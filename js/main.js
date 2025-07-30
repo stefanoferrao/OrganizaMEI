@@ -984,47 +984,111 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (btnImportar) btnImportar.onclick = function () {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json,application/json';
-    input.onchange = function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        try {
-          const dados = JSON.parse(evt.target.result);
-          if (confirm('Tem certeza que deseja importar e substituir TODOS os dados atuais?')) {
-            if (dados.produtos) localStorage.setItem('produtos', JSON.stringify(dados.produtos));
-            if (dados.lancamentos) localStorage.setItem('lancamentos', JSON.stringify(dados.lancamentos));
-            if (dados.categorias) localStorage.setItem('categorias', JSON.stringify(dados.categorias));
-            alert('Dados importados com sucesso! A página será recarregada.');
-            location.reload();
-          }
-        } catch (err) {
-          alert('Arquivo inválido!');
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
+    Swal.fire({
+      title: 'Importar Dados',
+      text: 'Selecione um arquivo JSON para importar',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Selecionar Arquivo',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3182ce',
+      cancelButtonColor: '#4a5568',
+      background: '#232b38',
+      color: '#e2e8f0'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json,application/json';
+        input.onchange = function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function (evt) {
+            try {
+              const dados = JSON.parse(evt.target.result);
+              Swal.fire({
+                title: 'Confirmar Importação',
+                text: 'Tem certeza que deseja importar e substituir TODOS os dados atuais?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, importar!',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#e53e3e',
+                cancelButtonColor: '#4a5568',
+                background: '#232b38',
+                color: '#e2e8f0'
+              }).then((confirmResult) => {
+                if (confirmResult.isConfirmed) {
+                  if (dados.produtos) localStorage.setItem('produtos', JSON.stringify(dados.produtos));
+                  if (dados.lancamentos) localStorage.setItem('lancamentos', JSON.stringify(dados.lancamentos));
+                  if (dados.categorias) localStorage.setItem('categorias', JSON.stringify(dados.categorias));
+                  Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Dados importados com sucesso! A página será recarregada.',
+                    icon: 'success',
+                    confirmButtonColor: '#38a169',
+                    background: '#232b38',
+                    color: '#e2e8f0'
+                  }).then(() => {
+                    location.reload();
+                  });
+                }
+              });
+            } catch (err) {
+              Swal.fire({
+                title: 'Erro!',
+                text: 'Arquivo JSON inválido!',
+                icon: 'error',
+                confirmButtonColor: '#e53e3e',
+                background: '#232b38',
+                color: '#e2e8f0'
+              });
+            }
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+      }
+    });
   };
 
 
 
   if (btnExportarTodos) btnExportarTodos.onclick = function () {
-    const dados = {
-      produtos: JSON.parse(localStorage.getItem('produtos') || '[]'),
-      lancamentos: JSON.parse(localStorage.getItem('lancamentos') || '[]'),
-      categorias: JSON.parse(localStorage.getItem('categorias') || '{}')
-    };
-    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `dados-todos-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const dados = {
+        produtos: JSON.parse(localStorage.getItem('produtos') || '[]'),
+        lancamentos: JSON.parse(localStorage.getItem('lancamentos') || '[]'),
+        categorias: JSON.parse(localStorage.getItem('categorias') || '{}')
+      };
+      
+      const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dados-todos-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      Swal.fire({
+        title: 'Sucesso!',
+        text: 'Dados exportados com sucesso!',
+        icon: 'success',
+        confirmButtonColor: '#38a169',
+        background: '#232b38',
+        color: '#e2e8f0'
+      });
+    } catch (error) {
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Erro ao exportar dados: ' + error.message,
+        icon: 'error',
+        confirmButtonColor: '#e53e3e',
+        background: '#232b38',
+        color: '#e2e8f0'
+      });
+    }
   };
 
   if (btnApagarTodos) btnApagarTodos.onclick = function () {
