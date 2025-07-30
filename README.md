@@ -1,4 +1,4 @@
-# Integração YumMetrics com Google Sheets
+# Integração OrganizaMEI com Google Sheets
 
 ## Como configurar a integração com Google Sheets
 
@@ -10,7 +10,7 @@
 4. **IMPORTANTE**: Substitua `'SUA_PLANILHA_ID'` pelo ID real da sua planilha do Google Sheets
    - Para encontrar o ID da planilha, abra sua planilha no Google Sheets
    - O ID está na URL: `https://docs.google.com/spreadsheets/d/[ID_DA_PLANILHA]/edit`
-5. Salve o projeto com um nome (ex: "YumMetrics-Financeiro")
+5. Salve o projeto com um nome (ex: "OrganizaMEI-Financeiro")
 
 ### 2. Implantar como Web App
 
@@ -22,9 +22,9 @@
 4. Clique em "Implantar"
 5. **Copie a URL do Web App** que será gerada
 
-### 3. Configurar no YumMetrics
+### 3. Configurar no OrganizaMEI
 
-1. Abra o YumMetrics no navegador
+1. Abra o OrganizaMEI no navegador
 2. Vá para a guia "Financeiro"
 3. Na seção "Integração com Google Sheets":
    - Cole a URL do Web App no campo
@@ -112,4 +112,4 @@ Se aparecer erro de CORS, verifique se:
 - A URL do Web App é salva localmente no navegador
 - Os dados são transmitidos via HTTPS
 - Apenas você tem acesso aos dados da sua planilha
-- Recomenda-se usar uma planilha dedicada para o YumMetrics
+- Recomenda-se usar uma planilha dedicada para o OrganizaMEI
