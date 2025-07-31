@@ -1216,7 +1216,7 @@ canvas#graficoDinamico {
 .buttonscfg {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 140px;
   margin-bottom: 16px;
   align-items: center;
 }
