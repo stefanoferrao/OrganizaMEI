@@ -1051,6 +1051,72 @@ canvas#graficoDinamico {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.filtro-container label {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+#filtro-mes,
+#filtro-ano {
+  background: #232b38;
+  color: #fff;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+#filtro-mes:hover,
+#filtro-ano:hover {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+#filtro-mes:focus,
+#filtro-ano:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+}
+
+#filtro-mes option,
+#filtro-ano option {
+  background: #232b38;
+  color: #fff;
+  padding: 8px;
+}
+
+@media (max-width: 800px) {
+  .filtro-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .filtro-container label {
+    margin-bottom: 4px;
+  }
+  
+  #filtro-mes,
+  #filtro-ano {
+    width: 100%;
+    min-width: auto;
+  }
 }
 
 .modal-hidden {
@@ -1430,6 +1496,47 @@ canvas#graficoDinamico {
     background-color: #38a169;
     height: 30%;
   }
+}
+
+/* Seletores de categoria do financeiro - discretos e elegantes */
+#tipo-lancamento,
+#categoria-lancamento,
+#subcategoria-lancamento {
+  background: #232b38;
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  padding-right: 28px;
+}
+
+#tipo-lancamento:hover,
+#categoria-lancamento:hover,
+#subcategoria-lancamento:hover {
+  border-color: #3182ce;
+}
+
+#tipo-lancamento:focus,
+#categoria-lancamento:focus,
+#subcategoria-lancamento:focus {
+  outline: none;
+  border-color: #38a169;
+}
+
+#tipo-lancamento option,
+#categoria-lancamento option,
+#subcategoria-lancamento option {
+  background: #232b38;
+  color: #e2e8f0;
+  padding: 8px;
 }
 
 @keyframes loadingError {
