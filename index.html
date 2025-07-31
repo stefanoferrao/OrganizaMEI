@@ -125,6 +125,8 @@
                     <option value="pizza-receitas">Receitas por categoria (Pizza)</option>
                     <option value="pizza-despesas-sub">Despesas por subcategoria (Pizza)</option>
                     <option value="pizza-receitas-sub">Receitas por subcategoria (Pizza)</option>
+                    <option value="dre">DRE - Demonstrativo do Resultado</option>
+                    <option value="dre-detalhado">DRE Detalhado - Todos os meses</option>
                 </select>
             </div>
             <canvas id="graficoDinamico"></canvas>
@@ -180,6 +182,7 @@
 
             </div>
         </section>
+        <div style="text-align: center; margin-top: 30px; color: #666; font-style: italic; font-size: 0.9em;">Versão 2.0</div>
     </main>
 
     <script>
@@ -197,6 +200,22 @@
             if (tabId === 'vendas' && typeof renderizarVendas === 'function') {
                 setTimeout(() => renderizarVendas(), 100);
             }
+            // Atualiza financeiro ao clicar na aba
+            if (tabId === 'financeiro') {
+                setTimeout(() => {
+                    // Limpa e recarrega elementos específicos
+                    document.getElementById('resumo-financeiro').innerHTML = '';
+                    document.getElementById('financeiro-lista').innerHTML = '';
+                    
+                    // Chama as funções de renderização
+                    if (typeof renderizarLancamentos === 'function') {
+                        renderizarLancamentos();
+                    }
+                    if (typeof renderizarResumoFinanceiro === 'function') {
+                        renderizarResumoFinanceiro();
+                    }
+                }, 100);
+            }
         }
         window.addEventListener('DOMContentLoaded', function () {
             const tabSalva = localStorage.getItem('tabSelecionada');
@@ -206,6 +225,7 @@
             }
         });
     </script>
+    
 
 </body>
 

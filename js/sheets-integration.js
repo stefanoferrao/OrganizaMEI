@@ -165,18 +165,42 @@ async function sincronizarFinanceiro() {
         // Salvar dados sincronizados
         localStorage.setItem('lancamentos', JSON.stringify(lancamentosSincronizados));
         
+        // Atualizar variável global lancamentos
+        if (typeof window.lancamentos !== 'undefined') {
+            window.lancamentos.length = 0;
+            window.lancamentos.push(...lancamentosSincronizados);
+        }
+        
         showProgress('Atualizando interface...');
         
-        // Atualizar interface
-        if (typeof renderizarLancamentos === 'function') renderizarLancamentos();
-        if (typeof renderizarDashboardResumo === 'function') renderizarDashboardResumo();
-        if (typeof renderizarVendas === 'function') renderizarVendas();
+        // Forçar atualização completa da interface
+        setTimeout(() => {
+            // Recarregar dados do localStorage
+            const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+            if (typeof window.lancamentos !== 'undefined') {
+                window.lancamentos.length = 0;
+                window.lancamentos.push(...novosLancamentos);
+            }
+            
+            // Atualizar todas as interfaces
+            if (typeof renderizarLancamentos === 'function') renderizarLancamentos();
+            if (typeof renderizarDashboardResumo === 'function') renderizarDashboardResumo();
+            if (typeof renderizarVendas === 'function') renderizarVendas();
+            if (typeof renderizarResumoFinanceiro === 'function') renderizarResumoFinanceiro();
+            if (typeof atualizarFiltroMesAno === 'function') atualizarFiltroMesAno();
+        }, 500);
         
         updateSyncStatus('Sincronizado', 'success');
         updateSyncIndicator('success');
         hideProgress();
         
-        setTimeout(() => updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success'), 1000);
+        setTimeout(() => {
+            updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
+            // Recarregar a página para garantir atualização completa
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        }, 1000);
     } catch (error) {
         updateSyncStatus('Erro na sincronização', 'error');
         updateSyncIndicator('error');

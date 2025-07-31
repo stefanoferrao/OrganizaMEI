@@ -27,7 +27,7 @@ const categorias = JSON.parse(localStorage.getItem("categorias")) || {
   despesa: {
     "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
     "Pessoal": ["Salários", "Benefícios"],
-    "Compras": ["Mercadorias", "Materiais"],
+    "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
     "Outros": ["Impostos", "Multas"]
   }
 };
@@ -984,111 +984,47 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (btnImportar) btnImportar.onclick = function () {
-    Swal.fire({
-      title: 'Importar Dados',
-      text: 'Selecione um arquivo JSON para importar',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Selecionar Arquivo',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3182ce',
-      cancelButtonColor: '#4a5568',
-      background: '#232b38',
-      color: '#e2e8f0'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json,application/json';
-        input.onchange = function (e) {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = function (evt) {
-            try {
-              const dados = JSON.parse(evt.target.result);
-              Swal.fire({
-                title: 'Confirmar Importação',
-                text: 'Tem certeza que deseja importar e substituir TODOS os dados atuais?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, importar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#e53e3e',
-                cancelButtonColor: '#4a5568',
-                background: '#232b38',
-                color: '#e2e8f0'
-              }).then((confirmResult) => {
-                if (confirmResult.isConfirmed) {
-                  if (dados.produtos) localStorage.setItem('produtos', JSON.stringify(dados.produtos));
-                  if (dados.lancamentos) localStorage.setItem('lancamentos', JSON.stringify(dados.lancamentos));
-                  if (dados.categorias) localStorage.setItem('categorias', JSON.stringify(dados.categorias));
-                  Swal.fire({
-                    title: 'Sucesso!',
-                    text: 'Dados importados com sucesso! A página será recarregada.',
-                    icon: 'success',
-                    confirmButtonColor: '#38a169',
-                    background: '#232b38',
-                    color: '#e2e8f0'
-                  }).then(() => {
-                    location.reload();
-                  });
-                }
-              });
-            } catch (err) {
-              Swal.fire({
-                title: 'Erro!',
-                text: 'Arquivo JSON inválido!',
-                icon: 'error',
-                confirmButtonColor: '#e53e3e',
-                background: '#232b38',
-                color: '#e2e8f0'
-              });
-            }
-          };
-          reader.readAsText(file);
-        };
-        input.click();
-      }
-    });
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        try {
+          const dados = JSON.parse(evt.target.result);
+          if (confirm('Tem certeza que deseja importar e substituir TODOS os dados atuais?')) {
+            if (dados.produtos) localStorage.setItem('produtos', JSON.stringify(dados.produtos));
+            if (dados.lancamentos) localStorage.setItem('lancamentos', JSON.stringify(dados.lancamentos));
+            if (dados.categorias) localStorage.setItem('categorias', JSON.stringify(dados.categorias));
+            alert('Dados importados com sucesso! A página será recarregada.');
+            location.reload();
+          }
+        } catch (err) {
+          alert('Arquivo inválido!');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
   };
 
 
 
   if (btnExportarTodos) btnExportarTodos.onclick = function () {
-    try {
-      const dados = {
-        produtos: JSON.parse(localStorage.getItem('produtos') || '[]'),
-        lancamentos: JSON.parse(localStorage.getItem('lancamentos') || '[]'),
-        categorias: JSON.parse(localStorage.getItem('categorias') || '{}')
-      };
-      
-      const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dados-todos-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Dados exportados com sucesso!',
-        icon: 'success',
-        confirmButtonColor: '#38a169',
-        background: '#232b38',
-        color: '#e2e8f0'
-      });
-    } catch (error) {
-      Swal.fire({
-        title: 'Erro!',
-        text: 'Erro ao exportar dados: ' + error.message,
-        icon: 'error',
-        confirmButtonColor: '#e53e3e',
-        background: '#232b38',
-        color: '#e2e8f0'
-      });
-    }
+    const dados = {
+      produtos: JSON.parse(localStorage.getItem('produtos') || '[]'),
+      lancamentos: JSON.parse(localStorage.getItem('lancamentos') || '[]'),
+      categorias: JSON.parse(localStorage.getItem('categorias') || '{}')
+    };
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `dados-todos-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (btnApagarTodos) btnApagarTodos.onclick = function () {
@@ -1319,7 +1255,238 @@ document.addEventListener("DOMContentLoaded", function () {
         backgroundColors.push(["#38a169", "#3182ce", "#e53e3e", "#ecc94b", "#805ad5", "#ed8936", "#319795", "#d53f8c"][i % 8]);
       });
       label = "Receitas por subcategoria";
+    } else if (tipo === "dre") {
+      // DRE - Demonstrativo do Resultado do Exercício
+      const canvas = document.getElementById("graficoDinamico");
+      canvas.style.display = 'none';
+      
+      // Criar container para DRE
+      let dreContainer = document.getElementById('dre-container');
+      if (!dreContainer) {
+        dreContainer = document.createElement('div');
+        dreContainer.id = 'dre-container';
+        canvas.parentNode.appendChild(dreContainer);
+      }
+      
+      // Calcular dados do DRE
+      let filtrados = lancamentos;
+      if (window.filtroMes && window.filtroAno) {
+        filtrados = lancamentos.filter(l => {
+          if (!l.data) return false;
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
+          }
+          return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
+        });
+      }
+      
+      const receitas = filtrados.filter(l => l.tipo === 'receita');
+      const despesas = filtrados.filter(l => l.tipo === 'despesa');
+      
+      const receitaBruta = receitas.reduce((acc, l) => acc + l.valor, 0);
+      const totalDespesas = despesas.reduce((acc, l) => acc + l.valor, 0);
+      const lucroLiquido = receitaBruta - totalDespesas;
+      
+      // Agrupar receitas por categoria
+      const receitasPorCategoria = {};
+      receitas.forEach(l => {
+        if (!receitasPorCategoria[l.categoria]) receitasPorCategoria[l.categoria] = 0;
+        receitasPorCategoria[l.categoria] += l.valor;
+      });
+      
+      // Agrupar despesas por categoria
+      const despesasPorCategoria = {};
+      despesas.forEach(l => {
+        if (!despesasPorCategoria[l.categoria]) despesasPorCategoria[l.categoria] = 0;
+        despesasPorCategoria[l.categoria] += l.valor;
+      });
+      
+      const periodo = window.filtroMes && window.filtroAno ? 
+        `${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}` : 'Todos os períodos';
+      
+      dreContainer.style.display = 'block';
+      dreContainer.innerHTML = `
+        <div class="dre-report">
+          <h3 class="dre-title">DRE - Demonstrativo do Resultado do Exercício</h3>
+          <p class="dre-period">Período: ${periodo}</p>
+          
+          <div class="dre-section">
+            <h4 class="dre-section-title">RECEITAS</h4>
+            ${Object.entries(receitasPorCategoria).map(([cat, valor]) => 
+              `<div class="dre-line"><span>${cat}</span><span>R$ ${valor.toFixed(2)}</span></div>`
+            ).join('')}
+            <div class="dre-line dre-total"><span>RECEITA BRUTA</span><span>R$ ${receitaBruta.toFixed(2)}</span></div>
+          </div>
+          
+          <div class="dre-section">
+            <h4 class="dre-section-title">DESPESAS</h4>
+            ${Object.entries(despesasPorCategoria).map(([cat, valor]) => 
+              `<div class="dre-line"><span>${cat}</span><span>(R$ ${valor.toFixed(2)})</span></div>`
+            ).join('')}
+            <div class="dre-line dre-total"><span>TOTAL DESPESAS</span><span>(R$ ${totalDespesas.toFixed(2)})</span></div>
+          </div>
+          
+          <div class="dre-section">
+            <div class="dre-line dre-result ${lucroLiquido >= 0 ? 'positive' : 'negative'}">
+              <span>RESULTADO LÍQUIDO</span>
+              <span>R$ ${lucroLiquido.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return; // Não criar gráfico para DRE
+    } else if (tipo === "dre-detalhado") {
+      const canvas = document.getElementById("graficoDinamico");
+      canvas.style.display = 'none';
+      
+      let dreContainer = document.getElementById('dre-container');
+      if (!dreContainer) {
+        dreContainer = document.createElement('div');
+        dreContainer.id = 'dre-container';
+        canvas.parentNode.appendChild(dreContainer);
+      }
+      
+      const ano = window.filtroAno || new Date().getFullYear();
+      const meses = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+      const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      
+      // Usar categorias existentes do sistema
+      const categoriasExistentes = JSON.parse(localStorage.getItem('categorias')) || {
+        receita: { "Vendas": [], "Investimentos": [], "Outros": [] },
+        despesa: { "Operacional": [], "Pessoal": [], "Compras": [], "Outros": [] }
+      };
+      
+      // Inicializar dados
+      const dadosPorCategoria = { receita: {}, despesa: {} };
+      
+      // Inicializar todas as categorias existentes
+      Object.keys(categoriasExistentes.receita).forEach(cat => {
+        dadosPorCategoria.receita[cat] = {};
+        meses.forEach(m => dadosPorCategoria.receita[cat][m] = 0);
+      });
+      
+      Object.keys(categoriasExistentes.despesa).forEach(cat => {
+        dadosPorCategoria.despesa[cat] = {};
+        meses.forEach(m => dadosPorCategoria.despesa[cat][m] = 0);
+      });
+      
+      // Processar lançamentos
+      lancamentos.forEach(l => {
+        if (!l.data) return;
+        let d;
+        if (typeof l.data === 'string' && l.data.includes('/')) {
+          const [dia, m, a] = l.data.split('/');
+          d = new Date(a, m - 1, dia);
+        } else {
+          d = new Date(l.data);
+        }
+        
+        if (d.getFullYear() !== Number(ano)) return;
+        
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const categoria = l.categoria || 'Outros';
+        
+        if (l.tipo === 'receita' && dadosPorCategoria.receita[categoria]) {
+          dadosPorCategoria.receita[categoria][mes] += l.valor;
+        } else if (l.tipo === 'despesa' && dadosPorCategoria.despesa[categoria]) {
+          dadosPorCategoria.despesa[categoria][mes] += l.valor;
+        }
+      });
+      
+      // Gerar HTML
+      let html = `
+        <div class="dre-detalhado">
+          <h3 class="dre-title">DRE Detalhado - Ano ${ano}</h3>
+          <div class="dre-table-container">
+            <table class="dre-table">
+              <thead>
+                <tr class="dre-header">
+                  <th class="dre-cell"></th>
+                  ${nomesMeses.map(m => `<th class="dre-cell">${m}</th>`).join('')}
+                  <th class="dre-cell">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      // Receitas
+      html += '<tr class="dre-section-header receitas"><td colspan="14">RECEITAS</td></tr>';
+      let totalReceitasPorMes = meses.map(() => 0);
+      
+      Object.keys(categoriasExistentes.receita).forEach(cat => {
+        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
+        let totalCategoria = 0;
+        
+        meses.forEach((mes, i) => {
+          const valor = dadosPorCategoria.receita[cat] ? dadosPorCategoria.receita[cat][mes] : 0;
+          totalReceitasPorMes[i] += valor;
+          totalCategoria += valor;
+          html += `<td class="dre-cell dre-receita">R$ ${valor.toFixed(2)}</td>`;
+        });
+        
+        html += `<td class="dre-cell dre-receita dre-total">R$ ${totalCategoria.toFixed(2)}</td></tr>`;
+      });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
+      const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
+      totalReceitasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-receita">R$ ${total.toFixed(2)}</td>`;
+      });
+      html += `<td class="dre-cell dre-receita dre-total">R$ ${totalReceitas.toFixed(2)}</td></tr>`;
+      
+      // Despesas
+      html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
+      let totalDespesasPorMes = meses.map(() => 0);
+      
+      Object.keys(categoriasExistentes.despesa).forEach(cat => {
+        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
+        let totalCategoria = 0;
+        
+        meses.forEach((mes, i) => {
+          const valor = dadosPorCategoria.despesa[cat] ? dadosPorCategoria.despesa[cat][mes] : 0;
+          totalDespesasPorMes[i] += valor;
+          totalCategoria += valor;
+          html += `<td class="dre-cell dre-despesa">R$ ${valor.toFixed(2)}</td>`;
+        });
+        
+        html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalCategoria.toFixed(2)}</td></tr>`;
+      });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
+      const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
+      totalDespesasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-despesa">R$ ${total.toFixed(2)}</td>`;
+      });
+      html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalDespesas.toFixed(2)}</td></tr>`;
+      
+      // Saldo
+      html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
+      const saldoTotal = totalReceitas - totalDespesas;
+      
+      meses.forEach((mes, i) => {
+        const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
+        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">R$ ${saldoMes.toFixed(2)}</td>`;
+      });
+      
+      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">R$ ${saldoTotal.toFixed(2)}</td></tr>`;
+      
+      html += '</tbody></table></div></div>';
+      dreContainer.style.display = 'block';
+      dreContainer.innerHTML = html;
+      
+      return;
     }
+
+    // Mostrar canvas novamente para outros gráficos
+    const canvas = document.getElementById("graficoDinamico");
+    if (canvas) canvas.style.display = 'block';
+    const dreContainer = document.getElementById('dre-container');
+    if (dreContainer) dreContainer.style.display = 'none';
 
     chartInstance = new Chart(ctx, {
       type: chartType,

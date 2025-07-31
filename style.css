@@ -1569,3 +1569,221 @@ canvas#graficoDinamico {
     justify-content: center;
   }
 }
+
+/* Estilos para DRE */
+.dre-report {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px auto;
+  max-width: 600px;
+  border: 2px solid #3182ce;
+  box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
+}
+
+.dre-title {
+  color: #3182ce;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.dre-period {
+  color: #a0aec0;
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1rem;
+}
+
+.dre-section {
+  margin-bottom: 20px;
+}
+
+.dre-section-title {
+  color: #38a169;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #38a169;
+}
+
+.dre-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: #2d3748;
+  border-radius: 6px;
+  color: #e2e8f0;
+}
+
+.dre-total {
+  background: #3182ce;
+  color: #fff;
+  font-weight: bold;
+  margin-top: 8px;
+  border: 2px solid #3182ce;
+}
+
+.dre-result {
+  background: #38a169;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 12px;
+  border: 2px solid #38a169;
+  margin-top: 16px;
+}
+
+.dre-result.negative {
+  background: #e53e3e;
+  border-color: #e53e3e;
+}
+
+@media (max-width: 600px) {
+  .dre-report {
+    margin: 20px 12px;
+    padding: 16px;
+  }
+  
+  .dre-title {
+    font-size: 1.2rem;
+  }
+  
+  .dre-line {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Estilos para DRE Detalhado */
+.dre-detalhado {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px auto;
+  max-width: 100%;
+  border: 2px solid #3182ce;
+  box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
+  overflow-x: auto;
+}
+
+.dre-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.dre-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+  background: #2d3748;
+}
+
+.dre-table th,
+.dre-table td {
+  padding: 8px 6px;
+  text-align: center;
+  border: 1px solid #4a5568;
+  font-size: 0.85rem;
+}
+
+.dre-header th {
+  background: #3182ce;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.dre-section-header td {
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+}
+
+.dre-section-header.receitas td {
+  background: #38a169;
+  color: #fff;
+}
+
+.dre-section-header.despesas td {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.dre-row {
+  background: #2d3748;
+}
+
+.dre-row:nth-child(even) {
+  background: #232b38;
+}
+
+.dre-categoria {
+  text-align: left !important;
+  font-weight: 500;
+  color: #e2e8f0;
+  padding-left: 12px;
+}
+
+.dre-receita {
+  color: #38a169;
+}
+
+.dre-despesa {
+  color: #e53e3e;
+}
+
+.dre-subtotal {
+  background: #4a5568 !important;
+  font-weight: bold;
+}
+
+.dre-subtotal td {
+  color: #fff;
+  font-weight: bold;
+}
+
+.dre-result-row {
+  background: #38a169 !important;
+}
+
+.dre-result-row td {
+  color: #fff;
+  font-weight: bold;
+}
+
+.dre-resultado.positive {
+  color: #38a169;
+  font-weight: bold;
+}
+
+.dre-resultado.negative {
+  color: #e53e3e;
+  font-weight: bold;
+}
+
+.dre-total {
+  font-weight: bold;
+  background: #4a5568;
+}
+
+@media (max-width: 800px) {
+  .dre-detalhado {
+    margin: 20px 12px;
+    padding: 16px;
+  }
+  
+  .dre-table {
+    font-size: 0.75rem;
+  }
+  
+  .dre-table th,
+  .dre-table td {
+    padding: 6px 4px;
+    font-size: 0.75rem;
+  }
+}
