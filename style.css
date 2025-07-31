@@ -1165,7 +1165,6 @@ canvas#graficoDinamico {
 }
 
 .config-btn {
-  display: none;
   background: #3182ce;
   color: #fff;
   border: none;
