@@ -6,7 +6,7 @@
 
 1. Acesse [script.google.com](https://script.google.com)
 2. Clique em "Novo projeto"
-3. Cole o código do arquivo `google-apps-script.js` no editor
+3. Cole o código do arquivo `Código.gs` no editor (https://github.com/stefanoferrao/OrganizaMEI/blob/main/Código.gs)
 4. **IMPORTANTE**: Substitua `'SUA_PLANILHA_ID'` pelo ID real da sua planilha do Google Sheets
    - Para encontrar o ID da planilha, abra sua planilha no Google Sheets
    - O ID está na URL: `https://docs.google.com/spreadsheets/d/[ID_DA_PLANILHA]/edit`
