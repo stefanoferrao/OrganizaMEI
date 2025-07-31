@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OrganizaMEI</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/menu.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="js/main.js"></script>
+    <script defer src="js/sheets-integration.js"></script>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <img src="src/OrganizaMEI.png" alt="OrganizaMEI" style="max-width: 100%; height: auto; border-radius: 10px;">
+        <div class="filtro-container">
+            <label for="filtro-mes">Mês:</label>
+            <select id="filtro-mes"></select>
+            <label for="filtro-ano">Ano:</label>
+            <select id="filtro-ano"></select>
+            <button id="btn-filtrar" type="button">Filtrar</button>
+        </div>
+        <nav>
+            <button onclick="changeTab('dashboard')">Dashboard</button>
+            <button onclick="changeTab('estoque')">Estoque</button>
+            <button onclick="changeTab('financeiro')">Financeiro</button>
+            <button onclick="changeTab('vendas')">Vendas</button>
+            <button onclick="changeTab('categorias')">Categorias</button>
+            <button onclick="changeTab('graficos')">Gráficos</button>
+            <button onclick="changeTab('configuracoes')">Configurações</button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Dashboard -->
+        <!-- Categorias -->
+        <section id="categorias" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Categorias e Subcategorias</h2>
+            <div id="lista-categorias"></div>
+        </section>
+        <section id="dashboard" class="tab-section active">
+            <h2 class="text-xl font-semibold mb-4">Visão Geral</h2>
+            <div id="dashboard-resumo" class="dashboard-cards"></div>
+        </section>
+
+        <!-- Estoque -->
+        <section id="estoque" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Controle de Estoque</h2>
+            <form id="estoque-form">
+                <input id="produto" type="text" placeholder="Produto" />
+                <input id="quantidade" type="number" placeholder="Quantidade" />
+                <button type="submit">Entrada de Produto</button>
+            </form>
+            <ul id="estoque-lista"></ul>
+            <!-- Modal Saída Produto -->
+            <div id="saida-modal" class="modal-bg modal-hidden">
+                <div class="modal-content">
+                    <h3 class="modal-title">Saída de Produto</h3>
+                    <div id="saida-modal-produto" class="modal-produto"></div>
+                    <form id="saida-modal-form">
+                        <input id="saida-modal-quantidade" type="number" min="1" placeholder="Quantidade saída"
+                            class="input-margin-bottom" />
+                        <input id="saida-modal-valor" type="number" min="0" step="0.01"
+                            placeholder="Valor total da saída (R$)" class="input-margin-bottom" />
+                        <div class="modal-actions">
+                            <button type="submit" class="modal-confirm">Confirmar Saída</button>
+                            <button type="button" class="modal-cancel">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financeiro -->
+        <section id="financeiro" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Financeiro</h2>
+
+            <div id="filtro-info" class="filtro-info"></div>
+
+            <div class="sync-status-container">
+                <div id="resumo-financeiro" class="resumo-financeiro"></div>
+                <div id="sync-indicator" class="sync-indicator">
+                    <!-- <span id="sync-status-main" class="sync-status">Não sincronizado</span>-->
+                    <div class="sync-icon">⚠️</div>
+                </div>
+            </div>
+            <form id="financeiro-form">
+                <select id="tipo-lancamento">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+                <select id="categoria-lancamento"></select>
+                <select id="subcategoria-lancamento"></select>
+                <input id="descricao-lancamento" type="text" placeholder="Descrição" />
+                <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
+                <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor (R$)" />
+                <input id="data-lancamento" type="date" />
+                <button type="submit">Adicionar</button>
+            </form>
+            <ul id="financeiro-lista"></ul>
+        </section>
+
+        <!-- Vendas -->
+        <section id="vendas" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Itens Vendidos</h2>
+            <ul id="vendas-lista"></ul>
+        </section>
+        <!-- Gráficos -->
+        <section id="graficos" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Gráficos</h2>
+            <div style="margin-bottom: 16px;">
+                <label for="tipo-grafico">Escolha o gráfico:</label>
+                <select id="tipo-grafico">
+                    <option value="vendas">Vendas no período</option>
+                    <option value="ticket">Ticket médio</option>
+                    <option value="patrimonio">Evolução do patrimônio</option>
+                    <option value="fluxo">Fluxo de caixa</option>
+                    <option value="pizza-despesas">Despesas por categoria (Pizza)</option>
+                    <option value="pizza-receitas">Receitas por categoria (Pizza)</option>
+                    <option value="pizza-despesas-sub">Despesas por subcategoria (Pizza)</option>
+                    <option value="pizza-receitas-sub">Receitas por subcategoria (Pizza)</option>
+                </select>
+            </div>
+            <canvas id="graficoDinamico"></canvas>
+        </section>
+        <!-- Análises -->
+        <section id="analises" class="tab-section">
+            <h2>Análises</h2>
+            <div>
+                <label for="tipo-analise">Escolha a análise:</label>
+                <select id="tipo-analise">
+                    <option value="vendas">Vendas no período</option>
+                    <option value="fluxo">Fluxo de caixa</option>
+                    <!-- Adicione mais opções conforme necessário -->
+                </select>
+            </div>
+            <div id="analise-conteudo">
+                <!-- Aqui será exibido o conteúdo da análise selecionada -->
+            </div>
+        </section>
+        <section id="configuracoes" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4">Configurações</h2>
+            <div style="display: flex; flex-direction: column; gap: 16px; max-width: 400px;">
+                <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
+                <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
+                <hr />
+                <a href="https://github.com/stefanoferrao/OrganizaMEI/blob/main/README.md" target="_blank" class="config-btn" style="text-decoration: none; text-align: center; display: block;">📖 Ler README</a>
+                <hr />
+
+                <!-- Integração Google Sheets -->
+                <div class="sheets-integration">
+                    <h3>Integração com Google Sheets</h3>
+                    <div id="urlStatus"></div>
+                    <div class="sheets-config">
+                        <input id="webAppUrl" type="url" placeholder="URL do Web App do Google Sheets" />
+                        <div class="buttonscfg">
+                            <button id="btn-save-url" type="button">Salvar URL</button>
+                            <button id="btn-clear-url" type="button">Limpar URL</button>
+                            <button id="btn-enviar-dados" type="button">Enviar dados</button>
+                        </div>
+                    </div>
+                    <div class="sheets-actions">
+                        <button id="btn-sync-financeiro" type="button">Importar dados Planilha</button>
+
+                        <div id="sync-progress" class="sync-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="progress-text">Sincronizando...</span>
+                        </div>
+                    </div>
+                    <div id="sheets-status" class="sheets-status"></div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function changeTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            localStorage.setItem('tabSelecionada', tabId);
+            // Atualiza dashboard ao clicar na aba
+            if (tabId === 'dashboard' && typeof renderizarDashboardResumo === 'function') {
+                renderizarDashboardResumo();
+            }
+            // Atualiza vendas ao clicar na aba
+            if (tabId === 'vendas' && typeof renderizarVendas === 'function') {
+                setTimeout(() => renderizarVendas(), 100);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', function () {
+            const tabSalva = localStorage.getItem('tabSelecionada');
+            if (tabSalva) {
+                document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabSalva).classList.add('active');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
