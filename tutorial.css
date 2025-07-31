@@ -7,7 +7,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
-  z-index: 9999;
+  z-index: 1000;
   pointer-events: none;
 }
 
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 20px;
   pointer-events: all;
-  z-index: 10001;
+  z-index: 1001;
 }
 
 .tutorial-progress {
@@ -94,7 +94,7 @@
   border: 2px solid #38a169;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: 1002;
   max-width: 350px;
   pointer-events: all;
   animation: tutorialFadeIn 0.3s ease;
@@ -183,7 +183,7 @@
 
 .tutorial-highlight {
   position: relative;
-  z-index: 9998;
+  z-index: 999;
   box-shadow: 0 0 0 4px #38a169, 0 0 20px rgba(56, 161, 105, 0.5) !important;
   border-radius: 8px !important;
   animation: tutorialPulse 2s infinite;
@@ -236,4 +236,13 @@
     padding: 8px 12px;
     font-size: 13px;
   }
+}
+
+/* SweetAlert2 customizado para tutorial */
+.swal-tutorial-container {
+  z-index: 10000 !important;
+}
+
+.swal-tutorial-container .swal2-popup {
+  z-index: 10001 !important;
 }

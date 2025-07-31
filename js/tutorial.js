@@ -289,7 +289,10 @@ class TutorialOnboarding {
       confirmButtonColor: '#e53e3e',
       cancelButtonColor: '#38a169',
       background: '#232b38',
-      color: '#e2e8f0'
+      color: '#e2e8f0',
+      customClass: {
+        container: 'swal-tutorial-container'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.complete();
