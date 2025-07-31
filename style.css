@@ -1729,6 +1729,28 @@ canvas#graficoDinamico {
   padding-left: 12px;
 }
 
+.dre-categoria-header td {
+  background: #4a5568 !important;
+  color: #fff;
+  font-weight: bold;
+  text-align: left;
+  padding-left: 16px;
+  font-size: 0.9rem;
+}
+
+.dre-categoria-nome {
+  color: #3182ce;
+  font-weight: bold;
+}
+
+.dre-subcategoria {
+  text-align: left !important;
+  font-weight: 400;
+  color: #a0aec0;
+  padding-left: 32px;
+  font-style: italic;
+}
+
 .dre-receita {
   color: #38a169;
 }
