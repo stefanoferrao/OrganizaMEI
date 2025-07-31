@@ -1,0 +1,248 @@
+/* Tutorial Interativo - Estilos */
+
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.tutorial-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: all;
+  z-index: 1001;
+}
+
+.tutorial-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #232b38;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 2px solid #38a169;
+}
+
+.tutorial-step-counter {
+  color: #e2e8f0;
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+.tutorial-progress-bar {
+  width: 150px;
+  height: 6px;
+  background: #2d3748;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tutorial-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38a169, #48bb78);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.tutorial-btn {
+  background: #38a169;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  pointer-events: all;
+}
+
+.tutorial-btn:hover {
+  background: #2f855a;
+  transform: translateY(-1px);
+}
+
+.tutorial-skip {
+  background: #e53e3e;
+}
+
+.tutorial-skip:hover {
+  background: #c53030;
+}
+
+.tutorial-prev {
+  background: #4a5568;
+}
+
+.tutorial-prev:hover {
+  background: #2d3748;
+}
+
+.tutorial-tooltip {
+  position: fixed;
+  background: #232b38;
+  border: 2px solid #38a169;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1002;
+  max-width: 350px;
+  pointer-events: all;
+  animation: tutorialFadeIn 0.3s ease;
+}
+
+@keyframes tutorialFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tutorial-tooltip-content {
+  padding: 20px;
+}
+
+.tutorial-tooltip-title {
+  color: #38a169;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+}
+
+.tutorial-tooltip-text {
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.tutorial-tooltip-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tutorial-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.tutorial-tooltip-right .tutorial-tooltip-arrow {
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #38a169;
+}
+
+.tutorial-tooltip-left .tutorial-tooltip-arrow {
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #38a169;
+}
+
+.tutorial-tooltip-bottom .tutorial-tooltip-arrow {
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #38a169;
+}
+
+.tutorial-tooltip-top .tutorial-tooltip-arrow {
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #38a169;
+}
+
+.tutorial-tooltip-center .tutorial-tooltip-arrow {
+  display: none;
+}
+
+.tutorial-highlight {
+  position: relative;
+  z-index: 999;
+  box-shadow: 0 0 0 4px #38a169, 0 0 20px rgba(56, 161, 105, 0.5) !important;
+  border-radius: 8px !important;
+  animation: tutorialPulse 2s infinite;
+}
+
+@keyframes tutorialPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px #38a169, 0 0 20px rgba(56, 161, 105, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px #38a169, 0 0 30px rgba(56, 161, 105, 0.8);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .tutorial-controls {
+    top: 10px;
+    right: 10px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .tutorial-progress {
+    padding: 8px 12px;
+  }
+  
+  .tutorial-progress-bar {
+    width: 120px;
+  }
+  
+  .tutorial-tooltip {
+    max-width: 280px;
+    margin: 10px;
+  }
+  
+  .tutorial-tooltip-content {
+    padding: 15px;
+  }
+  
+  .tutorial-tooltip-title {
+    font-size: 16px;
+  }
+  
+  .tutorial-tooltip-text {
+    font-size: 13px;
+  }
+  
+  .tutorial-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* SweetAlert2 customizado para tutorial */
+.swal-tutorial-container {
+  z-index: 10000 !important;
+}
+
+.swal-tutorial-container .swal2-popup {
+  z-index: 10001 !important;
+}

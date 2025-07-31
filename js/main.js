@@ -1,5 +1,15 @@
 const produtos = JSON.parse(localStorage.getItem("produtos") || "[]");
 
+// Função para formatar moeda brasileira
+function formatarMoedaBR(valor) {
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
 // Função para gerar identificador único
 function gerarIdentificadorUnico() {
   const agora = new Date();
@@ -316,7 +326,7 @@ function renderizarLancamentos() {
         </span>
       </span>
       <span class="lancamento-valor-container">
-        <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2)}">R$ ${l.valor.toFixed(2)}</span><br>
+        <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2).replace('.', ',')}">R$ ${l.valor.toFixed(2).replace('.', ',')}</span><br>
          <span class="lancamento-data">${l.data ? (typeof l.data === 'string' && l.data.includes('/') ? l.data : l.data.toLocaleDateString('pt-BR')) : ""}</span>
       </span>
       <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover">&#128465;</button>
@@ -347,9 +357,9 @@ function renderizarResumoFinanceiro() {
   const totalDespesas = filtrados.filter(l => l.tipo === "despesa").reduce((acc, l) => acc + l.valor, 0);
   const saldo = totalReceitas - totalDespesas;
   div.innerHTML = `
-    <strong>Receitas:</strong> R$ ${totalReceitas.toFixed(2)}<br>
-    <strong>Despesas:</strong> R$ ${totalDespesas.toFixed(2)}<br>
-    <strong>Saldo:</strong> R$ ${saldo.toFixed(2)}
+    <strong>Receitas:</strong> R$ ${totalReceitas.toFixed(2).replace('.', ',')}<br>
+    <strong>Despesas:</strong> R$ ${totalDespesas.toFixed(2).replace('.', ',')}<br>
+    <strong>Saldo:</strong> R$ ${saldo.toFixed(2).replace('.', ',')}
   `;
 }
 
@@ -552,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="venda-quantidade">${v.quantidade ? v.quantidade + ' un.' : ''}</span>
         </div>
         <div class="venda-meta">
-          <span class="venda-valor">R$ ${v.valor.toFixed(2)}</span>
+          <span class="venda-valor">R$ ${v.valor.toFixed(2).replace('.', ',')}</span>
           <span class="venda-data-row">
             <span class="venda-data">${dataFormatada}</span>
             <span class="icon-editar-data" title="Editar data">🗓️</span>
@@ -970,8 +980,44 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
       }).reduce((acc, l) => acc + l.valor, 0);
     }
+    
+    // Cálculo do Valor Médio por Item
+    const vendasTotais = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas");
+    const totalItensVendidos = vendasTotais.reduce((acc, l) => acc + (l.quantidade || 1), 0);
+    const valorMedioItem = totalItensVendidos > 0 ? vendasTotais.reduce((acc, l) => acc + l.valor, 0) / totalItensVendidos : 0;
+    
+    // Cálculo da Saúde Financeira (0-100)
+    let saudeScore = 0;
+    if (saldo > 0) saudeScore += 40;
+    if (totalReceitas > totalDespesas) saudeScore += 30;
+    if (vendasMes > 0 || totalReceitas > 0) saudeScore += 20;
+    if (produtos.length > 0) saudeScore += 10;
+    const saudeTexto = saudeScore >= 80 ? "Excelente" : saudeScore >= 60 ? "Boa" : saudeScore >= 40 ? "Regular" : "Atenção";
     div.innerHTML = `
     <div class="dashboard-container">
+      <!-- Primeira linha: Vendas no Mês, Receitas, Despesas, Saldo -->
+      <div class="dashboard-card dashboard-card-vendas">
+        <span class="dashboard-icon">🛒</span>
+        <span class="dashboard-label dashboard-label-vendas">Vendas no Mês</span>
+        <span class="dashboard-value dashboard-value-vendas">R$ ${vendasMes.toFixed(2).replace('.', ',')}</span>
+        <span class="dashboard-periodo">${filtroMes && filtroAno ? `Referente a ${filtroMes.toString().padStart(2, '0')}/${filtroAno}` : 'Escolha o mês'}</span>
+      </div>
+      <div class="dashboard-card dashboard-card-receitas">
+        <span class="dashboard-icon">💰</span>
+        <span class="dashboard-label dashboard-label-receitas">Receitas</span>
+        <span class="dashboard-value dashboard-value-receitas">R$ ${totalReceitas.toFixed(2).replace('.', ',')}</span>
+      </div>
+      <div class="dashboard-card dashboard-card-despesas">
+        <span class="dashboard-icon">💸</span>
+        <span class="dashboard-label dashboard-label-despesas">Despesas</span>
+        <span class="dashboard-value dashboard-value-despesas">R$ ${totalDespesas.toFixed(2).replace('.', ',')}</span>
+      </div>
+      <div class="dashboard-card dashboard-card-saldo ${saldo >= 0 ? 'dashboard-card-saldo-positivo' : 'dashboard-card-saldo-negativo'}">
+        <span class="dashboard-icon">🧮</span>
+        <span class="dashboard-label dashboard-label-saldo">Saldo</span>
+        <span class="dashboard-value dashboard-value-saldo">R$ ${saldo.toFixed(2).replace('.', ',')}</span>
+      </div>
+      <!-- Segunda linha: Produtos, Itens em Estoque, Valor Médio por item, Saúde Financeira -->
       <div class="dashboard-card dashboard-card-produtos">
         <span class="dashboard-icon">📦</span>
         <span class="dashboard-label dashboard-label-produtos">Produtos</span>
@@ -982,26 +1028,17 @@ document.addEventListener("DOMContentLoaded", function () {
         <span class="dashboard-label dashboard-label-estoque">Itens em Estoque</span>
         <span class="dashboard-value dashboard-value-estoque">${totalItensEstoque}</span>
       </div>
-      <div class="dashboard-card dashboard-card-vendas">
-        <span class="dashboard-icon">🛒</span>
-        <span class="dashboard-label dashboard-label-vendas">Vendas no mês</span>
-        <span class="dashboard-value dashboard-value-vendas">R$ ${vendasMes.toFixed(2)}</span>
-        <span class="dashboard-periodo">${filtroMes && filtroAno ? `Referente a ${filtroMes.toString().padStart(2, '0')}/${filtroAno}` : 'Escolha o mês'}</span>
+      <div class="dashboard-card dashboard-card-valor-medio">
+        <span class="dashboard-icon">💎</span>
+        <span class="dashboard-label dashboard-label-valor-medio">Valor Médio por Item</span>
+        <span class="dashboard-value dashboard-value-valor-medio">R$ ${valorMedioItem.toFixed(2).replace('.', ',')}</span>
+        <span class="dashboard-periodo">${totalItensVendidos} itens vendidos</span>
       </div>
-      <div class="dashboard-card dashboard-card-receitas">
-        <span class="dashboard-icon">💰</span>
-        <span class="dashboard-label dashboard-label-receitas">Receitas</span>
-        <span class="dashboard-value dashboard-value-receitas">R$ ${totalReceitas.toFixed(2)}</span>
-      </div>
-      <div class="dashboard-card dashboard-card-despesas">
-        <span class="dashboard-icon">💸</span>
-        <span class="dashboard-label dashboard-label-despesas">Despesas</span>
-        <span class="dashboard-value dashboard-value-despesas">R$ ${totalDespesas.toFixed(2)}</span>
-      </div>
-      <div class="dashboard-card dashboard-card-saldo ${saldo >= 0 ? 'dashboard-card-saldo-positivo' : 'dashboard-card-saldo-negativo'}">
-        <span class="dashboard-icon">🧮</span>
-        <span class="dashboard-label dashboard-label-saldo">Saldo</span>
-        <span class="dashboard-value dashboard-value-saldo">R$ ${saldo.toFixed(2)}</span>
+      <div class="dashboard-card dashboard-card-saude ${saudeScore >= 80 ? 'dashboard-card-saude-excelente' : saudeScore >= 60 ? 'dashboard-card-saude-boa' : saudeScore >= 40 ? 'dashboard-card-saude-regular' : 'dashboard-card-saude-atencao'}">
+        <span class="dashboard-icon">💚</span>
+        <span class="dashboard-label dashboard-label-saude">Saúde Financeira</span>
+        <span class="dashboard-value dashboard-value-saude">${saudeScore}%</span>
+        <span class="dashboard-periodo">${saudeTexto}</span>
       </div>
     </div>
   `;
@@ -1398,23 +1435,23 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="dre-section">
             <h4 class="dre-section-title">RECEITAS</h4>
             ${Object.entries(receitasPorCategoria).map(([cat, valor]) => 
-              `<div class="dre-line"><span>${cat}</span><span>R$ ${valor.toFixed(2)}</span></div>`
+              `<div class="dre-line"><span>${cat}</span><span>R$ ${valor.toFixed(2).replace('.', ',')}</span></div>`
             ).join('')}
-            <div class="dre-line dre-total"><span>RECEITA BRUTA</span><span>R$ ${receitaBruta.toFixed(2)}</span></div>
+            <div class="dre-line dre-total"><span>RECEITA BRUTA</span><span>R$ ${receitaBruta.toFixed(2).replace('.', ',')}</span></div>
           </div>
           
           <div class="dre-section">
             <h4 class="dre-section-title">DESPESAS</h4>
             ${Object.entries(despesasPorCategoria).map(([cat, valor]) => 
-              `<div class="dre-line"><span>${cat}</span><span>(R$ ${valor.toFixed(2)})</span></div>`
+              `<div class="dre-line"><span>${cat}</span><span>(R$ ${valor.toFixed(2).replace('.', ',')})</span></div>`
             ).join('')}
-            <div class="dre-line dre-total"><span>TOTAL DESPESAS</span><span>(R$ ${totalDespesas.toFixed(2)})</span></div>
+            <div class="dre-line dre-total"><span>TOTAL DESPESAS</span><span>(R$ ${totalDespesas.toFixed(2).replace('.', ',')})</span></div>
           </div>
           
           <div class="dre-section">
             <div class="dre-line dre-result ${lucroLiquido >= 0 ? 'positive' : 'negative'}">
               <span>RESULTADO LÍQUIDO</span>
-              <span>R$ ${lucroLiquido.toFixed(2)}</span>
+              <span>R$ ${lucroLiquido.toFixed(2).replace('.', ',')}</span>
             </div>
           </div>
         </div>
@@ -1507,18 +1544,18 @@ document.addEventListener("DOMContentLoaded", function () {
           const valor = dadosPorCategoria.receita[cat] ? dadosPorCategoria.receita[cat][mes] : 0;
           totalReceitasPorMes[i] += valor;
           totalCategoria += valor;
-          html += `<td class="dre-cell dre-receita">R$ ${valor.toFixed(2)}</td>`;
+          html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
         });
         
-        html += `<td class="dre-cell dre-receita dre-total">R$ ${totalCategoria.toFixed(2)}</td></tr>`;
+        html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
       });
       
       html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
       const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
       totalReceitasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-receita">R$ ${total.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
       });
-      html += `<td class="dre-cell dre-receita dre-total">R$ ${totalReceitas.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
       
       // Despesas
       html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
@@ -1532,18 +1569,18 @@ document.addEventListener("DOMContentLoaded", function () {
           const valor = dadosPorCategoria.despesa[cat] ? dadosPorCategoria.despesa[cat][mes] : 0;
           totalDespesasPorMes[i] += valor;
           totalCategoria += valor;
-          html += `<td class="dre-cell dre-despesa">R$ ${valor.toFixed(2)}</td>`;
+          html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
         });
         
-        html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalCategoria.toFixed(2)}</td></tr>`;
+        html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
       });
       
       html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
       const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
       totalDespesasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-despesa">R$ ${total.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
       });
-      html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalDespesas.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
       
       // Saldo
       html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
@@ -1551,10 +1588,10 @@ document.addEventListener("DOMContentLoaded", function () {
       
       meses.forEach((mes, i) => {
         const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
-        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">R$ ${saldoMes.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
       });
       
-      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">R$ ${saldoTotal.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
       
       html += '</tbody></table></div></div>';
       dreContainer.style.display = 'block';
@@ -1641,19 +1678,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const valor = dadosOrganizados.receita[categoria][subcategoria][mes];
             totalReceitasPorMes[i] += valor;
             totalSubcategoria += valor;
-            html += `<td class="dre-cell dre-receita">R$ ${valor.toFixed(2)}</td>`;
+            html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
           });
           
-          html += `<td class="dre-cell dre-receita dre-total">R$ ${totalSubcategoria.toFixed(2)}</td></tr>`;
+          html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
         });
       });
       
       html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
       const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
       totalReceitasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-receita">R$ ${total.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
       });
-      html += `<td class="dre-cell dre-receita dre-total">R$ ${totalReceitas.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
       
       // Despesas por categoria e subcategoria
       html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
@@ -1670,19 +1707,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const valor = dadosOrganizados.despesa[categoria][subcategoria][mes];
             totalDespesasPorMes[i] += valor;
             totalSubcategoria += valor;
-            html += `<td class="dre-cell dre-despesa">R$ ${valor.toFixed(2)}</td>`;
+            html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
           });
           
-          html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalSubcategoria.toFixed(2)}</td></tr>`;
+          html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
         });
       });
       
       html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
       const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
       totalDespesasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-despesa">R$ ${total.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
       });
-      html += `<td class="dre-cell dre-despesa dre-total">R$ ${totalDespesas.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
       
       // Saldo
       html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
@@ -1690,10 +1727,10 @@ document.addEventListener("DOMContentLoaded", function () {
       
       meses.forEach((mes, i) => {
         const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
-        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">R$ ${saldoMes.toFixed(2)}</td>`;
+        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
       });
       
-      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">R$ ${saldoTotal.toFixed(2)}</td></tr>`;
+      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
       
       html += '</tbody></table></div></div>';
       dreContainer.style.display = 'block';
