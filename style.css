@@ -1809,3 +1809,8 @@ canvas#graficoDinamico {
     font-size: 0.75rem;
   }
 }
+
+/* Estilos para tutorial highlight */
+.tutorial-highlight {
+  transition: all 0.3s ease;
+}
