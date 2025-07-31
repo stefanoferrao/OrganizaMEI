@@ -361,18 +361,99 @@ async function removerLancamento(index) {
   salvarLancamentos();
   renderizarLancamentos();
   
-  // Remover do Google Sheets em background se tiver ID
+  // Verificar sincronização com Google Sheets
   if (lancamento.id && typeof excluirLancamentoSheets === 'function') {
     try {
-      await excluirLancamentoSheets(lancamento.id);
+      // Atualizar indicador para "sincronizando"
+      if (typeof updateSyncIndicator === 'function') {
+        updateSyncIndicator('syncing');
+      }
+      
+      const sucesso = await excluirLancamentoSheets(lancamento.id);
+      
+      if (sucesso) {
+        // Item deletado com sucesso do Google Sheets
+        if (typeof updateSyncIndicator === 'function') {
+          updateSyncIndicator('success');
+        }
+      } else {
+        // Erro ao deletar do Google Sheets - mostrar aviso
+        if (typeof updateSyncIndicator === 'function') {
+          updateSyncIndicator('error');
+        }
+        mostrarAvisoImportacao();
+      }
     } catch (error) {
       console.error('Erro ao excluir do Google Sheets:', error);
-      // Em caso de erro, o item já foi removido localmente
+      // Erro de conexão - mostrar aviso
+      if (typeof updateSyncIndicator === 'function') {
+        updateSyncIndicator('error');
+      }
+      mostrarAvisoImportacao();
     }
+  } else {
+    // Item sem ID ou função não disponível - mostrar aviso
+    if (typeof updateSyncIndicator === 'function') {
+      updateSyncIndicator('error');
+    }
+    mostrarAvisoImportacao();
+  }
+}
+
+// Função para mostrar aviso de importação
+function mostrarAvisoImportacao() {
+  // Criar ou atualizar elemento de aviso
+  let avisoElement = document.getElementById('aviso-importacao');
+  
+  if (!avisoElement) {
+    avisoElement = document.createElement('div');
+    avisoElement.id = 'aviso-importacao';
+    avisoElement.className = 'aviso-importacao';
+    
+    // Inserir após o sync-indicator
+    const syncContainer = document.querySelector('.sync-status-container');
+    if (syncContainer) {
+      syncContainer.appendChild(avisoElement);
+    }
+  }
+  
+  avisoElement.innerHTML = `
+    <div class="aviso-content">
+      <span class="aviso-icon">⚠️</span>
+      <span class="aviso-texto">Item não sincronizado com a planilha. Recomendamos importar os dados novamente em "Configurações".</span>
+      <button class="aviso-btn" onclick="irParaConfiguracoes()">Ir para Configurações</button>
+      <button class="aviso-fechar" onclick="fecharAviso()">×</button>
+    </div>
+  `;
+  
+  avisoElement.style.display = 'block';
+  
+  // Auto-ocultar após 10 segundos
+  setTimeout(() => {
+    if (avisoElement) {
+      avisoElement.style.display = 'none';
+    }
+  }, 10000);
+}
+
+// Função para ir para configurações
+function irParaConfiguracoes() {
+  changeTab('configuracoes');
+  fecharAviso();
+}
+
+// Função para fechar aviso
+function fecharAviso() {
+  const avisoElement = document.getElementById('aviso-importacao');
+  if (avisoElement) {
+    avisoElement.style.display = 'none';
   }
 }
 
 window.removerLancamento = removerLancamento;
+window.mostrarAvisoImportacao = mostrarAvisoImportacao;
+window.irParaConfiguracoes = irParaConfiguracoes;
+window.fecharAviso = fecharAviso;
 
 function removerProduto(index) {
   produtos.splice(index, 1);

@@ -88,8 +88,8 @@
             <div class="sync-status-container">
                 <div id="resumo-financeiro" class="resumo-financeiro"></div>
                 <div id="sync-indicator" class="sync-indicator">
-                    <!-- <span id="sync-status-main" class="sync-status">Não sincronizado</span>-->
                     <div class="sync-icon">⚠️</div>
+                    <span class="sync-text">Verificando sincronização...</span>
                 </div>
             </div>
             <form id="financeiro-form">
@@ -218,6 +218,9 @@
                     if (typeof renderizarResumoFinanceiro === 'function') {
                         renderizarResumoFinanceiro();
                     }
+                    
+                    // Verificar status de sincronização
+                    verificarStatusSincronizacao();
                 }, 100);
             }
         }

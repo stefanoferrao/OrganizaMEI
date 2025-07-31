@@ -83,6 +83,7 @@ function updateSyncStatus(message, type) {
 function updateSyncIndicator(type) {
     const indicator = document.getElementById('sync-indicator');
     const icon = indicator?.querySelector('.sync-icon');
+    const text = indicator?.querySelector('.sync-text');
     
     if (indicator && icon) {
         indicator.className = `sync-indicator sync-${type}`;
@@ -90,15 +91,19 @@ function updateSyncIndicator(type) {
         switch(type) {
             case 'success':
                 icon.textContent = '✅';
+                if (text) text.textContent = 'Sincronizado';
                 break;
             case 'error':
                 icon.textContent = '❌';
+                if (text) text.textContent = 'Não sincronizado';
                 break;
             case 'syncing':
                 icon.textContent = '🔄';
+                if (text) text.textContent = 'Sincronizando...';
                 break;
             default:
                 icon.textContent = '⚠️';
+                if (text) text.textContent = 'Status desconhecido';
         }
     }
 }
@@ -244,7 +249,10 @@ async function adicionarLancamentoSheets(lancamento) {
 // Excluir lançamento do Google Sheets
 async function excluirLancamentoSheets(id) {
     const url = getCurrentUrl();
-    if (!url || url.includes('*')) return false;
+    if (!url || url.includes('*')) {
+        console.log('URL não configurada para exclusão');
+        return false;
+    }
 
     try {
         const response = await fetch(url, {
@@ -257,8 +265,14 @@ async function excluirLancamentoSheets(id) {
             })
         });
         
+        if (!response.ok) {
+            console.error('Resposta HTTP não OK:', response.status);
+            return false;
+        }
+        
         const result = await response.json();
-        return result.success;
+        console.log('Resultado da exclusão:', result);
+        return result.success === true;
     } catch (error) {
         console.error('Erro ao excluir do Google Sheets:', error);
         return false;
@@ -398,7 +412,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Verificar status inicial de sincronização
+function verificarStatusSincronizacao() {
+    const url = getCurrentUrl();
+    if (url && !url.includes('*')) {
+        updateSyncIndicator('success');
+    } else {
+        updateSyncIndicator('error');
+        // Mostrar aviso se não estiver configurado
+        if (typeof mostrarAvisoImportacao === 'function') {
+            setTimeout(() => {
+                const avisoElement = document.getElementById('aviso-importacao');
+                if (!avisoElement || avisoElement.style.display === 'none') {
+                    mostrarAvisoImportacao();
+                }
+            }, 1000);
+        }
+    }
+}
+
 // Expor funções globalmente para uso em outros arquivos
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;
 window.updateSyncIndicator = updateSyncIndicator;
+window.verificarStatusSincronizacao = verificarStatusSincronizacao;
