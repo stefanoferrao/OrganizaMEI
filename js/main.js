@@ -316,7 +316,7 @@ function renderizarLancamentos() {
         </span>
       </span>
       <span class="lancamento-valor-container">
-        <span class="lancamento-valor">R$ ${l.valor.toFixed(2)}</span><br>
+        <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2)}">R$ ${l.valor.toFixed(2)}</span><br>
          <span class="lancamento-data">${l.data ? (typeof l.data === 'string' && l.data.includes('/') ? l.data : l.data.toLocaleDateString('pt-BR')) : ""}</span>
       </span>
       <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover">&#128465;</button>
