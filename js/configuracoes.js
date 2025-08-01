@@ -249,7 +249,7 @@ A planilha deve conter as seguintes colunas, nessa ordem:
   if (btnApagarTodos) btnApagarTodos.onclick = function () {
     Swal.fire({
       title: 'Apagar TODOS os dados?',
-      text: 'Esta ação é IRREVERSÍVEL!',
+      text: 'Esta ação é IRREVERSÍVEL! Os dados serão apagados do CACHE da página, e NÃO do banco de dados',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#e53e3e',

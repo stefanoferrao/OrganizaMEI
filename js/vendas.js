@@ -48,29 +48,37 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="venda-meta">
           <span class="venda-valor">R$ ${v.valor.toFixed(2).replace('.', ',')}</span>
-          <span class="venda-data-row">
+          <div class="venda-data-row">
             <span class="venda-data">${dataFormatada}</span>
             <span class="icon-editar-data" title="Editar data">🗓️</span>
-            <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') ? v.data.split('/').reverse().join('-') : v.data || ''}" class="venda-data-input" style="display: none;" />
-            <span class="icon-salvar-data" title="Salvar data" style="display: none;">✔️</span>
-          </span>
+            <div class="date-popup">
+              <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') ? v.data.split('/').reverse().join('-') : v.data || ''}" class="venda-data-input" />
+              <div class="date-popup-actions">
+                <button class="btn-salvar-data" title="Salvar">✓</button>
+                <button class="btn-cancelar-data" title="Cancelar">✕</button>
+              </div>
+            </div>
+          </div>
         </div>
       `;
       
       const editarIcon = li.querySelector('.icon-editar-data');
+      const popup = li.querySelector('.date-popup');
       const inputData = li.querySelector('.venda-data-input');
-      const salvarIcon = li.querySelector('.icon-salvar-data');
-      const labelData = li.querySelector('.venda-data');
+      const salvarBtn = li.querySelector('.btn-salvar-data');
+      const cancelarBtn = li.querySelector('.btn-cancelar-data');
       
-      editarIcon.onclick = function () {
-        inputData.style.display = 'inline';
-        salvarIcon.style.display = 'inline';
-        editarIcon.style.display = 'none';
-        labelData.style.display = 'none';
+      // Abrir popup
+      editarIcon.onclick = function (e) {
+        e.stopPropagation();
+        // Fechar outros popups abertos
+        document.querySelectorAll('.date-popup.show').forEach(p => p.classList.remove('show'));
+        popup.classList.add('show');
         inputData.focus();
       };
       
-      salvarIcon.onclick = function () {
+      // Salvar data
+      const salvarData = function () {
         const novaData = inputData.value;
         if (!novaData) {
           alert('Por favor, selecione uma data válida.');
@@ -90,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const [ano, mes, dia] = novaData.split('-');
           lancamentos[vendaIndex].data = `${dia}/${mes}/${ano}`;
           salvarLancamentos();
+          popup.classList.remove('show');
           renderizarVendas();
           if (typeof renderizarLancamentos === 'function') {
             renderizarLancamentos();
@@ -102,9 +111,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       };
       
+      salvarBtn.onclick = salvarData;
+      
+      // Cancelar edição
+      cancelarBtn.onclick = function () {
+        popup.classList.remove('show');
+      };
+      
+      // Salvar com Enter
       inputData.onkeydown = function (e) {
         if (e.key === 'Enter') {
-          salvarIcon.onclick();
+          salvarData();
+        } else if (e.key === 'Escape') {
+          popup.classList.remove('show');
         }
       };
       
@@ -112,6 +131,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Fechar popups ao clicar fora
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.date-popup') && !e.target.closest('.icon-editar-data')) {
+      document.querySelectorAll('.date-popup.show').forEach(popup => {
+        popup.classList.remove('show');
+      });
+    }
+  });
+  
   // Expor função globalmente
   window.renderizarVendas = renderizarVendas;
   
