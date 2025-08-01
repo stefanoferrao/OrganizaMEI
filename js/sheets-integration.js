@@ -140,6 +140,9 @@ async function sincronizarFinanceiro() {
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
         
+        // Aguardar um pouco para mostrar o progresso
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         // Obter dados da planilha
         console.log('Fazendo requisição para:', url + '?action=read');
         const responseRead = await fetch(url + '?action=read', { method: 'GET', mode: 'cors' });
@@ -152,6 +155,7 @@ async function sincronizarFinanceiro() {
         }
         
         showProgress('Processando dados...');
+        await new Promise(resolve => setTimeout(resolve, 600));
         
         const dadosPlanilha = resultRead.data || [];
         
@@ -177,35 +181,38 @@ async function sincronizarFinanceiro() {
         }
         
         showProgress('Atualizando interface...');
+        await new Promise(resolve => setTimeout(resolve, 700));
         
         // Forçar atualização completa da interface
-        setTimeout(() => {
-            // Recarregar dados do localStorage
-            const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
-            if (typeof window.lancamentos !== 'undefined') {
-                window.lancamentos.length = 0;
-                window.lancamentos.push(...novosLancamentos);
-            }
-            
-            // Atualizar todas as interfaces
-            if (typeof renderizarLancamentos === 'function') renderizarLancamentos();
-            if (typeof renderizarDashboardResumo === 'function') renderizarDashboardResumo();
-            if (typeof renderizarVendas === 'function') renderizarVendas();
-            if (typeof renderizarResumoFinanceiro === 'function') renderizarResumoFinanceiro();
-            if (typeof atualizarFiltroMesAno === 'function') atualizarFiltroMesAno();
-        }, 500);
+        // Recarregar dados do localStorage
+        const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+        if (typeof window.lancamentos !== 'undefined') {
+            window.lancamentos.length = 0;
+            window.lancamentos.push(...novosLancamentos);
+        }
+        
+        // Atualizar todas as interfaces
+        if (typeof renderizarLancamentos === 'function') renderizarLancamentos();
+        if (typeof renderizarDashboardResumo === 'function') renderizarDashboardResumo();
+        if (typeof renderizarVendas === 'function') renderizarVendas();
+        if (typeof renderizarResumoFinanceiro === 'function') renderizarResumoFinanceiro();
+        if (typeof atualizarFiltroMesAno === 'function') atualizarFiltroMesAno();
+        
+        showProgress('Finalizando...');
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         updateSyncStatus('Sincronizado', 'success');
         updateSyncIndicator('success');
         hideProgress();
         
-        setTimeout(() => {
-            updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
-            // Recarregar a página para garantir atualização completa
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }, 1000);
+        // Aguardar 1500ms para compatibilidade com atualização dos dados
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
+        
+        // Recarregar a página para garantir atualização completa
+        window.location.reload();
+        
     } catch (error) {
         updateSyncStatus('Erro na sincronização', 'error');
         updateSyncIndicator('error');

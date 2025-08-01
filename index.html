@@ -19,7 +19,7 @@
 
     <!-- Sidebar -->
     <aside>
-        <img src="src/OrganizaMEI.png" alt="OrganizaMEI" style="max-width: 100%; height: auto; border-radius: 10px;">
+        <img src="src/OrganizaMEI.png" alt="OrganizaMEI" class="logo-organizamei">
         <div class="filtro-container">
             <label for="filtro-mes">Mês:</label>
             <select id="filtro-mes"></select>
@@ -116,7 +116,7 @@
         <!-- Gráficos -->
         <section id="graficos" class="tab-section">
             <h2 class="text-xl font-semibold mb-4">Gráficos</h2>
-            <div style="margin-bottom: 16px;">
+            <div class="grafico-container">
                 <label for="tipo-grafico">Escolha o gráfico:</label>
                 <select id="tipo-grafico">
                     <option value="vendas">Vendas no período</option>
@@ -156,7 +156,7 @@
                 <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
                 <hr />
                 <a href="https://github.com/stefanoferrao/OrganizaMEI/blob/main/README.md" target="_blank" class="config-btn" style="text-decoration: none; text-align: center; display: block;">📖 Ler README</a>
-                <button onclick="startTutorial()" class="config-btn" style="background: #3182ce;">🎓 Refazer Tutorial</button>
+                <button onclick="startTutorial()" class="config-btn">🎓 Refazer Tutorial</button>
                 <hr />
 
                 <!-- Integração Google Sheets -->

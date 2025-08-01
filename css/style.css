@@ -212,7 +212,7 @@
 }
 
 .cat-btn-editar:hover {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   box-shadow: 0 2px 8px #3182ce44;
 }
@@ -297,7 +297,7 @@
 }
 
 .cat-btn-editar-sub:hover {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   box-shadow: 0 2px 8px #3182ce44;
 }
@@ -538,6 +538,7 @@ main {
 
 form input,
 form button {
+  box-sizing: border-box;
   width: 100%;
   padding: 8px;
   border-radius: 6px;
@@ -707,7 +708,7 @@ canvas#graficoDinamico {
   align-items: center;
   justify-content: space-between;
   transition: box-shadow 0.2s;
-  border-left: 6px solid #3182ce;
+  border-left: 6px solid #17acaf;
 }
 
 @media (max-width: 480px) {
@@ -774,7 +775,7 @@ canvas#graficoDinamico {
 .venda-valor {
   font-size: 1.15rem;
   font-weight: bold;
-  color: #3182ce;
+  color: #17acaf;
 }
 
 .venda-data {
@@ -785,7 +786,7 @@ canvas#graficoDinamico {
 .venda-icon {
   font-size: 1.7rem;
   margin-right: 18px;
-  color: #3182ce;
+  color: #17acaf;
 }
 
 /* Oculta o botão Filtrar */
@@ -969,12 +970,12 @@ canvas#graficoDinamico {
 
 .dashboard-card-estoque {
   background: #232b38;
-  color: #3182ce;
-  border: 2.5px solid #3182ce;
+  color: #17acaf;
+  border: 2.5px solid #17acaf;
 }
 
 .dashboard-card-vendas {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   border: 2.5px solid #3182ce;
 }
@@ -1136,14 +1137,14 @@ canvas#graficoDinamico {
 
 #filtro-mes:hover,
 #filtro-ano:hover {
-  border-color: #3182ce;
+  border-color: #17acaf;
   box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
 
 #filtro-mes:focus,
 #filtro-ano:focus {
   outline: none;
-  border-color: #3182ce;
+  border-color: #17acaf;
   box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
 }
 
@@ -1209,7 +1210,7 @@ canvas#graficoDinamico {
 
 .btn-editar-data,
 .btn-salvar-data {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -1290,7 +1291,7 @@ canvas#graficoDinamico {
 }
 
 .config-btn {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -1312,12 +1313,12 @@ canvas#graficoDinamico {
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
-  border: 2px solid #3182ce;
+  border: 2px solid #17acaf;
   box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
 }
 
 .sheets-integration h3 {
-  color: #3182ce;
+  color: #17acaf;
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 16px;
@@ -1366,12 +1367,12 @@ canvas#graficoDinamico {
 }
 
 .sheets-config input:focus {
-  border: 2px solid #3182ce;
+  border: 2px solid #17acaf;
   outline: none;
 }
 
 .sheets-config button {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -1411,10 +1412,9 @@ canvas#graficoDinamico {
 
 .sheets-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  justify-content: center;
   margin-bottom: 16px;
-  flex-wrap: wrap;
 }
 
 .sheets-actions button {
@@ -1426,8 +1426,7 @@ canvas#graficoDinamico {
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s;
-  flex: 1;
-  min-width: 150px;
+  width: 100%;
 }
 
 .sheets-actions button:hover {
@@ -1462,14 +1461,6 @@ canvas#graficoDinamico {
   .sheets-config input {
     min-width: 100%;
   }
-
-  .sheets-actions {
-    flex-direction: column;
-  }
-
-  .sheets-actions button {
-    min-width: 100%;
-  }
 }
 
 /* Estilos para sincronização na tela financeiro */
@@ -1487,7 +1478,7 @@ canvas#graficoDinamico {
 .sync-btn {
   width: 200px;
   height: 50px;
-  background: #3182ce;
+  background: #17acaf;
   color: white;
   border: none;
   border-radius: 4px;
@@ -1528,7 +1519,7 @@ canvas#graficoDinamico {
 @keyframes loadingProgress {
   0% {
     width: 0%;
-    background-color: #3182ce;
+    background-color: #17acaf;
     height: 30%;
   }
 
@@ -1574,7 +1565,7 @@ canvas#graficoDinamico {
 #tipo-lancamento:hover,
 #categoria-lancamento:hover,
 #subcategoria-lancamento:hover {
-  border-color: #3182ce;
+  border-color: #17acaf;
 }
 
 #tipo-lancamento:focus,
@@ -1595,7 +1586,7 @@ canvas#graficoDinamico {
 @keyframes loadingError {
   0% {
     width: 0%;
-    background-color: #3182ce;
+    background-color: #17acaf;
     height: 30%;
   }
 
@@ -1786,6 +1777,8 @@ canvas#graficoDinamico {
   background: #2d3748;
   border-radius: 6px;
   border: 1px solid #4a5568;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .progress-bar {
@@ -1799,9 +1792,9 @@ canvas#graficoDinamico {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3182ce, #38a169);
+  background: linear-gradient(90deg, #17acaf, #38a169);
   border-radius: 4px;
-  animation: progressAnimation 2s ease-in-out infinite;
+  animation: progressAnimation 4s ease-in-out forwards;
 }
 
 @keyframes progressAnimation {
@@ -1809,8 +1802,16 @@ canvas#graficoDinamico {
     width: 0%;
   }
 
+  25% {
+    width: 30%;
+  }
+
   50% {
-    width: 70%;
+    width: 60%;
+  }
+
+  75% {
+    width: 85%;
   }
 
   100% {
@@ -1843,12 +1844,12 @@ canvas#graficoDinamico {
   padding: 24px;
   margin: 20px auto;
   max-width: 600px;
-  border: 2px solid #3182ce;
+  border: 2px solid #17acaf;
   box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
 }
 
 .dre-title {
-  color: #3182ce;
+  color: #17acaf;
   font-size: 1.4rem;
   font-weight: bold;
   text-align: center;
@@ -1887,11 +1888,11 @@ canvas#graficoDinamico {
 }
 
 .dre-total {
-  background: #3182ce;
+  background: #17acaf;
   color: #fff;
   font-weight: bold;
   margin-top: 8px;
-  border: 2px solid #3182ce;
+  border: 2px solid #17acaf;
 }
 
 .dre-result {
@@ -1925,6 +1926,74 @@ canvas#graficoDinamico {
   }
 }
 
+/* Estilos para seletor de gráficos */
+.grafico-container {
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.grafico-container label {
+  color: #a0aec0;
+  font-size: 1rem;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+#tipo-grafico {
+  background: #232b38;
+  color: #fff;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+#tipo-grafico:hover {
+  border-color: #17acaf;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+#tipo-grafico:focus {
+  outline: none;
+  border-color: #17acaf;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+}
+
+#tipo-grafico option {
+  background: #232b38;
+  color: #fff;
+  padding: 10px;
+}
+
+@media (max-width: 800px) {
+  .grafico-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .grafico-container label {
+    margin-bottom: 4px;
+  }
+  
+  #tipo-grafico {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
 /* Estilos para DRE Detalhado */
 .dre-detalhado {
   background: #232b38;
@@ -1932,7 +2001,7 @@ canvas#graficoDinamico {
   padding: 24px;
   margin: 20px auto;
   max-width: 100%;
-  border: 2px solid #3182ce;
+  border: 2px solid #17acaf;
   box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
   overflow-x: auto;
 }
@@ -2079,4 +2148,13 @@ canvas#graficoDinamico {
 /* Estilos para tutorial highlight */
 .tutorial-highlight {
   transition: all 0.3s ease;
+}
+
+/* Estilo para logo OrganizaMEI */
+.logo-organizamei {
+  max-width: 100%;
+  height: auto;
+  padding: 0px;
+  border-radius: 6px;
+  border: 1px solid #17acaf60;
 }

@@ -1209,13 +1209,16 @@ document.addEventListener("DOMContentLoaded", function () {
           if (typeof l.data === 'string' && l.data.includes('/')) {
             const [d1, m1, a1] = l.data.split('/');
             d = new Date(a1, m1 - 1, d1);
-            dia = d1;
-            mes = m1;
+            dia = String(d1).padStart(2, '0');
+            mes = String(m1).padStart(2, '0');
+          } else if (typeof l.data === 'string') {
+            d = new Date(l.data);
+            dia = String(d.getDate()).padStart(2, '0');
+            mes = String(d.getMonth() + 1).padStart(2, '0');
           } else {
             d = new Date(l.data);
-            const [ano, m2, d2] = l.data.split("-");
-            dia = d2;
-            mes = m2;
+            dia = String(d.getDate()).padStart(2, '0');
+            mes = String(d.getMonth() + 1).padStart(2, '0');
           }
           
           // Filtra pelo mês/ano selecionado
@@ -1228,7 +1231,15 @@ document.addEventListener("DOMContentLoaded", function () {
           vendasPorDia[chave] = (vendasPorDia[chave] || 0) + l.valor;
         }
       });
-      Object.keys(vendasPorDia).sort().forEach(k => {
+      // Ordenar as datas corretamente (DD/MM)
+      const anoReferencia = window.filtroAno || new Date().getFullYear();
+      Object.keys(vendasPorDia).sort((a, b) => {
+        const [diaA, mesA] = a.split('/');
+        const [diaB, mesB] = b.split('/');
+        const dataA = new Date(anoReferencia, mesA - 1, diaA);
+        const dataB = new Date(anoReferencia, mesB - 1, diaB);
+        return dataA - dataB;
+      }).forEach(k => {
         labels.push(k);
         data.push(vendasPorDia[k]);
       });
