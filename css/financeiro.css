@@ -1,0 +1,271 @@
+/* Financeiro Styles */
+
+/* Estilos para lançamentos financeiros */
+.lancamento-item {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  padding: 4px 10px;
+  align-items: center;
+}
+
+.lancamento-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.lancamento-icon {
+  font-size: 1.5rem;
+}
+
+.lancamento-descricao {
+  font-size: 0.98rem;
+}
+
+.lancamento-valor-container {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 120px;
+  text-align: right;
+  word-break: break-all;
+  height: 100%;
+}
+
+.lancamento-valor {
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: help;
+  position: relative;
+}
+
+.lancamento-valor:hover {
+  text-decoration: underline;
+}
+
+.lancamento-data {
+  font-size: 0.9rem;
+}
+
+.lancamento-btn-remover {
+  background: none;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+/* Seletores de categoria do financeiro - discretos e elegantes */
+#tipo-lancamento,
+#categoria-lancamento,
+#subcategoria-lancamento {
+  background: #232b38;
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  padding-right: 28px;
+}
+
+#tipo-lancamento:hover,
+#categoria-lancamento:hover,
+#subcategoria-lancamento:hover {
+  border-color: #17acaf;
+}
+
+#tipo-lancamento:focus,
+#categoria-lancamento:focus,
+#subcategoria-lancamento:focus {
+  outline: none;
+  border-color: #38a169;
+}
+
+#tipo-lancamento option,
+#categoria-lancamento option,
+#subcategoria-lancamento option {
+  background: #232b38;
+  color: #e2e8f0;
+  padding: 8px;
+}
+
+/* Estilos para sincronização na tela financeiro */
+.sync-status-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px;
+  background: #2d3748;
+  border-radius: 8px;
+}
+
+/* Indicador visual de sincronização */
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #2d3748;
+  border: 2px solid #4a5568;
+  transition: all 0.3s ease;
+}
+
+.sync-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #a0aec0;
+}
+
+.sync-indicator.sync-success {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: #38a169;
+}
+
+.sync-indicator.sync-success .sync-text {
+  color: #38a169;
+}
+
+.sync-indicator.sync-error {
+  background: rgba(229, 62, 62, 0.1);
+  border-color: #e53e3e;
+}
+
+.sync-indicator.sync-error .sync-text {
+  color: #e53e3e;
+}
+
+.sync-indicator.sync-syncing {
+  background: rgba(236, 201, 75, 0.1);
+  border-color: #ecc94b;
+}
+
+.sync-indicator.sync-syncing .sync-text {
+  color: #ecc94b;
+}
+
+.sync-icon {
+  font-size: 1.2rem;
+  animation: none;
+}
+
+.sync-indicator.sync-syncing .sync-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Aviso de importação */
+.aviso-importacao {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(236, 201, 75, 0.1);
+  border: 2px solid #ecc94b;
+  border-radius: 8px;
+  color: #ecc94b;
+}
+
+.aviso-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aviso-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.aviso-texto {
+  flex: 1;
+  font-size: 0.9rem;
+  min-width: 200px;
+}
+
+.aviso-btn {
+  background: #ecc94b;
+  color: #1a202c;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.aviso-btn:hover {
+  background: #d69e2e;
+}
+
+.aviso-fechar {
+  background: transparent;
+  color: #ecc94b;
+  border: 1px solid #ecc94b;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.aviso-fechar:hover {
+  background: #ecc94b;
+  color: #1a202c;
+}
+
+@media (max-width: 600px) {
+  .aviso-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .aviso-texto {
+    min-width: 100%;
+  }
+  
+  .aviso-btn {
+    align-self: stretch;
+  }
+
+  .sync-status-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sync-indicator {
+    justify-content: center;
+  }
+}

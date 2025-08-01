@@ -1,0 +1,342 @@
+/* Configurações Styles */
+
+.config-btn {
+  background: #17acaf;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 1.08rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+.config-btn:hover {
+  background: #38a169;
+}
+
+/* Estilos para integração com Google Sheets */
+.sheets-integration {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 2px solid #17acaf;
+  box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
+}
+
+.sheets-integration h3 {
+  color: #17acaf;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.sheets-config {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.buttonscfg {
+  display: flex;
+  justify-content: space-between;
+  gap: 140px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.url-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.url-buttons button {
+  flex: 1;
+  min-width: 120px;
+}
+
+.sheets-config input {
+  flex: 1;
+  min-width: 300px;
+  background: #2d3748;
+  color: #fff;
+  border: 2px solid #4a5568;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.sheets-config input:focus {
+  border: 2px solid #17acaf;
+  outline: none;
+}
+
+.sheets-config button {
+  background: #17acaf;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.sheets-config button:hover {
+  background: #2c5aa0;
+}
+
+/* Botão Limpar URL com estilo diferenciado */
+#btn-clear-url {
+  background: #e53e3e !important;
+}
+
+#btn-clear-url:hover {
+  background: #c53030 !important;
+}
+
+/* Botão Enviar dados com destaque */
+#btn-enviar-dados {
+  background: #805ad5 !important;
+}
+
+#btn-enviar-dados:hover {
+  background: #6b46c1 !important;
+}
+
+#urlStatus {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.sheets-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sheets-actions button {
+  background: #38a169;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.sheets-actions button:hover {
+  background: #2f855a;
+}
+
+.sheets-status {
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  min-height: 20px;
+}
+
+.sheets-status.success {
+  background: rgba(56, 161, 105, 0.2);
+  color: #38a169;
+  border: 1px solid #38a169;
+}
+
+.sheets-status.error {
+  background: rgba(229, 62, 62, 0.2);
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+}
+
+@media (max-width: 600px) {
+  .sheets-config {
+    flex-direction: column;
+  }
+
+  .sheets-config input {
+    min-width: 100%;
+  }
+
+  .sheets-integration {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+.sync-btn {
+  width: 200px;
+  height: 50px;
+  background: #17acaf;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sync-btn:hover {
+  background: #2c5282;
+  transform: scale(1.05);
+}
+
+.sync-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.sync-btn .loading-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  border-radius: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.sync-btn .loading-bar.loading {
+  animation: loadingProgress 3s ease-in-out forwards;
+}
+
+@keyframes loadingProgress {
+  0% {
+    width: 0%;
+    background-color: #17acaf;
+    height: 30%;
+  }
+
+  33% {
+    width: 33%;
+    background-color: #ecc94b;
+    height: 30%;
+  }
+
+  66% {
+    width: 66%;
+    background-color: #38a169;
+    height: 30%;
+  }
+
+  100% {
+    width: 100%;
+    background-color: #38a169;
+    height: 30%;
+  }
+}
+
+@keyframes loadingError {
+  0% {
+    width: 0%;
+    background-color: #17acaf;
+    height: 30%;
+  }
+
+  50% {
+    width: 50%;
+    background-color: #ecc94b;
+    height: 30%;
+  }
+
+  100% {
+    width: 100%;
+    background-color: #e53e3e;
+    height: 30%;
+  }
+}
+
+.sync-btn .loading-bar.error {
+  animation: loadingError 2s ease-in-out forwards;
+}
+
+.sync-status {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sync-status.sync-success {
+  color: #143e28;
+}
+
+.sync-status.sync-error {
+  color: #e53e3e;
+}
+
+.sync-status.sync-syncing {
+  color: #ecc94b;
+}
+
+/* Barra de progresso nas configurações */
+.sync-progress {
+  margin-top: 12px;
+  padding: 8px;
+  background: #2d3748;
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #4a5568;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #17acaf, #38a169);
+  border-radius: 4px;
+  animation: progressAnimation 4s ease-in-out forwards;
+}
+
+@keyframes progressAnimation {
+  0% {
+    width: 0%;
+  }
+
+  25% {
+    width: 30%;
+  }
+
+  50% {
+    width: 60%;
+  }
+
+  75% {
+    width: 85%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #a0aec0;
+  text-align: center;
+  display: block;
+}

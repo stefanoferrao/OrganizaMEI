@@ -1,0 +1,190 @@
+/* Dashboard Styles */
+#dashboard-resumo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 24px;
+  max-width: 1400px;
+  margin: 0 auto 24px auto;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(8, 1fr);
+    gap: 12px;
+  }
+}
+
+.dashboard-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(49, 130, 206, 0.13);
+  min-width: 180px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-card-produtos {
+  background: #232b38;
+  color: #38a169;
+  border: 2.5px solid #38a169;
+}
+
+.dashboard-card-estoque {
+  background: #232b38;
+  color: #17acaf;
+  border: 2.5px solid #17acaf;
+}
+
+.dashboard-card-vendas {
+  background: #17acaf;
+  color: #fff;
+  border: 2.5px solid #3182ce;
+}
+
+.dashboard-card-receitas {
+  background: #38a169;
+  color: #fff;
+  border: 2.5px solid #38a169;
+}
+
+.dashboard-card-despesas {
+  background: #e53e3e;
+  color: #fff;
+  border: 2.5px solid #e53e3e;
+}
+
+.dashboard-card-saldo {
+  color: #fff;
+  border: 2.5px solid;
+}
+
+.dashboard-card-saldo-positivo {
+  background: #3182ce;
+  border-color: #3182ce;
+}
+
+.dashboard-card-saldo-negativo {
+  background: #e53e3e;
+  border-color: #e53e3e;
+}
+
+.dashboard-card-valor-medio {
+  background: #805ad5;
+  color: #fff;
+  border: 2.5px solid #805ad5;
+}
+
+.dashboard-card-saude {
+  color: #fff;
+  border: 2.5px solid;
+}
+
+.dashboard-card-saude-excelente {
+  background: #38a169;
+  border-color: #38a169;
+}
+
+.dashboard-card-saude-boa {
+  background: #3182ce;
+  border-color: #3182ce;
+}
+
+.dashboard-card-saude-regular {
+  background: #ecc94b;
+  border-color: #ecc94b;
+  color: #1a202c;
+}
+
+.dashboard-card-saude-regular .dashboard-label-saude,
+.dashboard-card-saude-regular .dashboard-value-saude,
+.dashboard-card-saude-regular .dashboard-periodo {
+  color: #1a202c;
+}
+
+.dashboard-card-saude-atencao {
+  background: #e53e3e;
+  border-color: #e53e3e;
+}
+
+.dashboard-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.dashboard-label {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.dashboard-label-produtos,
+.dashboard-label-estoque {
+  color: #a0aec0;
+}
+
+.dashboard-label-vendas,
+.dashboard-label-receitas,
+.dashboard-label-despesas,
+.dashboard-label-saldo,
+.dashboard-label-valor-medio,
+.dashboard-label-saude {
+  color: #e2e8f0;
+}
+
+.dashboard-value {
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.dashboard-value-produtos {
+  color: #38a169;
+}
+
+.dashboard-value-estoque {
+  color: #3182ce;
+}
+
+.dashboard-value-vendas,
+.dashboard-value-receitas,
+.dashboard-value-despesas,
+.dashboard-value-saldo,
+.dashboard-value-valor-medio,
+.dashboard-value-saude {
+  color: #fff;
+}
+
+.dashboard-periodo {
+  font-size: 1rem;
+  margin-top: 4px;
+  color: #e2e8f0;
+}

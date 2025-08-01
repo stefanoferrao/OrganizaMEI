@@ -1,0 +1,200 @@
+/* Estoque Styles */
+li.estoque-item {
+  background: #2d3748;
+  padding: 14px 18px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s;
+}
+
+@media (max-width: 480px) {
+  li.estoque-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .estoque-acoes {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+li.estoque-item:hover {
+  box-shadow: 0 4px 16px rgba(56, 161, 105, 0.12);
+}
+
+.estoque-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.estoque-nome {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #38a169;
+}
+
+.estoque-quantidade {
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.estoque-acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-remover,
+.btn-saida {
+  background: #4a5568;
+  border: none;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remover:hover {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.btn-saida:hover {
+  background: #38a169;
+  color: #fff;
+}
+
+.icon-remover {
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+.icon-saida {
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+/* Modal Saída Produto */
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 32px 28px 24px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  min-width: 320px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 20px 16px;
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+    min-width: auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .modal-confirm,
+  .modal-cancel {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  color: #38a169;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.modal-produto {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.modal-confirm {
+  background: #38a169;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-confirm:hover {
+  background: #2f855a;
+}
+
+.modal-cancel {
+  background: #4a5568;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-cancel:hover {
+  background: #e53e3e;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+.input-margin-bottom {
+  margin-bottom: 8px;
+}
+
+/* Touch targets para mobile */
+@media (max-width: 800px) {
+  .btn-remover,
+  .btn-saida {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 12px;
+  }
+}
