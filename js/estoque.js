@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const nome = nomeInput.value.trim();
       const quantidade = parseInt(qtdInput.value);
 
-      if (nome && quantidade > 0) {
+      if (nome && quantidade >= 0) {
         // Verifica se já existe o produto
         const idx = produtos.findIndex(p => p.nome.toLowerCase() === nome.toLowerCase());
         if (idx >= 0) {

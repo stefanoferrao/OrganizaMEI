@@ -38,7 +38,7 @@ li.estoque-item:hover {
 .estoque-nome {
   font-size: 1.1rem;
   font-weight: bold;
-  color: #38a169;
+  color: #17acaf;
 }
 
 .estoque-quantidade {
@@ -72,7 +72,7 @@ li.estoque-item:hover {
 }
 
 .btn-saida:hover {
-  background: #38a169;
+  background: #17acaf;
   color: #fff;
 }
 
@@ -134,7 +134,7 @@ li.estoque-item:hover {
 
 .modal-title {
   font-size: 1.3rem;
-  color: #38a169;
+  color: #17acaf;
   font-weight: bold;
   margin-bottom: 18px;
 }
@@ -152,7 +152,7 @@ li.estoque-item:hover {
 }
 
 .modal-confirm {
-  background: #38a169;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 6px;
