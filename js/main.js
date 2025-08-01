@@ -1815,16 +1815,3 @@ document.addEventListener("DOMContentLoaded", function () {
     renderizarGrafico(document.getElementById("tipo-grafico").value);
   }
 });
-
-  // Evento para trocar o gráfico
-  const selectGrafico = document.getElementById("tipo-grafico");
-  if (selectGrafico) {
-    selectGrafico.addEventListener("change", function () {
-      renderizarGrafico(this.value);
-    });
-  }
-
-  // Renderiza o gráfico padrão ao abrir a aba
-  if (document.getElementById("graficoDinamico")) {
-    renderizarGrafico(document.getElementById("tipo-grafico").value);
-  }
