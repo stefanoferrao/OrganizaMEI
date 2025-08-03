@@ -17,8 +17,8 @@
   "theme_color": "#17acaf",
   "background_color": "#1a202c",
   "display": "standalone",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/OrganizaMEI/",
+  "scope": "/OrganizaMEI/",
   "orientation": "portrait-primary",
   "categories": ["finance", "business", "productivity"]
 }
