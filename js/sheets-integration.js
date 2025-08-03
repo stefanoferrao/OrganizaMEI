@@ -49,28 +49,35 @@ async function saveWebAppUrl() {
         const progressText = progressContainer.querySelector('.progress-text');
         
         progressText.textContent = 'Aguarde - Validando URL...';
-        progressFill.style.width = '30%';
+        progressFill.style.width = '20%';
         await new Promise(resolve => setTimeout(resolve, 600));
         
         progressText.textContent = 'Aguarde - Salvando configuração...';
-        progressFill.style.width = '70%';
+        progressFill.style.width = '40%';
         await new Promise(resolve => setTimeout(resolve, 400));
         
         localStorage.setItem('googleSheetsWebAppUrl', url);
         hideUrlWithAsterisks();
+        
+        progressText.textContent = 'Aguarde - Sincronizando dados...';
+        progressFill.style.width = '70%';
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Executar ressincronização automaticamente
+        await sincronizarTudo();
         
         progressText.textContent = 'Aguarde - Finalizando...';
         progressFill.style.width = '100%';
         await new Promise(resolve => setTimeout(resolve, 300));
         
         // Estado de sucesso
-        btn.innerHTML = '✅ Salvo!';
+        btn.innerHTML = '✅ Salvo e Sincronizado!';
         btn.classList.remove('loading');
         btn.classList.add('success');
         progressContainer.remove();
         
         if (typeof mostrarNotificacao === 'function') {
-            mostrarNotificacao('URL salva com sucesso!');
+            mostrarNotificacao('URL salva e dados sincronizados!');
         }
         
         // Atualizar status após salvar
@@ -535,6 +542,7 @@ async function atualizarStatusIntegracao() {
             sheetsActions.style.display = 'block';
             
             // Verificar aba Estoque
+            estoqueStatus.innerHTML = '<div class="loading-spinner-small"></div>';
             const temAbaEstoque = await verificarAbaEstoque();
             if (temAbaEstoque) {
                 estoqueStatus.textContent = '✅';

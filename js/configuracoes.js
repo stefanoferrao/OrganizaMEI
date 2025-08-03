@@ -178,7 +178,7 @@ A planilha deve conter as seguintes colunas, nessa ordem:
   }
   
   // Adicionar event listener ao botão README
-  const btnReadme = document.querySelector('a[href*="README.md"]');
+  const btnReadme = document.getElementById('btn-readme');
   if (btnReadme) {
     btnReadme.onclick = function(e) {
       e.preventDefault();

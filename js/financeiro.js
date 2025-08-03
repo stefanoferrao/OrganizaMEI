@@ -65,7 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     });
     
-    if (window.filtroMes && window.filtroAno) {
+    // Verificar se deve mostrar todos os registros
+    const mostrarTodos = document.getElementById("mostrar-todos-registros")?.checked;
+    
+    if (!mostrarTodos && window.filtroMes && window.filtroAno) {
       filtrados = filtrados.filter(l => {
         if (!l.data) return false;
         const d = l.data;
@@ -111,7 +114,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!div) return;
     
     let filtrados = lancamentos;
-    if (window.filtroMes && window.filtroAno) {
+    const mostrarTodos = document.getElementById("mostrar-todos-registros")?.checked;
+    
+    if (!mostrarTodos && window.filtroMes && window.filtroAno) {
       filtrados = lancamentos.filter(l => {
         if (!l.data) return false;
         let d;
@@ -121,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           d = new Date(l.data);
         }
-        return d.getMonth() + 1 === window.filtroMes && d.getFullYear() === window.filtroAno;
+        return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
       });
     }
     
@@ -430,6 +435,15 @@ document.addEventListener("DOMContentLoaded", function () {
   window.irParaConfiguracoes = irParaConfiguracoes;
   window.fecharAviso = fecharAviso;
   window.mostrarNotificacao = mostrarNotificacao;
+  
+  // Event listener para o checkbox
+  const mostrarTodosCheckbox = document.getElementById("mostrar-todos-registros");
+  if (mostrarTodosCheckbox) {
+    mostrarTodosCheckbox.addEventListener("change", function() {
+      renderizarLancamentos();
+      renderizarResumoFinanceiro();
+    });
+  }
   
   // Inicializar
   atualizarCategorias();

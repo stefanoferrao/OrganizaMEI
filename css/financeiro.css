@@ -1,5 +1,60 @@
 /* Financeiro Styles */
 
+/* Controles do Financeiro */
+.financeiro-controles {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #2d3748;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+}
+
+/* Checkbox customizado */
+.checkbox-mostrar-todos {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+.checkbox-mostrar-todos input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: #1a202c;
+  border: 2px solid #4a5568;
+  border-radius: 4px;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+}
+
+.checkbox-mostrar-todos:hover .checkmark {
+  border-color: #17acaf;
+}
+
+.checkbox-mostrar-todos input[type="checkbox"]:checked + .checkmark {
+  background: #17acaf;
+  border-color: #17acaf;
+}
+
+.checkbox-mostrar-todos input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 /* Estilos para lançamentos financeiros */
 .lancamento-item {
   display: flex;

@@ -13,6 +13,13 @@
     <link rel="manifest" href="src/favicon/site.webmanifest">
     <link rel="shortcut icon" href="src/favicon/favicon.ico">
     
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#17acaf">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OrganizaMEI">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/menu.js"></script>
     
@@ -112,6 +119,14 @@
         <section id="financeiro" class="tab-section">
             <h2 class="text-xl font-semibold mb-4">Financeiro</h2>
 
+            <div class="financeiro-controles">
+                <label class="checkbox-mostrar-todos">
+                    <input type="checkbox" id="mostrar-todos-registros">
+                    <span class="checkmark"></span>
+                    Mostrar todos os registros
+                </label>
+            </div>
+
             <div id="filtro-info" class="filtro-info"></div>
 
             <div class="sync-status-container">
@@ -187,7 +202,7 @@
                 <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
                 <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
                 <hr />
-                <a href="https://github.com/stefanoferrao/OrganizaMEI/blob/main/README.md" target="_blank" class="config-btn" style="text-decoration: none; text-align: center; display: block;">📖 Ler README</a>
+                <button id="btn-readme" class="config-btn">📖 Ler README</button>
                 <button onclick="startTutorial()" class="config-btn">🎓 Refazer Tutorial</button>
                 <hr />
 
@@ -249,6 +264,19 @@
     </main>
 
     <script>
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./js/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
         function changeTab(tabId) {
             document.querySelectorAll('.tab-section').forEach(tab => {
                 tab.classList.remove('active');

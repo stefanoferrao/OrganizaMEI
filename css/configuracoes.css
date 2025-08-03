@@ -8,11 +8,14 @@
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 8px;
 }
 
 .configuracoes-container > * {
   width: 100%;
   max-width: 460px;
+  box-sizing: border-box;
 }
 
 .configuracoes-container hr {
@@ -33,6 +36,9 @@
   margin-bottom: 4px;
   transition: background 0.2s;
   box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .config-btn:hover {
@@ -95,7 +101,8 @@
 
 .sheets-config input {
   flex: 1;
-  min-width: 300px;
+  min-width: 0;
+  width: 100%;
   background: #2d3748;
   color: #fff;
   border: 2px solid #4a5568;
@@ -103,6 +110,7 @@
   padding: 10px 12px;
   font-size: 1rem;
   transition: border 0.2s;
+  box-sizing: border-box;
 }
 
 .sheets-config input:focus {
@@ -120,6 +128,8 @@
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .sheets-config button:hover {
@@ -199,26 +209,78 @@
 }
 
 @media (max-width: 600px) {
+  .configuracoes-container {
+    padding: 0 8px;
+    max-width: calc(100vw - 16px);
+    width: calc(100vw - 16px);
+  }
+
+  .configuracoes-container > * {
+    max-width: 100%;
+    width: 100%;
+  }
+
   .sheets-config {
     flex-direction: column;
+    text-align: center;
   }
 
   .sheets-config input {
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
+    text-align: center;
   }
 
   .sheets-integration {
-    padding: 16px;
+    padding: 8px;
     margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
   }
   
   .estoque-status {
-    padding: 10px;
+    padding: 8px;
+  }
+
+  .buttonscfg {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .url-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .url-buttons button {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .sheets-config button {
+    width: 100%;
+    min-width: 0;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .sync-btn {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  .config-btn {
+    font-size: 1rem;
+    padding: 10px 12px;
+    white-space: normal;
+    word-wrap: break-word;
   }
 }
 
 .sync-btn {
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
   height: 50px;
   background: #17acaf;
   color: white;
@@ -232,6 +294,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .sync-btn:hover {
@@ -545,6 +608,7 @@
 #btn-save-url {
   position: relative;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 #btn-save-url.loading {
@@ -569,6 +633,16 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 6px;
+}
+
+.loading-spinner-small {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid #17acaf;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

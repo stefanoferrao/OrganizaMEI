@@ -30,10 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }).reduce((acc, l) => acc + l.valor, 0);
     }
     
-    // Cálculo do Valor Médio por Item
+    // Cálculo do Valor Médio por Item e Total em Vendas
     const vendasTotais = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas");
     const totalItensVendidos = vendasTotais.reduce((acc, l) => acc + (l.quantidade || 1), 0);
     const valorMedioItem = totalItensVendidos > 0 ? vendasTotais.reduce((acc, l) => acc + l.valor, 0) / totalItensVendidos : 0;
+    const totalVendasProdutos = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas" && l.subcategoria === "Produtos").reduce((acc, l) => acc + l.valor, 0);
     
     // Cálculo da Saúde Financeira (0-100)
     let saudeScore = 0;
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <span class="dashboard-icon">💰</span>
         <span class="dashboard-label dashboard-label-receitas">Receitas</span>
         <span class="dashboard-value dashboard-value-receitas">R$ ${totalReceitas.toFixed(2).replace('.', ',')}</span>
+        <span class="dashboard-periodo">Total em vendas: R$ ${totalVendasProdutos.toFixed(2).replace('.', ',')}</span>
       </div>
       <div class="dashboard-card dashboard-card-despesas">
         <span class="dashboard-icon">💸</span>
