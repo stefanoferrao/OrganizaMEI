@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.classList.add('active');
         menuToggle.innerHTML = '✕';
         menuToggle.setAttribute('aria-label', 'Fechar menu');
+        // Prevenir scroll do body quando menu estiver aberto
+        document.body.style.overflow = 'hidden';
     }
     
     // Função para fechar menu
@@ -30,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.classList.remove('active');
         menuToggle.innerHTML = '☰';
         menuToggle.setAttribute('aria-label', 'Abrir menu');
+        // Restaurar scroll do body
+        document.body.style.overflow = '';
     }
     
     // Event listeners

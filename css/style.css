@@ -61,13 +61,15 @@ aside {
     position: fixed;
     top: 0;
     left: -100%;
-    width: 280px;
+    width: 100vw;
     height: 100vh;
     padding: 60px 16px 16px 16px;
     gap: 12px;
     z-index: 1000;
     transition: left 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   aside.open {
@@ -174,6 +176,8 @@ ul {
 @media (max-width: 800px) {
   .menu-overlay.active {
     display: block;
+    width: 100vw;
+    height: 100vh;
   }
 }
 
@@ -199,6 +203,35 @@ ul {
 /* Touch targets para mobile */
 @media (max-width: 800px) {
   nav button {
+    padding: 16px 12px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Espaçamento extra para o último botão */
+  nav button:last-child {
+    margin-bottom: 20px;
+  }
+  
+  /* Melhor espaçamento para filtros no mobile */
+  .filtro-container {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #4a5568;
+    margin-bottom: 16px;
+  }
+  
+  .filtro-container label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .filtro-container select,
+  .filtro-container button {
+    margin-bottom: 8px;
     padding: 12px;
     font-size: 1rem;
   }
