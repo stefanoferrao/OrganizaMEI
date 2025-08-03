@@ -1,7 +1,7 @@
-const CACHE_NAME = 'organizamei-v1';
+const CACHE_NAME = 'organizamei-v3';
 const urlsToCache = [
-  '../',
-  '../index.html',
+  './',
+  './index.html',
   '../css/style.css',
   '../css/dashboard.css',
   '../css/estoque.css',
