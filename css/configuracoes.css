@@ -68,16 +68,15 @@
 
 .sheets-config {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   margin-bottom: 16px;
-  align-items: center;
-  flex-wrap: wrap;
 }
 
 .buttonscfg {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
+  justify-content: center;
+  gap: 12px;
   margin-bottom: 16px;
   align-items: center;
 }
@@ -130,11 +129,15 @@
 /* Botão Limpar URL com estilo diferenciado */
 #btn-clear-url {
   background: #e53e3e;
-  margin-left: 193px;
 }
 
 #btn-clear-url:hover {
   background: #c53030;
+}
+
+#btn-clear-url:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Botão Enviar dados com destaque */
@@ -159,7 +162,7 @@
 }
 
 .sheets-actions button {
-  background: #38a169;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -168,10 +171,11 @@
   cursor: pointer;
   transition: background 0.2s;
   width: 100%;
+  margin-bottom: 5px;
 }
 
 .sheets-actions button:hover {
-  background: #2f855a;
+  background: #17acaf22;
 }
 
 .sheets-status {
@@ -184,8 +188,8 @@
 
 .sheets-status.success {
   background: rgba(56, 161, 105, 0.2);
-  color: #38a169;
-  border: 1px solid #38a169;
+  color: #17acaf;
+  border: 1px solid #17acaf;
 }
 
 .sheets-status.error {
@@ -206,6 +210,10 @@
   .sheets-integration {
     padding: 16px;
     margin-bottom: 16px;
+  }
+  
+  .estoque-status {
+    padding: 10px;
   }
 }
 
@@ -435,4 +443,170 @@
 .readme-content p {
   margin: 0.8rem 0;
   line-height: 1.6;
+}
+
+/* Estilos para status do estoque */
+.estoque-status {
+  background: #2d3748;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #4a5568;
+}
+
+.estoque-status p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #a0aec0;
+}
+
+.estoque-status.success {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: #38a169;
+}
+
+.estoque-status.success p {
+  color: #38a169;
+}
+
+.estoque-status.error {
+  background: rgba(229, 62, 62, 0.1);
+  border-color: #e53e3e;
+}
+
+.estoque-status.error p {
+  color: #e53e3e;
+}
+
+#btnCriarAbaEstoque {
+  background: #805ad5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+#btnCriarAbaEstoque:hover {
+  background: #6b46c1;
+}
+
+#btnTestarConexao {
+  background: linear-gradient(135deg, #17acaf, #117f81);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#btnTestarConexao:before {
+  content: "🔗";
+  font-size: 1rem;
+}
+
+#btnTestarConexao:hover {
+  background: linear-gradient(135deg, #2c5282, #2a69ac);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+}
+
+#btnTestarConexao:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(49, 130, 206, 0.3);
+}
+
+#btnTestarConexao:disabled {
+  background: #4a5568;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+#btnTestarConexao:disabled:before {
+  content: "⏳";
+}
+
+/* Estilos para feedback visual do botão Salvar URL */
+#btn-save-url {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+#btn-save-url.loading {
+  background: #ecc94b !important;
+  cursor: not-allowed;
+}
+
+#btn-save-url.success {
+  background: #38a169 !important;
+}
+
+#btn-save-url.error {
+  background: #e53e3e !important;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Barra de progresso para salvar URL */
+.save-url-progress {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: #2d3748;
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  box-sizing: border-box;
+}
+
+.save-url-progress .progress-text {
+  font-size: 0.9rem;
+  color: #ecc94b;
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #4a5568;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #17acaf, #38a169);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.5s ease;
 }

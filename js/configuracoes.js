@@ -186,6 +186,11 @@ A planilha deve conter as seguintes colunas, nessa ordem:
     };
   }
   
+  // Verificar status do estoque quando a página carregar
+  if (typeof atualizarStatusEstoque === 'function') {
+    setTimeout(atualizarStatusEstoque, 1500);
+  }
+  
   const btnImportar = document.getElementById('btn-importar-dados');
   const btnExportarTodos = document.getElementById('btn-exportar-todos');
   

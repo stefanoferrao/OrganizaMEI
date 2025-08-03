@@ -8,7 +8,7 @@ li.estoque-item {
   align-items: center;
   margin-bottom: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 480px) {
@@ -44,6 +44,7 @@ li.estoque-item:hover {
 .estoque-quantidade {
   font-size: 0.95rem;
   color: #fff;
+  transition: all 0.3s ease;
 }
 
 .estoque-acoes {
@@ -60,10 +61,15 @@ li.estoque-item:hover {
   border-radius: 6px;
   cursor: pointer;
   font-size: 1.1rem;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-remover:active,
+.btn-saida:active {
+  transform: scale(0.95);
 }
 
 .btn-remover:hover {
@@ -166,6 +172,12 @@ li.estoque-item:hover {
   background: #2f855a;
 }
 
+.modal-confirm:disabled {
+  background: #4a5568;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .modal-cancel {
   background: #4a5568;
   color: #fff;
@@ -181,12 +193,65 @@ li.estoque-item:hover {
   background: #e53e3e;
 }
 
+/* Estilo para notificações */
+.notificacao-estoque {
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .notificacao-estoque {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    transform: translateY(-100%);
+  }
+  
+  .notificacao-estoque.show {
+    transform: translateY(0);
+  }
+}
+
 .modal-hidden {
   display: none;
 }
 
 .input-margin-bottom {
   margin-bottom: 8px;
+}
+
+/* Estados visuais para feedback */
+.estoque-item.processando {
+  opacity: 0.7;
+  transform: scale(0.98);
+  pointer-events: none;
+}
+
+.estoque-item.sucesso {
+  background: #2f855a !important;
+  transform: scale(1.02);
+}
+
+.estoque-item.removendo {
+  opacity: 0.5;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+/* Animação para novos itens */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.estoque-item.novo {
+  animation: slideIn 0.3s ease;
 }
 
 /* Touch targets para mobile */
@@ -196,5 +261,93 @@ li.estoque-item:hover {
     min-height: 44px;
     min-width: 44px;
     padding: 8px 12px;
+  }
+}
+
+/* SweetAlert2 Dark Theme Customization */
+.swal-dark-popup {
+  background: #2d3748 !important;
+  border: 1px solid #4a5568 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swal-dark-title {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  font-size: 1.4rem !important;
+}
+
+.swal-dark-content {
+  color: #cbd5e0 !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+.swal-dark-confirm {
+  background: #e53e3e !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3) !important;
+}
+
+.swal-dark-confirm:hover {
+  background: #c53030 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4) !important;
+}
+
+.swal-dark-cancel {
+  background: #4a5568 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: #e2e8f0 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 8px rgba(74, 85, 104, 0.3) !important;
+}
+
+.swal-dark-cancel:hover {
+  background: #2d3748 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(74, 85, 104, 0.4) !important;
+}
+
+/* SweetAlert2 Icon customization */
+.swal2-icon.swal2-warning {
+  border-color: #f6ad55 !important;
+  color: #f6ad55 !important;
+}
+
+.swal2-icon.swal2-success {
+  border-color: #68d391 !important;
+  color: #68d391 !important;
+}
+
+/* Toast notification styles */
+.swal2-toast.swal-dark-popup {
+  background: #2d3748 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #4a5568 !important;
+}
+
+/* Mobile responsiveness for SweetAlert2 */
+@media (max-width: 480px) {
+  .swal-dark-popup {
+    margin: 16px !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+  
+  .swal-dark-confirm,
+  .swal-dark-cancel {
+    padding: 14px 20px !important;
+    font-size: 1rem !important;
+    min-height: 48px !important;
   }
 }

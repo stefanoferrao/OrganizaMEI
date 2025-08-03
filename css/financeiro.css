@@ -9,6 +9,60 @@
   border-radius: 8px;
   padding: 4px 10px;
   align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Estados visuais para feedback */
+.lancamento-item.processando {
+  opacity: 0.7;
+  transform: scale(0.98);
+  pointer-events: none;
+}
+
+.lancamento-item.sucesso {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(56, 161, 105, 0.3);
+}
+
+.lancamento-item.removendo {
+  opacity: 0.5;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+/* Animação para novos itens */
+@keyframes slideInFinanceiro {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lancamento-item.novo {
+  animation: slideInFinanceiro 0.4s ease;
+}
+
+/* Estilo para notificações do financeiro */
+.notificacao-financeiro {
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .notificacao-financeiro {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    transform: translateY(-100%);
+  }
+  
+  .notificacao-financeiro.show {
+    transform: translateY(0);
+  }
 }
 
 .lancamento-info {
@@ -115,6 +169,123 @@
   border-radius: 8px;
 }
 
+/* Estilos para integração unificada */
+.integration-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: #2d3748;
+  border: 2px solid #4a5568;
+}
+
+.integration-status.connected {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: #38a169;
+}
+
+.integration-status.error {
+  background: rgba(229, 62, 62, 0.1);
+  border-color: #e53e3e;
+}
+
+.status-icon {
+  font-size: 1.5rem;
+}
+
+.status-text {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.sheets-tabs-status {
+  background: #2d3748;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.tab-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #4a5568;
+}
+
+.tab-status:last-child {
+  border-bottom: none;
+}
+
+.tab-icon {
+  font-size: 1.2rem;
+}
+
+.tab-name {
+  flex: 1;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.tab-status-indicator {
+  font-size: 1.1rem;
+}
+
+.btn-create-tab {
+  background: #ecc94b;
+  color: #1a202c;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-create-tab:hover {
+  background: #d69e2e;
+}
+
+.btn-sync-primary {
+  background: #17acaf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 8px;
+}
+
+.btn-sync-primary:hover {
+  background: #2f855a;
+}
+
+.btn-sync-primary:disabled {
+  background: #4a5568;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-test {
+  background: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-test:hover {
+  background: #2d3748;
+}
+
 /* Indicador visual de sincronização */
 .sync-indicator {
   display: flex;
@@ -165,11 +336,9 @@
   animation: none;
 }
 
-.sync-indicator.sync-syncing .sync-icon {
-  animation: spin 1s linear infinite;
-}
 
-@keyframes spin {
+
+@keyframes spinSync {
   from {
     transform: rotate(0deg);
   }
@@ -177,6 +346,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.sync-indicator.sync-syncing .sync-icon {
+  animation: spinSync 1s linear infinite;
 }
 
 /* Aviso de importação */
@@ -245,6 +418,41 @@
   color: #1a202c;
 }
 
+/* Botão de submit com estado de carregamento */
+#financeiro-form button[type="submit"] {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#financeiro-form button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #4a5568;
+}
+
+#financeiro-form button[type="submit"]:disabled::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
 @media (max-width: 600px) {
   .aviso-content {
     flex-direction: column;
@@ -267,5 +475,20 @@
 
   .sync-indicator {
     justify-content: center;
+  }
+  
+  .integration-status {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .sheets-actions {
+    flex-direction: column;
+  }
+  
+  .btn-sync-primary,
+  .btn-test {
+    width: 100%;
+    margin: 4px 0;
   }
 }

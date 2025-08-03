@@ -118,7 +118,7 @@
                 <div id="resumo-financeiro" class="resumo-financeiro"></div>
                 <div id="sync-indicator" class="sync-indicator">
                     <div class="sync-icon">⚠️</div>
-                    <span class="sync-text">Verificando sincronização...</span>
+                    <span class="sync-text">Verificando sincronização... Aguarde</span>
                 </div>
             </div>
             <form id="financeiro-form">
@@ -193,32 +193,59 @@
 
                 <!-- Integração Google Sheets -->
                 <div class="sheets-integration">
-                    <h3>Integração com Google Sheets</h3>
-                    <div id="urlStatus"></div>
+                    <h3>🔗 Integração com Google Sheets</h3>
+                    
+                    <!-- Status Geral -->
+                    <div id="integration-status" class="integration-status">
+                        <div class="status-icon">⚠️</div>
+                        <div class="status-text">
+                            <strong>Status:</strong> <span id="status-message">Não configurado</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuração URL -->
                     <div class="sheets-config">
-                        <input id="webAppUrl" type="url" placeholder="URL do Web App do Google Sheets" />
+                        <label for="webAppUrl">URL do Web App:</label>
+                        <input id="webAppUrl" type="url" placeholder="Cole aqui a URL do Google Apps Script" />
                         <div class="buttonscfg">
-                            <button id="btn-save-url" type="button">Salvar URL</button>
-                            <button id="btn-clear-url" type="button">Limpar URL</button>
-                            <button id="btn-enviar-dados" type="button" style="display: none;">Enviar dados</button>
+                            <button id="btn-save-url" type="button">💾 Salvar URL</button>
+                            <button id="btn-clear-url" type="button">🗑️ Limpar</button>
                         </div>
                     </div>
-                    <div class="sheets-actions">
-                        <button id="btn-sync-financeiro" type="button">Sincronizar com Planilha</button>
-
-                        <div id="sync-progress" class="sync-progress" style="display: none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                            </div>
-                            <span class="progress-text">Sincronizando...</span>
+                    
+                    <!-- Status das Abas -->
+                    <div id="sheets-tabs-status" class="sheets-tabs-status" style="display: none;">
+                        <div class="tab-status">
+                            <span class="tab-icon">💰</span>
+                            <span class="tab-name">Financeiro</span>
+                            <span id="financeiro-status" class="tab-status-indicator">✅</span>
+                        </div>
+                        <div class="tab-status">
+                            <span class="tab-icon">📦</span>
+                            <span class="tab-name">Estoque</span>
+                            <span id="estoque-status" class="tab-status-indicator">❌</span>
+                            <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar Aba</button>
                         </div>
                     </div>
-                    <div id="sheets-status" class="sheets-status"></div>
+                    
+                    <!-- Ações de Sincronização -->
+                    <div class="sheets-actions" style="display: none;">
+                        <button id="btn-sync-all" type="button" class="btn-sync-primary">🔄 Ressincronizar Tudo</button>
+                        <button id="btn-test-connection" type="button" class="btn-test">🔍 Testar Conexão</button>
+                    </div>
+                    
+                    <!-- Progresso -->
+                    <div id="sync-progress" class="sync-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <span class="progress-text">Preparando...</span>
+                    </div>
                 </div>
 
             </div>
         </section>
-        <div style="text-align: center; margin-top: 30px; color: #666; font-style: italic; font-size: 0.9em;">Versão 2.0</div>
+        <div style="text-align: center; margin-top: 30px; color: #666; font-style: italic; font-size: 0.9em;">Versão 3.0</div>
     </main>
 
     <script>
@@ -254,6 +281,14 @@
                     // Verificar status de sincronização
                     verificarStatusSincronizacao();
                 }, 100);
+            }
+            // Atualiza status da integração ao clicar na aba de configurações
+            if (tabId === 'configuracoes') {
+                setTimeout(() => {
+                    if (typeof atualizarStatusIntegracao === 'function') {
+                        atualizarStatusIntegracao();
+                    }
+                }, 200);
             }
         }
         window.addEventListener('DOMContentLoaded', function () {

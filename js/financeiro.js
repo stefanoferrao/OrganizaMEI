@@ -1,6 +1,46 @@
 // Financeiro - Receitas e Despesas
 document.addEventListener("DOMContentLoaded", function () {
   
+  // Função para mostrar notificações rápidas
+  function mostrarNotificacao(mensagem, tipo = 'sucesso') {
+    const notificacao = document.createElement('div');
+    notificacao.className = `notificacao-financeiro ${tipo}`;
+    notificacao.textContent = mensagem;
+    
+    const isMobile = window.innerWidth <= 480;
+    notificacao.style.cssText = `
+      position: fixed;
+      ${isMobile ? 'top: 10px; left: 10px; right: 10px;' : 'top: 20px; right: 20px;'}
+      background: ${tipo === 'sucesso' ? '#2f855a' : '#e53e3e'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10000;
+      font-weight: bold;
+      transform: ${isMobile ? 'translateY(-100%)' : 'translateX(100%)'};
+      transition: transform 0.3s ease;
+      text-align: center;
+    `;
+    
+    document.body.appendChild(notificacao);
+    
+    // Animar entrada
+    setTimeout(() => {
+      notificacao.style.transform = isMobile ? 'translateY(0)' : 'translateX(0)';
+    }, 10);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+      notificacao.style.transform = isMobile ? 'translateY(-100%)' : 'translateX(100%)';
+      setTimeout(() => {
+        if (notificacao.parentNode) {
+          notificacao.parentNode.removeChild(notificacao);
+        }
+      }, 300);
+    }, 3000);
+  }
+  
   function renderizarLancamentos() {
     const lista = document.getElementById("financeiro-lista");
     if (!lista) return;
@@ -99,10 +139,19 @@ document.addEventListener("DOMContentLoaded", function () {
   async function removerLancamento(index) {
     const lancamento = lancamentos[index];
     
+    // Feedback visual imediato - marcar item como sendo removido
+    const items = document.querySelectorAll('.lancamento-item');
+    const itemParaRemover = items[index];
+    if (itemParaRemover) {
+      itemParaRemover.classList.add('removendo');
+    }
+    
     // Remover imediatamente da interface para melhor UX
     lancamentos.splice(index, 1);
     salvarLancamentos();
     renderizarLancamentos();
+    
+    mostrarNotificacao('Lançamento removido com sucesso!');
     
     // Verificar sincronização com Google Sheets
     if (lancamento.id && typeof excluirLancamentoSheets === 'function') {
@@ -124,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (typeof updateSyncIndicator === 'function') {
             updateSyncIndicator('error');
           }
+          mostrarNotificacao('Erro ao sincronizar com planilha', 'erro');
           mostrarAvisoImportacao();
         }
       } catch (error) {
@@ -132,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (typeof updateSyncIndicator === 'function') {
           updateSyncIndicator('error');
         }
+        mostrarNotificacao('Erro de conexão com planilha', 'erro');
         mostrarAvisoImportacao();
       }
     } else {
@@ -139,6 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (typeof updateSyncIndicator === 'function') {
         updateSyncIndicator('error');
       }
+      mostrarNotificacao('Item não sincronizado', 'erro');
       mostrarAvisoImportacao();
     }
   }
@@ -255,6 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const quantidadeInput = document.getElementById("quantidade-lancamento");
       const valorInput = document.getElementById("valor-lancamento");
       const dataInput = document.getElementById("data-lancamento");
+      const submitBtn = financeiroForm.querySelector('button[type="submit"]');
       
       const tipo = tipoInput.value;
       const categoria = categoriaInput.value;
@@ -265,6 +318,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = dataInput.value;
       
       if ((tipo === "receita" || tipo === "despesa") && categoria && subcategoria && descricao && valor > 0 && data) {
+        // Feedback visual imediato - desabilitar botão e mostrar carregamento
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Adicionando...';
+        
         // Converter data de AAAA-MM-DD para DD/MM/AAAA
         const [ano, mes, dia] = data.split('-');
         const dataFormatada = `${dia}/${mes}/${ano}`;
@@ -280,18 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
           data: dataFormatada 
         };
         
-        lancamentos.push(novoLancamento);
-        salvarLancamentos();
-        renderizarLancamentos();
-        
-        // Adicionar automaticamente ao Google Sheets
-        if (typeof adicionarLancamentoSheets === 'function') {
-          const sucesso = await adicionarLancamentoSheets(novoLancamento);
-          if (sucesso && typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('success');
-          }
-        }
-        
+        // Feedback visual imediato - limpar campos
         tipoInput.value = "receita";
         categoriaInput.value = "";
         subcategoriaInput.value = "";
@@ -299,6 +346,63 @@ document.addEventListener("DOMContentLoaded", function () {
         quantidadeInput.value = "1";
         valorInput.value = "";
         dataInput.value = "";
+        atualizarCategorias();
+        
+        lancamentos.push(novoLancamento);
+        salvarLancamentos();
+        
+        // Renderizar com animação para novo item
+        const lista = document.getElementById("financeiro-lista");
+        if (lista) {
+          // Adicionar item temporário com animação
+          const item = document.createElement("li");
+          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? "🛒" : "💰") : "💸";
+          let tipoCor = tipo === "receita" ? (categoria === "Vendas" ? "#3182ce" : "#38a169") : "#e53e3e";
+          item.classList.add('lancamento-item', 'novo', 'sucesso');
+          item.style.background = tipoCor;
+          item.innerHTML = `
+            <span class="lancamento-info">
+              <span class="lancamento-icon">${tipoIcon}</span>
+              <span>
+                <strong>${categoria}</strong> / <em>${subcategoria}</em><br>
+                <span class="lancamento-descricao">${descricao}</span>
+                ${quantidade && quantidade > 1 ? `<br><small>Qtd: ${quantidade}</small>` : ''}
+              </span>
+            </span>
+            <span class="lancamento-valor-container">
+              <span class="lancamento-valor" title="Valor unitário: R$ ${(valor / quantidade).toFixed(2).replace('.', ',')}">R$ ${valor.toFixed(2).replace('.', ',')}</span><br>
+               <span class="lancamento-data">${dataFormatada}</span>
+            </span>
+            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover">&#128465;</button>
+          `;
+          lista.insertBefore(item, lista.firstChild);
+          
+          // Remover classe de sucesso após animação
+          setTimeout(() => {
+            item.classList.remove('sucesso');
+          }, 1000);
+        }
+        
+        renderizarResumoFinanceiro();
+        
+        // Mostrar notificação de sucesso
+        const tipoTexto = tipo === 'receita' ? 'Receita' : 'Despesa';
+        mostrarNotificacao(`${tipoTexto} adicionada: ${descricao}`);
+        
+        // Adicionar automaticamente ao Google Sheets
+        if (typeof adicionarLancamentoSheets === 'function') {
+          if (typeof updateSyncIndicator === 'function') {
+            updateSyncIndicator('syncing');
+          }
+          
+          const sucesso = await adicionarLancamentoSheets(novoLancamento);
+          if (sucesso && typeof updateSyncIndicator === 'function') {
+            updateSyncIndicator('success');
+          } else if (typeof updateSyncIndicator === 'function') {
+            updateSyncIndicator('error');
+            mostrarNotificacao('Erro ao sincronizar com planilha', 'erro');
+          }
+        }
         
         if (typeof renderizarDashboardResumo === 'function') {
           renderizarDashboardResumo();
@@ -306,6 +410,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (typeof atualizarFiltroMesAno === 'function') {
           atualizarFiltroMesAno();
         }
+        
+        // Reabilitar botão
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }, 1000);
+      } else {
+        mostrarNotificacao('Preencha todos os campos obrigatórios!', 'erro');
       }
     });
   }
@@ -317,6 +429,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.mostrarAvisoImportacao = mostrarAvisoImportacao;
   window.irParaConfiguracoes = irParaConfiguracoes;
   window.fecharAviso = fecharAviso;
+  window.mostrarNotificacao = mostrarNotificacao;
   
   // Inicializar
   atualizarCategorias();
