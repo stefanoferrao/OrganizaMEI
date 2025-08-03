@@ -1,0 +1,102 @@
+/* PWA Specific Styles - Fullscreen Experience */
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  .pwa-mode {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+/* PWA Mode Adjustments */
+.pwa-mode {
+  padding-top: var(--safe-top, 0px);
+  padding-bottom: var(--safe-bottom, 0px);
+  padding-left: var(--safe-left, 0px);
+  padding-right: var(--safe-right, 0px);
+}
+
+/* Menu toggle positioning in PWA */
+.pwa-mode .menu-toggle {
+  top: calc(16px + var(--safe-top, 0px));
+}
+
+/* Sidebar adjustments */
+.pwa-mode aside {
+  padding-top: calc(16px + var(--safe-top, 0px));
+}
+
+/* Main content adjustments */
+.pwa-mode main {
+  padding-top: calc(24px + var(--safe-top, 0px));
+  padding-bottom: calc(16px + var(--safe-bottom, 0px));
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 800px) {
+  .pwa-mode main {
+    padding-top: calc(60px + var(--safe-top, 0px));
+  }
+  
+  .pwa-mode aside {
+    padding-top: calc(60px + var(--safe-top, 0px));
+  }
+}
+
+/* Hide scrollbars in PWA */
+.pwa-mode ::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Improve touch interactions */
+.pwa-mode {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Prevent text selection on UI elements */
+.pwa-mode nav button,
+.pwa-mode .menu-toggle,
+.pwa-mode .config-btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Better tap targets for mobile */
+.pwa-mode nav button {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Prevent zoom on inputs */
+.pwa-mode input,
+.pwa-mode select,
+.pwa-mode textarea {
+  font-size: 16px;
+}
+
+/* Status bar color matching */
+@media (prefers-color-scheme: dark) {
+  .pwa-mode {
+    background-color: #1a202c;
+  }
+}
+
+/* Fullscreen specific styles */
+@media all and (display-mode: fullscreen) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Hide any browser UI remnants */
+  html {
+    overflow-x: hidden;
+  }
+}

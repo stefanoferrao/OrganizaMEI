@@ -1,8 +1,9 @@
-const CACHE_NAME = 'organizamei-v3';
+const CACHE_NAME = 'organizamei-v3.1-pwa';
 const urlsToCache = [
   './',
   './index.html',
   '../css/style.css',
+  '../css/pwa.css',
   '../css/dashboard.css',
   '../css/estoque.css',
   '../css/financeiro.css',
@@ -46,7 +47,27 @@ self.addEventListener('fetch', function(event) {
           return response;
         }
         return fetch(event.request);
-      }
-    )
+      })
+      .catch(function() {
+        // Fallback para offline
+        if (event.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
+      })
+  );
+});
+
+// Limpar caches antigos
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
 });

@@ -19,12 +19,53 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OrganizaMEI">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- PWA Fullscreen Styles -->
+    <style>
+        @media all and (display-mode: fullscreen) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            
+            .menu-toggle {
+                top: calc(16px + env(safe-area-inset-top));
+            }
+            
+            aside {
+                padding-top: calc(16px + env(safe-area-inset-top));
+            }
+            
+            main {
+                padding-top: calc(24px + env(safe-area-inset-top));
+            }
+            
+            @media (max-width: 800px) {
+                main {
+                    padding-top: calc(60px + env(safe-area-inset-top));
+                }
+                
+                aside {
+                    padding-top: calc(60px + env(safe-area-inset-top));
+                }
+            }
+        }
+        
+        @media all and (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/menu.js"></script>
     
     <!-- CSS Modular -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pwa.css">
     <link rel="stylesheet" href="css/tutorial.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/estoque.css">
@@ -265,9 +306,22 @@
     </main>
 
     <script>
+        // Detectar modo PWA e ajustar interface
+        function detectPWAMode() {
+            const isPWA = window.matchMedia('(display-mode: fullscreen)').matches ||
+                         window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true;
+            
+            if (isPWA) {
+                document.body.classList.add('pwa-mode');
+                console.log('PWA Mode ativado - Interface otimizada para app nativo');
+            }
+        }
+        
         // Registrar Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
+                detectPWAMode();
                 navigator.serviceWorker.register('./js/sw.js')
                     .then(function(registration) {
                         console.log('SW registered: ', registration);
@@ -276,6 +330,8 @@
                         console.log('SW registration failed: ', registrationError);
                     });
             });
+        } else {
+            window.addEventListener('load', detectPWAMode);
         }
         
         function changeTab(tabId) {
