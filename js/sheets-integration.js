@@ -25,7 +25,7 @@ function mostrarNotificacaoSync(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `sync-notification ${type}`;
     
-    const icon = type === 'success' ? '<i class="fas fa-check" style="color: #38a169;"></i>' : type === 'error' ? '<i class="fas fa-times" style="color: #e53e3e;"></i>' : type === 'warning' ? '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>' : '<i class="fas fa-info-circle" style="color: #17acaf;"></i>';
+    const icon = type === 'success' ? '<i class="fas fa-check"></i>' : type === 'error' ? '<i class="fas fa-times"></i>' : type === 'warning' ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-info-circle"></i>';
     notification.innerHTML = `<span class="icon">${icon}</span> ${message}`;
     
     container.appendChild(notification);
@@ -436,7 +436,7 @@ function clearWebAppUrl() {
         delete urlInput.dataset.realUrl;
     }
     atualizarStatusIntegracao();
-    updateMiniIndicator('not-configured');
+    updateMiniIndicator('error');
     mostrarNotificacaoSync('Url removida', 'error');
 }
 
@@ -541,9 +541,10 @@ async function atualizarStatusIntegracao() {
         // Não configurado
         statusContainer.className = 'integration-status error';
         statusMessage.textContent = 'Não configurado';
-        statusIcon.innerHTML = '<i class="fas fa-times" style="color: #e53e3e;"></i>';
+        statusIcon.innerHTML = '<i class="fas fa-times"></i>';
         tabsStatus.style.display = 'none';
         sheetsActions.style.display = 'none';
+        updateMiniIndicator('not-configured');
         return;
     }
     
@@ -571,23 +572,25 @@ async function atualizarStatusIntegracao() {
             estoqueStatus.innerHTML = '<div class="loading-spinner-small"></div>';
             const temAbaEstoque = await verificarAbaEstoque();
             if (temAbaEstoque) {
-                estoqueStatus.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
+                estoqueStatus.innerHTML = '<i class="fas fa-check-circle"></i>';
                 btnCriarAba.style.display = 'none';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'true');
                 // Conectado sem pendências
                 statusMessage.textContent = 'Conectado e funcionando';
-                statusIcon.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                updateMiniIndicator('success');
             } else {
-                estoqueStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>';
+                estoqueStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 btnCriarAba.style.display = 'inline-block';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'false');
                 // Conectado com pendências
                 statusMessage.textContent = 'Conectado com pendências';
-                statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>';
+                statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                updateMiniIndicator('success');
             }
             
             // Financeiro sempre ativo se conectado
-            financeiroStatus.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
+            financeiroStatus.innerHTML = '<i class="fas fa-check-circle"></i>';
             
         } else {
             throw new Error(result.message || 'Falha na conexão');
@@ -596,9 +599,10 @@ async function atualizarStatusIntegracao() {
     } catch (error) {
         statusContainer.className = 'integration-status error';
         statusMessage.textContent = 'Erro de conexão';
-        statusIcon.innerHTML = '<i class="fas fa-times" style="color: #e53e3e;"></i>';
+        statusIcon.innerHTML = '<i class="fas fa-times"></i>';
         tabsStatus.style.display = 'none';
         sheetsActions.style.display = 'none';
+        updateMiniIndicator('error');
     }
 }
 
@@ -707,14 +711,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Status inicial
     setTimeout(atualizarStatusIntegracao, 500);
     
-    // Verificar status inicial
+    // Verificar status inicial baseado no integration-status
     setTimeout(() => {
-        const url = localStorage.getItem('googleSheetsWebAppUrl');
-        if (!url) {
-            updateMiniIndicator('not-configured');
-            mostrarNotificacaoSync('Configure o Google Sheets para sincronização automática', 'error');
-        } else {
-            updateMiniIndicator('success');
+        const statusContainer = document.getElementById('integration-status');
+        if (statusContainer) {
+            if (statusContainer.classList.contains('error')) {
+                updateMiniIndicator('error');
+            } else if (statusContainer.classList.contains('connected')) {
+                updateMiniIndicator('success');
+            } else {
+                updateMiniIndicator('not-configured');
+            }
         }
     }, 2000);
 });
@@ -973,12 +980,12 @@ async function atualizarStatusEstoque() {
     const temAbaEstoque = await verificarAbaEstoque();
     
     if (temAbaEstoque) {
-        statusElement.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i> Aba Estoque encontrada - Integração ativa';
+        statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Aba Estoque encontrada - Integração ativa';
         containerStatus.className = 'estoque-status success';
         btnCriar.style.display = 'none';
         localStorage.setItem('estoqueGoogleSheetsAtivo', 'true');
     } else {
-        statusElement.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i> Aba Estoque não encontrada - Usando apenas memória do dispositivo atual';
+        statusElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Aba Estoque não encontrada - Usando apenas memória do dispositivo atual';
         containerStatus.className = 'estoque-status error';
         btnCriar.style.display = 'block';
         localStorage.setItem('estoqueGoogleSheetsAtivo', 'false');

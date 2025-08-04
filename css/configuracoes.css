@@ -747,6 +747,7 @@
 .status-text {
   flex: 1;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .status-text strong {
@@ -757,7 +758,7 @@
 .sheets-tabs-status {
   background: #2d3748;
   border-radius: 8px;
-  padding: 16px;
+  padding: 0px 15px;
   margin-bottom: 16px;
   border: 1px solid #4a5568;
 }
