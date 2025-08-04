@@ -246,6 +246,15 @@ ul {
   border: 1px solid #17acaf;
 }
 
+.version-info {
+  text-align: right;
+  margin-top: 30px;
+  color: #666;
+  font-style: italic;
+  font-size: 11px;
+}
+
+
 /* PWA Fullscreen Support */
 @supports (padding: max(0px)) {
   body {
@@ -260,18 +269,17 @@ body {
 }
 
 /* Hide scrollbars in PWA mode */
-@media all and (display-mode: fullscreen),
-@media all and (display-mode: standalone) {
+@media all and (display-mode: fullscreen), (display-mode: standalone) {
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
   }
-  
+
   /* Improve touch scrolling */
   main {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Prevent text selection on UI elements */
   nav button, .menu-toggle {
     -webkit-user-select: none;

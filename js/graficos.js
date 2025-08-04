@@ -1,6 +1,11 @@
 // Gráficos - Visualizações e Relatórios
 document.addEventListener("DOMContentLoaded", function () {
   let chartInstance = null;
+  
+  // Registrar plugin de datalabels
+  if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+  }
 
   function renderizarGrafico(tipo) {
     const ctx = document.getElementById("graficoDinamico")?.getContext("2d");
@@ -61,16 +66,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const ticketPorMes = {}, qtdPorMes = {};
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.categoria === "Vendas" && l.data) {
-          let mes, ano;
+          let mes, ano, d;
           if (typeof l.data === 'string' && l.data.includes('/')) {
             const [dia, m, a] = l.data.split('/');
             mes = m;
             ano = a;
+            d = new Date(a, m - 1, dia);
           } else {
             const [a, m] = l.data.split("-");
             mes = m;
             ano = a;
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
+          
           const chave = `${mes}/${ano}`;
           ticketPorMes[chave] = (ticketPorMes[chave] || 0) + l.valor;
 
@@ -89,8 +104,23 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (tipo === "patrimonio") {
       let saldo = 0;
       const porData = {};
-      lancamentos
-        .filter(l => l.data)
+      
+      // Filtrar lançamentos por mês/ano se definido
+      let lancamentosFiltrados = lancamentos.filter(l => l.data);
+      if (window.filtroMes && window.filtroAno) {
+        lancamentosFiltrados = lancamentosFiltrados.filter(l => {
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
+          }
+          return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
+        });
+      }
+      
+      lancamentosFiltrados
         .sort((a, b) => {
           let dataA, dataB;
           if (typeof a.data === 'string' && a.data.includes('/')) {
@@ -122,16 +152,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const fluxoPorMes = {};
       lancamentos.forEach(l => {
         if (l.data) {
-          let mes, ano;
+          let mes, ano, d;
           if (typeof l.data === 'string' && l.data.includes('/')) {
             const [dia, m, a] = l.data.split('/');
             mes = m;
             ano = a;
+            d = new Date(a, m - 1, dia);
           } else {
             const [a, m] = l.data.split("-");
             mes = m;
             ano = a;
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
+          
           const chave = `${mes}/${ano}`;
           fluxoPorMes[chave] = (fluxoPorMes[chave] || 0) + (l.tipo === "receita" ? l.valor : -l.valor);
         }
@@ -147,6 +187,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const despesasPorCategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "despesa" && l.categoria) {
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            let d;
+            if (typeof l.data === 'string' && l.data.includes('/')) {
+              const [dia, mes, ano] = l.data.split('/');
+              d = new Date(ano, mes - 1, dia);
+            } else {
+              d = new Date(l.data);
+            }
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
           despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
         }
       });
@@ -162,6 +215,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const receitasPorCategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.categoria) {
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            let d;
+            if (typeof l.data === 'string' && l.data.includes('/')) {
+              const [dia, mes, ano] = l.data.split('/');
+              d = new Date(ano, mes - 1, dia);
+            } else {
+              d = new Date(l.data);
+            }
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
           receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
         }
       });
@@ -177,6 +243,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const despesasPorSubcategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "despesa" && l.subcategoria) {
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            let d;
+            if (typeof l.data === 'string' && l.data.includes('/')) {
+              const [dia, mes, ano] = l.data.split('/');
+              d = new Date(ano, mes - 1, dia);
+            } else {
+              d = new Date(l.data);
+            }
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
           const chave = `${l.categoria} - ${l.subcategoria}`;
           despesasPorSubcategoria[chave] = (despesasPorSubcategoria[chave] || 0) + l.valor;
         }
@@ -193,6 +272,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const receitasPorSubcategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.subcategoria) {
+          // Aplicar filtro de mês/ano se definido
+          if (window.filtroMes && window.filtroAno) {
+            let d;
+            if (typeof l.data === 'string' && l.data.includes('/')) {
+              const [dia, mes, ano] = l.data.split('/');
+              d = new Date(ano, mes - 1, dia);
+            } else {
+              d = new Date(l.data);
+            }
+            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
+              return;
+            }
+          }
           const chave = `${l.categoria} - ${l.subcategoria}`;
           receitasPorSubcategoria[chave] = (receitasPorSubcategoria[chave] || 0) + l.valor;
         }
@@ -612,9 +704,22 @@ document.addEventListener("DOMContentLoaded", function () {
             backgroundColor: 'rgba(56, 161, 105, 0.1)',
             tension: 0.3,
             fill: false,
-            pointBackgroundColor: '#38a169',
+            pointBackgroundColor: '#3182ce',
             pointBorderColor: '#38a169',
-            pointRadius: 5
+            pointRadius: 5,
+            datalabels: {
+              display: true,
+              align: 'top',
+              offset: 8,
+              color: '#38a169',
+              font: {
+                size: 10,
+                weight: 'bold'
+              },
+              formatter: function(value) {
+                return formatarMoedaBR(value);
+              }
+            }
           }, {
             label: 'Despesas',
             data: despesasPorMes,
@@ -622,9 +727,22 @@ document.addEventListener("DOMContentLoaded", function () {
             backgroundColor: 'rgba(229, 62, 62, 0.1)',
             tension: 0.3,
             fill: false,
-            pointBackgroundColor: '#e53e3e',
+            pointBackgroundColor: '#3182ce',
             pointBorderColor: '#e53e3e',
-            pointRadius: 5
+            pointRadius: 5,
+            datalabels: {
+              display: true,
+              align: 'bottom',
+              offset: 8,
+              color: '#e53e3e',
+              font: {
+                size: 10,
+                weight: 'bold'
+              },
+              formatter: function(value) {
+                return formatarMoedaBR(value);
+              }
+            }
           }]
         },
         options: {
@@ -643,6 +761,9 @@ document.addEventListener("DOMContentLoaded", function () {
                   return context.dataset.label + ': ' + formatarMoedaBR(context.parsed.y);
                 }
               }
+            },
+            datalabels: {
+              display: false // Desabilitar globalmente, usar configuração por dataset
             }
           },
           scales: {
@@ -908,8 +1029,26 @@ document.addEventListener("DOMContentLoaded", function () {
             titleColor: "#38a169",
             bodyColor: "#e2e8f0",
             borderColor: "#3182ce",
-            borderWidth: 1
-          }
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatarMoedaBR(context.parsed.y);
+              }
+            }
+          },
+          datalabels: (chartType === "line" && ['vendas', 'ticket', 'patrimonio', 'fluxo'].includes(tipo)) ? {
+            display: true,
+            align: 'bottom',
+            offset: 8,
+            color: '#e2e8f0',
+            font: {
+              size: 11,
+              weight: 'bold'
+            },
+            formatter: function(value) {
+              return formatarMoedaBR(value);
+            }
+          } : false
         },
         layout: { padding: 16 },
         scales: chartType === "pie" ? {} : {
@@ -918,7 +1057,13 @@ document.addEventListener("DOMContentLoaded", function () {
             grid: { color: "#2d3748" }
           },
           y: {
-            ticks: { color: "#e2e8f0", font: { weight: 'bold' } },
+            ticks: { 
+              color: "#e2e8f0", 
+              font: { weight: 'bold' },
+              callback: function(value) {
+                return formatarMoedaBR(value);
+              }
+            },
             grid: { color: "#2d3748" }
           }
         },

@@ -68,6 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
       }
+      // Atualizar gráficos se estiver na aba de gráficos
+      if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
+        const tipoGrafico = document.getElementById('tipo-grafico')?.value || 'vendas';
+        renderizarGrafico(tipoGrafico);
+      }
     });
   }
   
@@ -86,6 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
+      }
+      // Atualizar gráficos se estiver na aba de gráficos
+      if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
+        const tipoGrafico = document.getElementById('tipo-grafico')?.value || 'vendas';
+        renderizarGrafico(tipoGrafico);
       }
     });
   }
@@ -107,6 +117,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
+      }
+      // Atualizar gráficos se estiver na aba de gráficos
+      if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
+        const tipoGrafico = document.getElementById('tipo-grafico')?.value || 'vendas';
+        renderizarGrafico(tipoGrafico);
       }
     });
   }

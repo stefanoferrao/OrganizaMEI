@@ -1,4 +1,4 @@
-// Dashboard - Visão Geral
+// Dashboard - Visão Geral com Efeitos Visuais
 document.addEventListener("DOMContentLoaded", function () {
   
   function renderizarDashboardResumo() {
@@ -47,46 +47,46 @@ document.addEventListener("DOMContentLoaded", function () {
     div.innerHTML = `
     <div class="dashboard-container">
       <!-- Primeira linha: Vendas no Mês, Receitas, Despesas, Saldo -->
-      <div class="dashboard-card dashboard-card-vendas">
+      <div class="dashboard-card dashboard-card-vendas" data-card="0">
         <span class="dashboard-icon">🛒</span>
         <span class="dashboard-label dashboard-label-vendas">Vendas no Mês</span>
         <span class="dashboard-value dashboard-value-vendas">R$ ${vendasMes.toFixed(2).replace('.', ',')}</span>
         <span class="dashboard-periodo">${filtroMes && filtroAno ? `Referente a ${filtroMes.toString().padStart(2, '0')}/${filtroAno}` : 'Escolha o mês'}</span>
       </div>
-      <div class="dashboard-card dashboard-card-receitas">
+      <div class="dashboard-card dashboard-card-receitas" data-card="1">
         <span class="dashboard-icon">💰</span>
         <span class="dashboard-label dashboard-label-receitas">Receitas</span>
         <span class="dashboard-value dashboard-value-receitas">R$ ${totalReceitas.toFixed(2).replace('.', ',')}</span>
         <span class="dashboard-periodo">Total em vendas: R$ ${totalVendasProdutos.toFixed(2).replace('.', ',')}</span>
       </div>
-      <div class="dashboard-card dashboard-card-despesas">
+      <div class="dashboard-card dashboard-card-despesas" data-card="2">
         <span class="dashboard-icon">💸</span>
         <span class="dashboard-label dashboard-label-despesas">Despesas</span>
         <span class="dashboard-value dashboard-value-despesas">R$ ${totalDespesas.toFixed(2).replace('.', ',')}</span>
       </div>
-      <div class="dashboard-card dashboard-card-saldo ${saldo >= 0 ? 'dashboard-card-saldo-positivo' : 'dashboard-card-saldo-negativo'}">
+      <div class="dashboard-card dashboard-card-saldo ${saldo >= 0 ? 'dashboard-card-saldo-positivo' : 'dashboard-card-saldo-negativo'}" data-card="3">
         <span class="dashboard-icon">🧮</span>
         <span class="dashboard-label dashboard-label-saldo">Saldo</span>
         <span class="dashboard-value dashboard-value-saldo">R$ ${saldo.toFixed(2).replace('.', ',')}</span>
       </div>
       <!-- Segunda linha: Produtos, Itens em Estoque, Valor Médio por item, Saúde Financeira -->
-      <div class="dashboard-card dashboard-card-produtos">
+      <div class="dashboard-card dashboard-card-produtos" data-card="4">
         <span class="dashboard-icon">📦</span>
         <span class="dashboard-label dashboard-label-produtos">Produtos</span>
         <span class="dashboard-value dashboard-value-produtos">${totalProdutos}</span>
       </div>
-      <div class="dashboard-card dashboard-card-estoque">
+      <div class="dashboard-card dashboard-card-estoque" data-card="5">
         <span class="dashboard-icon">🗃️</span>
         <span class="dashboard-label dashboard-label-estoque">Itens em Estoque</span>
         <span class="dashboard-value dashboard-value-estoque">${totalItensEstoque}</span>
       </div>
-      <div class="dashboard-card dashboard-card-valor-medio">
+      <div class="dashboard-card dashboard-card-valor-medio" data-card="6">
         <span class="dashboard-icon">💎</span>
         <span class="dashboard-label dashboard-label-valor-medio">Valor Médio por Item</span>
         <span class="dashboard-value dashboard-value-valor-medio">R$ ${valorMedioItem.toFixed(2).replace('.', ',')}</span>
         <span class="dashboard-periodo">${totalItensVendidos} itens vendidos</span>
       </div>
-      <div class="dashboard-card dashboard-card-saude ${saudeScore >= 80 ? 'dashboard-card-saude-excelente' : saudeScore >= 60 ? 'dashboard-card-saude-boa' : saudeScore >= 40 ? 'dashboard-card-saude-regular' : 'dashboard-card-saude-atencao'}">
+      <div class="dashboard-card dashboard-card-saude ${saudeScore >= 80 ? 'dashboard-card-saude-excelente' : saudeScore >= 60 ? 'dashboard-card-saude-boa' : saudeScore >= 40 ? 'dashboard-card-saude-regular' : 'dashboard-card-saude-atencao'}" data-card="7">
         <span class="dashboard-icon">💚</span>
         <span class="dashboard-label dashboard-label-saude">Saúde Financeira</span>
         <span class="dashboard-value dashboard-value-saude">${saudeScore}%</span>
@@ -94,10 +94,30 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     </div>
   `;
+  
+    // Animar cards um por vez
+    const cards = div.querySelectorAll('.dashboard-card');
+    cards.forEach((card, index) => {
+      card.style.animation = `scaleIn 0.5s ease-out ${index * 0.1}s both`;
+    });
   }
 
-  // Expor função globalmente
+  // Função para animar entrada do dashboard
+  function animarEntradaDashboard() {
+    const dashboardSection = document.getElementById('dashboard');
+    if (dashboardSection && dashboardSection.classList.contains('active')) {
+      const resumoDiv = document.getElementById('dashboard-resumo');
+      if (resumoDiv) {
+        resumoDiv.style.animation = 'none';
+        resumoDiv.offsetHeight; // Trigger reflow
+        resumoDiv.style.animation = 'fadeInUp 0.8s ease-out forwards';
+      }
+    }
+  }
+  
+  // Expor funções globalmente
   window.renderizarDashboardResumo = renderizarDashboardResumo;
+  window.animarEntradaDashboard = animarEntradaDashboard;
   
   // Renderizar dashboard inicial
   renderizarDashboardResumo();

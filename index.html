@@ -63,6 +63,46 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/menu.js"></script>
     
+    <!-- Estilos para efeitos de navegação -->
+    <style>
+        .tab-section {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        nav button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        nav button.nav-active {
+            background: #17acaf !important;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
+        }
+        
+        nav button:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+    
     <!-- CSS Modular -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pwa.css">
@@ -77,6 +117,7 @@
     <link rel="stylesheet" href="css/filtros.css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     
     <!-- JavaScript Modular -->
     <script defer src="js/utils.js"></script>
@@ -114,6 +155,7 @@
             <button onclick="changeTab('graficos')">Gráficos</button>
             <button onclick="changeTab('configuracoes')">Configurações</button>
         </nav>
+        <div class="version-info">Versão 3.0</div>
     </aside>
 
     <!-- Main Content -->
@@ -302,7 +344,6 @@
 
             </div>
         </section>
-        <div style="text-align: center; margin-top: 30px; color: #666; font-style: italic; font-size: 0.9em;">Versão 3.0</div>
     </main>
 
     <script>
@@ -335,14 +376,53 @@
         }
         
         function changeTab(tabId) {
-            document.querySelectorAll('.tab-section').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
+            // Adicionar efeito de transição suave
+            const currentTab = document.querySelector('.tab-section.active');
+            if (currentTab) {
+                currentTab.style.opacity = '0';
+                currentTab.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.tab-section').forEach(tab => {
+                        tab.classList.remove('active');
+                        tab.style.opacity = '';
+                        tab.style.transform = '';
+                    });
+                    
+                    const newTab = document.getElementById(tabId);
+                    newTab.classList.add('active');
+                    newTab.style.opacity = '0';
+                    newTab.style.transform = 'translateX(20px)';
+                    
+                    // Animar entrada da nova aba
+                    setTimeout(() => {
+                        newTab.style.transition = 'all 0.4s ease-out';
+                        newTab.style.opacity = '1';
+                        newTab.style.transform = 'translateX(0)';
+                        
+                        // Remover estilos de transição após animação
+                        setTimeout(() => {
+                            newTab.style.transition = '';
+                        }, 400);
+                    }, 50);
+                }, 200);
+            } else {
+                document.querySelectorAll('.tab-section').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            }
+            
             localStorage.setItem('tabSelecionada', tabId);
-            // Atualiza dashboard ao clicar na aba
+            
+            // Atualiza dashboard ao clicar na aba com efeitos visuais
             if (tabId === 'dashboard' && typeof renderizarDashboardResumo === 'function') {
-                renderizarDashboardResumo();
+                setTimeout(() => {
+                    renderizarDashboardResumo();
+                    if (typeof animarEntradaDashboard === 'function') {
+                        animarEntradaDashboard();
+                    }
+                }, 250);
             }
             // Atualiza vendas ao clicar na aba
             if (tabId === 'vendas' && typeof renderizarVendas === 'function') {
@@ -375,12 +455,54 @@
                     }
                 }, 200);
             }
+            // Atualiza gráficos ao clicar na aba de gráficos
+            if (tabId === 'graficos') {
+                setTimeout(() => {
+                    if (typeof renderizarGrafico === 'function') {
+                        const tipoGrafico = document.getElementById('tipo-grafico')?.value || 'vendas';
+                        renderizarGrafico(tipoGrafico);
+                    }
+                }, 250);
+            }
         }
+        
+        // Adicionar efeito visual aos botões de navegação
+        document.addEventListener('DOMContentLoaded', function() {
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remover classe active de todos os botões
+                    navButtons.forEach(btn => btn.classList.remove('nav-active'));
+                    // Adicionar classe active ao botão clicado
+                    this.classList.add('nav-active');
+                    
+                    // Efeito de ripple
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
         window.addEventListener('DOMContentLoaded', function () {
             const tabSalva = localStorage.getItem('tabSelecionada');
             if (tabSalva) {
                 document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
-                document.getElementById(tabSalva).classList.add('active');
+                const savedTab = document.getElementById(tabSalva);
+                if (savedTab) {
+                    savedTab.classList.add('active');
+                    
+                    // Marcar botão de navegação correspondente como ativo
+                    const navButtons = document.querySelectorAll('nav button');
+                    navButtons.forEach(btn => {
+                        if (btn.onclick && btn.onclick.toString().includes(tabSalva)) {
+                            btn.classList.add('nav-active');
+                        }
+                    });
+                }
             }
         });
     </script>
