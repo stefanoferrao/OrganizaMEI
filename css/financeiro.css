@@ -75,7 +75,6 @@
 /* Estilos para lançamentos financeiros */
 .lancamento-item {
   display: flex;
-  align-items: stretch;
   justify-content: space-between;
   margin-bottom: 5px;
   border-radius: 8px;
@@ -186,6 +185,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   margin-left: 12px;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
 }
 
 /* Estilos para o formulário financeiro integrado */
