@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="cat-nome">${cat}</span>
               <span class="cat-sub-count">${subs.length} subcategorias</span>
               <div>
-                <button class="cat-btn-editar" title="Editar" onclick="editarCategoria('${tipo}','${cat}')">✏️</button>
-                <button class="cat-btn-remover" title="Remover" onclick="removerCategoria('${tipo}','${cat}')"><span class="cat-icon-remover">&#128465;</span></button>
+                <button class="cat-btn-editar" title="Editar" onclick="editarCategoria('${tipo}','${cat}')"><i class="fas fa-edit" style="color: #17acaf;"></i></button>
+                <button class="cat-btn-remover" title="Remover" onclick="removerCategoria('${tipo}','${cat}')"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
               </div>
             </div>
             <ul class="cat-sub-lista">
@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <li class="cat-sub-item" id="sub-${tipo}-${cat}-${sub}">
                   <span class="cat-sub-nome">${sub}</span>
                   <div>
-                    <button class="cat-btn-editar-sub" title="Editar" onclick="editarSubcategoria('${tipo}','${cat}','${sub}')">✏️</button>
-                    <button class="cat-btn-remover-sub" title="Remover" onclick="removerSubcategoria('${tipo}','${cat}','${sub}')">🗑️</button>
+                    <button class="cat-btn-editar-sub" title="Editar" onclick="editarSubcategoria('${tipo}','${cat}','${sub}')"><i class="fas fa-edit" style="color: #17acaf;"></i></button>
+                    <button class="cat-btn-remover-sub" title="Remover" onclick="removerSubcategoria('${tipo}','${cat}','${sub}')"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
                   </div>
                 </li>
               `).join("")}
