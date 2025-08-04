@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     filtrados.forEach((l) => {
       const item = document.createElement("li");
-      let tipoIcon = l.tipo === "receita" ? (l.categoria === "Vendas" ? "🛒" : "💰") : "💸";
+      let tipoIcon = l.tipo === "receita" ? (l.categoria === "Vendas" ? '<i class="fas fa-shopping-cart" style="color: #fff;"></i>' : '<i class="fas fa-dollar-sign" style="color: #fff;"></i>') : '<i class="fas fa-credit-card" style="color: #fff;"></i>';
       let tipoCor = l.tipo === "receita" ? (l.categoria === "Vendas" ? "#3182ce" : "#38a169") : "#e53e3e";
       item.classList.add('lancamento-item');
       item.style.background = tipoCor;
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2).replace('.', ',')}">R$ ${l.valor.toFixed(2).replace('.', ',')}</span><br>
            <span class="lancamento-data">${l.data ? (typeof l.data === 'string' && l.data.includes('/') ? l.data : l.data.toLocaleDateString('pt-BR')) : ""}</span>
         </span>
-        <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover">&#128465;</button>
+        <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
       `;
       lista.appendChild(item);
     });
@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     avisoElement.innerHTML = `
       <div class="aviso-content">
-        <span class="aviso-icon">⚠️</span>
+        <span class="aviso-icon"><i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i></span>
         <span class="aviso-texto">Item não sincronizado com a planilha. Recomendamos importar os dados novamente em "Configurações".</span>
         <button class="aviso-btn" onclick="irParaConfiguracoes()">Ir para Configurações</button>
         <button class="aviso-fechar" onclick="fecharAviso()">×</button>
@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (lista) {
           // Adicionar item temporário com animação
           const item = document.createElement("li");
-          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? "🛒" : "💰") : "💸";
+          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? '<i class="fas fa-shopping-cart" style="color: #fff;"></i>' : '<i class="fas fa-dollar-sign" style="color: #fff;"></i>') : '<i class="fas fa-credit-card" style="color: #fff;"></i>';
           let tipoCor = tipo === "receita" ? (categoria === "Vendas" ? "#3182ce" : "#38a169") : "#e53e3e";
           item.classList.add('lancamento-item', 'novo', 'sucesso');
           item.style.background = tipoCor;
@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="lancamento-valor" title="Valor unitário: R$ ${(valor / quantidade).toFixed(2).replace('.', ',')}">R$ ${valor.toFixed(2).replace('.', ',')}</span><br>
                <span class="lancamento-data">${dataFormatada}</span>
             </span>
-            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover">&#128465;</button>
+            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
           `;
           lista.insertBefore(item, lista.firstChild);
           

@@ -88,6 +88,11 @@
   color: #17acaf;
 }
 
+.venda-icon .fas {
+  font-size: 1.7rem;
+  color: #17acaf;
+}
+
 /* Estilos para mensagem de nenhuma venda */
 .venda-empty {
   color: #a0aec0;
@@ -107,6 +112,11 @@
   padding: 2px;
   border-radius: 3px;
   transition: background 0.2s;
+  color: #17acaf;
+}
+
+.icon-editar-data .fas {
+  font-size: 14px;
   color: #17acaf;
 }
 
@@ -168,6 +178,10 @@
   background: #2f855a;
 }
 
+.btn-salvar-data .fas {
+  color: white;
+}
+
 .btn-cancelar-data {
   background: #e53e3e;
   color: white;
@@ -175,4 +189,8 @@
 
 .btn-cancelar-data:hover {
   background: #c53030;
+}
+
+.btn-cancelar-data .fas {
+  color: white;
 }

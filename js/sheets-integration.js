@@ -23,41 +23,21 @@ function mostrarNotificacaoSync(message, type = 'info') {
     
     // Criar nova notificação
     const notification = document.createElement('div');
-    notification.style.cssText = `
-        background: ${type === 'success' ? '#38a169' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ecc94b' : '#17acaf'} !important;
-        color: ${type === 'warning' ? '#1a202c' : 'white'} !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-        min-width: 120px !important;
-        text-align: center !important;
-        opacity: 0 !important;
-        transform: translateX(20px) !important;
-        transition: all 0.3s ease !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        white-space: nowrap !important;
-        font-family: Arial, sans-serif !important;
-    `;
+    notification.className = `sync-notification ${type}`;
     
-    const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warning' ? '⚠' : 'ℹ';
-    notification.innerHTML = `<span style="font-weight: bold;">${icon}</span> ${message}`;
+    const icon = type === 'success' ? '<i class="fas fa-check" style="color: #38a169;"></i>' : type === 'error' ? '<i class="fas fa-times" style="color: #e53e3e;"></i>' : type === 'warning' ? '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>' : '<i class="fas fa-info-circle" style="color: #17acaf;"></i>';
+    notification.innerHTML = `<span class="icon">${icon}</span> ${message}`;
     
     container.appendChild(notification);
     
     // Mostrar com animação
     setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
+        notification.classList.add('show');
     }, 10);
     
     // Remover após 2 segundos
     setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(20px)';
+        notification.classList.remove('show');
         setTimeout(() => {
             container.innerHTML = '';
         }, 300);
@@ -74,15 +54,6 @@ function updateMiniIndicator(type) {
     const indicator = document.getElementById('mini-sync-indicator');
     if (indicator) {
         indicator.className = `mini-sync-indicator ${type}`;
-        
-        const dot = indicator.querySelector('.mini-sync-dot');
-        if (dot) {
-            if (type === 'syncing') {
-                dot.style.backgroundColor = '#17acaf';
-            } else if (type === 'success') {
-                dot.style.backgroundColor = '#38a169';
-            }
-        }
     }
 }
 
@@ -210,7 +181,7 @@ function getWebAppUrl() {
         hideUrlWithAsterisks();
         const urlStatus = document.getElementById('urlStatus');
         if (urlStatus) {
-            urlStatus.innerHTML = '<span style="color: #38a169;">✓ URL carregada</span>';
+            urlStatus.innerHTML = '<span class="url-loaded">✓ URL carregada</span>';
         }
         // Atualizar status da integração
         setTimeout(atualizarStatusIntegracao, 100);
@@ -466,7 +437,7 @@ function clearWebAppUrl() {
     }
     atualizarStatusIntegracao();
     updateMiniIndicator('not-configured');
-    mostrarNotificacaoSync('URL removida com sucesso', 'success');
+    mostrarNotificacaoSync('Url removida', 'error');
 }
 
 // Função para enviar todos os dados do OrganizaMEI para o Google Sheets
@@ -557,6 +528,7 @@ function adicionarIDsLancamentosExistentes() {
 async function atualizarStatusIntegracao() {
     const statusContainer = document.getElementById('integration-status');
     const statusMessage = document.getElementById('status-message');
+    const statusIcon = document.querySelector('.status-icon');
     const tabsStatus = document.getElementById('sheets-tabs-status');
     const sheetsActions = document.querySelector('.sheets-actions');
     const financeiroStatus = document.getElementById('financeiro-status');
@@ -569,6 +541,7 @@ async function atualizarStatusIntegracao() {
         // Não configurado
         statusContainer.className = 'integration-status error';
         statusMessage.textContent = 'Não configurado';
+        statusIcon.innerHTML = '<i class="fas fa-times" style="color: #e53e3e;"></i>';
         tabsStatus.style.display = 'none';
         sheetsActions.style.display = 'none';
         return;
@@ -577,7 +550,8 @@ async function atualizarStatusIntegracao() {
     try {
         // Configurado - verificar conexão
         statusContainer.className = 'integration-status';
-        statusMessage.textContent = 'Verificando conexão...';
+        statusMessage.textContent = 'Sincronizando';
+        statusIcon.innerHTML = '<div class="loading-spinner"></div>';
         
         // Testar conexão
         const response = await fetch(url, {
@@ -590,7 +564,6 @@ async function atualizarStatusIntegracao() {
         
         if (result.success) {
             statusContainer.className = 'integration-status connected';
-            statusMessage.textContent = 'Conectado e funcionando';
             tabsStatus.style.display = 'block';
             sheetsActions.style.display = 'block';
             
@@ -598,17 +571,23 @@ async function atualizarStatusIntegracao() {
             estoqueStatus.innerHTML = '<div class="loading-spinner-small"></div>';
             const temAbaEstoque = await verificarAbaEstoque();
             if (temAbaEstoque) {
-                estoqueStatus.textContent = '✅';
+                estoqueStatus.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
                 btnCriarAba.style.display = 'none';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'true');
+                // Conectado sem pendências
+                statusMessage.textContent = 'Conectado e funcionando';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
             } else {
-                estoqueStatus.textContent = '❌';
+                estoqueStatus.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>';
                 btnCriarAba.style.display = 'inline-block';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'false');
+                // Conectado com pendências
+                statusMessage.textContent = 'Conectado com pendências';
+                statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i>';
             }
             
             // Financeiro sempre ativo se conectado
-            financeiroStatus.textContent = '✅';
+            financeiroStatus.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i>';
             
         } else {
             throw new Error(result.message || 'Falha na conexão');
@@ -617,6 +596,7 @@ async function atualizarStatusIntegracao() {
     } catch (error) {
         statusContainer.className = 'integration-status error';
         statusMessage.textContent = 'Erro de conexão';
+        statusIcon.innerHTML = '<i class="fas fa-times" style="color: #e53e3e;"></i>';
         tabsStatus.style.display = 'none';
         sheetsActions.style.display = 'none';
     }
@@ -732,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = localStorage.getItem('googleSheetsWebAppUrl');
         if (!url) {
             updateMiniIndicator('not-configured');
-            mostrarNotificacaoSync('Configure o Google Sheets para sincronização automática', 'warning');
+            mostrarNotificacaoSync('Configure o Google Sheets para sincronização automática', 'error');
         } else {
             updateMiniIndicator('success');
         }
@@ -993,12 +973,12 @@ async function atualizarStatusEstoque() {
     const temAbaEstoque = await verificarAbaEstoque();
     
     if (temAbaEstoque) {
-        statusElement.textContent = '✅ Aba Estoque encontrada - Integração ativa';
+        statusElement.innerHTML = '<i class="fas fa-check-circle" style="color: #38a169;"></i> Aba Estoque encontrada - Integração ativa';
         containerStatus.className = 'estoque-status success';
         btnCriar.style.display = 'none';
         localStorage.setItem('estoqueGoogleSheetsAtivo', 'true');
     } else {
-        statusElement.textContent = '⚠️ Aba Estoque não encontrada - Usando apenas memória do dispositivo atual';
+        statusElement.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i> Aba Estoque não encontrada - Usando apenas memória do dispositivo atual';
         containerStatus.className = 'estoque-status error';
         btnCriar.style.display = 'block';
         localStorage.setItem('estoqueGoogleSheetsAtivo', 'false');

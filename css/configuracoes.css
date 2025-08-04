@@ -542,7 +542,7 @@
 }
 
 #btnCriarAbaEstoque {
-  background: #805ad5;
+  background: #17acaf;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -554,7 +554,7 @@
 }
 
 #btnCriarAbaEstoque:hover {
-  background: #6b46c1;
+  background: #17acaf22;
 }
 
 #btnTestarConexao {
@@ -578,8 +578,11 @@
 }
 
 #btnTestarConexao:before {
-  content: "🔗";
+  content: "\f0c1";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
   font-size: 1rem;
+  color: #17acaf;
 }
 
 #btnTestarConexao:hover {
@@ -601,7 +604,10 @@
 }
 
 #btnTestarConexao:disabled:before {
-  content: "⏳";
+  content: "\f017";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  color: #ecc94b;
 }
 
 /* Estilos para feedback visual do botão Salvar URL */
@@ -629,7 +635,6 @@
   width: 12px;
   height: 12px;
   border: 2px solid transparent;
-  border-top: 2px solid #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 6px;
@@ -639,7 +644,7 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid transparent;
+  border: 2px solid #4a5568;
   border-top: 2px solid #17acaf;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -695,6 +700,17 @@
   background: #2d3748;
   border: 1px solid #4a5568;
   margin-bottom: 16px;
+
+
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  margin-bottom: 16px;
 }
 
 .integration-status.connected {
@@ -716,8 +732,16 @@
   width: 24px;
   height: 24px;
   text-align: center;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-variant-emoji: emoji;
+  position: relative;
+}
+
+.status-icon .loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #4a5568;
+  border-top: 2px solid #17acaf;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .status-text {
@@ -759,8 +783,6 @@
   width: 20px;
   height: 20px;
   text-align: center;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-variant-emoji: emoji;
 }
 
 .tab-name {
@@ -770,7 +792,7 @@
 }
 
 .tab-status-indicator {
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -778,8 +800,6 @@
   width: 20px;
   height: 20px;
   text-align: center;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-variant-emoji: emoji;
 }
 
 .btn-create-tab {
@@ -796,21 +816,4 @@
 
 .btn-create-tab:hover {
   background: #6b46c1;
-}
-
-/* Estilos para botões de ação */
-.btn-sync-primary {
-  background: #17acaf !important;
-}
-
-.btn-sync-primary:hover {
-  background: #2c5282 !important;
-}
-
-.btn-test {
-  background: #17acaf !important;
-}
-
-.btn-test:hover {
-  background: #2c5282 !important;
 }

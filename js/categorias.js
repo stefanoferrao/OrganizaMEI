@@ -114,20 +114,80 @@ document.addEventListener("DOMContentLoaded", function () {
     const card = document.getElementById(`cat-${tipo}-${cat}`);
     if (!card) return;
     const nomeSpan = card.querySelector('.cat-nome');
-    nomeSpan.innerHTML = `<input type='text' value='${cat}' id='edit-cat-input-${tipo}-${cat}' class='cat-edit-input'> <button onclick="confirmarEditarCategoria('${tipo}','${cat}')">Salvar</button> <button onclick="renderizarListaCategorias()">Cancelar</button>`;
+    nomeSpan.innerHTML = `
+      <div class="cat-edit-dialog">
+        <input type='text' value='${cat}' id='edit-cat-input-${tipo}-${cat}' class='cat-edit-input' placeholder='Nome da categoria...'>
+        <div class="cat-edit-actions">
+          <button class="cat-btn-save" onclick="confirmarEditarCategoria('${tipo}','${cat}')">Salvar</button>
+          <button class="cat-btn-cancel" onclick="renderizarListaCategorias()">Cancelar</button>
+        </div>
+      </div>
+    `;
+    // Focar no input e selecionar o texto
+    setTimeout(() => {
+      const input = document.getElementById(`edit-cat-input-${tipo}-${cat}`);
+      if (input) {
+        input.focus();
+        input.select();
+        // Adicionar eventos de teclado
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmarEditarCategoria(tipo, cat);
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            renderizarListaCategorias();
+          }
+        });
+      }
+    }, 100);
   }
 
   window.confirmarEditarCategoria = function (tipo, cat) {
     const input = document.getElementById(`edit-cat-input-${tipo}-${cat}`);
     const novoNome = input.value.trim();
-    if (!novoNome) return alert('Digite o nome da categoria.');
-    if (categorias[tipo][novoNome] && novoNome !== cat) return alert('Já existe uma categoria com esse nome!');
+    
+    if (!novoNome) {
+      // Feedback visual para campo vazio
+      input.style.borderColor = '#e53e3e';
+      input.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.3)';
+      input.placeholder = 'Nome é obrigatório!';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
+        input.placeholder = 'Nome da categoria...';
+      }, 2000);
+      return;
+    }
+    
+    if (categorias[tipo][novoNome] && novoNome !== cat) {
+      // Feedback visual para nome duplicado
+      input.style.borderColor = '#ecc94b';
+      input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+      input.placeholder = 'Nome já existe!';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
+        input.placeholder = 'Nome da categoria...';
+      }, 2000);
+      return;
+    }
+    
+    // Animação de sucesso
+    input.style.borderColor = '#38a169';
+    input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+    
     categorias[tipo][novoNome] = categorias[tipo][cat];
     delete categorias[tipo][cat];
     salvarCategorias();
     renderizarListaCategorias();
     atualizarCategorias();
     atualizarCategoriaSubcategoriaForm();
+    
+    // Notificação de sucesso (se Notyf estiver disponível)
+    if (typeof notyf !== 'undefined') {
+      notyf.success(`Categoria "${novoNome}" atualizada!`);
+    }
   }
 
   // Editar subcategoria
@@ -135,40 +195,142 @@ document.addEventListener("DOMContentLoaded", function () {
     const subItem = document.getElementById(`sub-${tipo}-${cat}-${sub}`);
     if (!subItem) return;
     const nomeSpan = subItem.querySelector('.cat-sub-nome');
-    nomeSpan.innerHTML = `<input type='text' value='${sub}' id='edit-sub-input-${tipo}-${cat}-${sub}' class='cat-edit-sub-input'> <button onclick="confirmarEditarSubcategoria('${tipo}','${cat}','${sub}')">Salvar</button> <button onclick="renderizarListaCategorias()">Cancelar</button>`;
+    nomeSpan.innerHTML = `
+      <div class="cat-edit-dialog">
+        <input type='text' value='${sub}' id='edit-sub-input-${tipo}-${cat}-${sub}' class='cat-edit-sub-input' placeholder='Nome da subcategoria...'>
+        <div class="cat-edit-actions">
+          <button class="cat-btn-save" onclick="confirmarEditarSubcategoria('${tipo}','${cat}','${sub}')">Salvar</button>
+          <button class="cat-btn-cancel" onclick="renderizarListaCategorias()">Cancelar</button>
+        </div>
+      </div>
+    `;
+    // Focar no input e selecionar o texto
+    setTimeout(() => {
+      const input = document.getElementById(`edit-sub-input-${tipo}-${cat}-${sub}`);
+      if (input) {
+        input.focus();
+        input.select();
+        // Adicionar eventos de teclado
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmarEditarSubcategoria(tipo, cat, sub);
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            renderizarListaCategorias();
+          }
+        });
+      }
+    }, 100);
   }
 
   window.confirmarEditarSubcategoria = function (tipo, cat, sub) {
     const input = document.getElementById(`edit-sub-input-${tipo}-${cat}-${sub}`);
     const novoNome = input.value.trim();
-    if (!novoNome) return alert('Digite o nome da subcategoria.');
-    if (categorias[tipo][cat].includes(novoNome) && novoNome !== sub) return alert('Já existe uma subcategoria com esse nome!');
+    
+    if (!novoNome) {
+      // Feedback visual para campo vazio
+      input.style.borderColor = '#e53e3e';
+      input.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.3)';
+      input.placeholder = 'Nome é obrigatório!';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
+        input.placeholder = 'Nome da subcategoria...';
+      }, 2000);
+      return;
+    }
+    
+    if (categorias[tipo][cat].includes(novoNome) && novoNome !== sub) {
+      // Feedback visual para nome duplicado
+      input.style.borderColor = '#ecc94b';
+      input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+      input.placeholder = 'Nome já existe!';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
+        input.placeholder = 'Nome da subcategoria...';
+      }, 2000);
+      return;
+    }
+    
+    // Animação de sucesso
+    input.style.borderColor = '#38a169';
+    input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+    
     const idx = categorias[tipo][cat].indexOf(sub);
     if (idx !== -1) categorias[tipo][cat][idx] = novoNome;
     salvarCategorias();
     renderizarListaCategorias();
     atualizarCategorias();
     atualizarCategoriaSubcategoriaForm();
+    
+    // Notificação de sucesso (se Notyf estiver disponível)
+    if (typeof notyf !== 'undefined') {
+      notyf.success(`Subcategoria "${novoNome}" atualizada!`);
+    }
   }
 
   window.removerCategoria = function (tipo, cat) {
-    if (confirm(`Remover categoria '${cat}'?`)) {
-      delete categorias[tipo][cat];
-      salvarCategorias();
-      renderizarListaCategorias();
-      atualizarCategorias();
-      atualizarCategoriaSubcategoriaForm();
-    }
+    Swal.fire({
+      title: 'Confirmar Exclusão',
+      text: `Deseja remover a categoria "${cat}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, remover',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#e53e3e',
+      cancelButtonColor: '#4a5568',
+      background: '#232b38',
+      color: '#e2e8f0'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        delete categorias[tipo][cat];
+        salvarCategorias();
+        renderizarListaCategorias();
+        atualizarCategorias();
+        atualizarCategoriaSubcategoriaForm();
+        Swal.fire({
+          title: 'Removida!',
+          text: `Categoria "${cat}" foi removida.`,
+          icon: 'success',
+          confirmButtonColor: '#38a169',
+          background: '#232b38',
+          color: '#e2e8f0'
+        });
+      }
+    });
   }
 
   window.removerSubcategoria = function (tipo, cat, sub) {
-    if (confirm(`Remover subcategoria '${sub}'?`)) {
-      categorias[tipo][cat] = categorias[tipo][cat].filter(s => s !== sub);
-      salvarCategorias();
-      renderizarListaCategorias();
-      atualizarCategorias();
-      atualizarCategoriaSubcategoriaForm();
-    }
+    Swal.fire({
+      title: 'Confirmar Exclusão',
+      text: `Deseja remover a subcategoria "${sub}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, remover',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#e53e3e',
+      cancelButtonColor: '#4a5568',
+      background: '#232b38',
+      color: '#e2e8f0'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        categorias[tipo][cat] = categorias[tipo][cat].filter(s => s !== sub);
+        salvarCategorias();
+        renderizarListaCategorias();
+        atualizarCategorias();
+        atualizarCategoriaSubcategoriaForm();
+        Swal.fire({
+          title: 'Removida!',
+          text: `Subcategoria "${sub}" foi removida.`,
+          icon: 'success',
+          confirmButtonColor: '#38a169',
+          background: '#232b38',
+          color: '#e2e8f0'
+        });
+      }
+    });
   }
 
   function atualizarCategoriaSubcategoriaForm() {

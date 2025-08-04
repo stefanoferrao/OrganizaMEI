@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="estoque-acoes">
           <button class="btn-remover" title="Remover" onclick="removerProduto(${index})">
-            <span class="icon-remover">&#128465;</span>
+            <span class="icon-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></span>
           </button>
           <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${index})">
-            <span class="icon-saida">&#8594;</span>
+            <span class="icon-saida"><i class="fas fa-arrow-right" style="color: #17acaf;"></i></span>
           </button>
         </div>
       `;
@@ -101,16 +101,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const produto = produtos[index];
     
     const result = await Swal.fire({
-      title: '🗑️ Excluir Produto',
+      title: 'Excluir Produto',
       html: `<div style="text-align: left; margin: 20px 0;">
                <p style="margin-bottom: 15px;"><strong>Produto:</strong> ${produto.nome}</p>
                <p style="margin-bottom: 15px;"><strong>Quantidade:</strong> ${produto.quantidade} unidades</p>
-               <p style="color: #ff6b6b; font-weight: bold;">⚠️ Esta ação é irreversível!</p>
+               <p style="color: #ff6b6b; font-weight: bold;"><i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i> Esta ação é irreversível!</p>
              </div>`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: '🗑️ Sim, excluir',
-      cancelButtonText: '❌ Cancelar',
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
       reverseButtons: true,
       customClass: {
         popup: 'swal-dark-popup',
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
       
       // Notificação de sucesso com SweetAlert2
       Swal.fire({
-        title: '✅ Produto Removido',
+        title: 'Produto Removido',
         text: `${produto.nome} foi removido do estoque com sucesso!`,
         icon: 'success',
         timer: 2000,
@@ -232,10 +232,10 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
               <div class="estoque-acoes">
                 <button class="btn-remover" title="Remover" onclick="removerProduto(${produtos.length - 1})">
-                  <span class="icon-remover">&#128465;</span>
+                  <span class="icon-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></span>
                 </button>
                 <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${produtos.length - 1})">
-                  <span class="icon-saida">&#8594;</span>
+                  <span class="icon-saida"><i class="fas fa-arrow-right" style="color: #17acaf;"></i></span>
                 </button>
               </div>
             `;

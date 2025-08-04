@@ -164,7 +164,7 @@ A planilha deve conter as seguintes colunas, nessa ordem:
       .replace(/\n/g, '<br>');
     
     Swal.fire({
-      title: '📖 Guia de Integração Google Sheets',
+      title: 'Guia de Integração Google Sheets',
       html: `<div class="readme-content">${htmlContent}</div>`,
       width: '80%',
       showCloseButton: true,
@@ -204,7 +204,7 @@ A planilha deve conter as seguintes colunas, nessa ordem:
       btnApagarTodos.className = 'config-btn';
       btnApagarTodos.style.background = '#e53e3e';
       btnApagarTodos.style.marginTop = '16px';
-      btnApagarTodos.textContent = 'Apagar TODOS os dados';
+      btnApagarTodos.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #fff;"></i> Apagar TODOS os dados';
       div.appendChild(btnApagarTodos);
     }
   }

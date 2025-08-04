@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const li = document.createElement('li');
       li.className = 'venda-item';
       li.innerHTML = `
-        <span class="venda-icon">🛒</span>
+        <span class="venda-icon"><i class="fas fa-shopping-cart" style="color: #17acaf;"></i></span>
         <div class="venda-main">
           <span class="venda-produto">${v.descricao || v.subcategoria || '-'}</span>
           <span class="venda-quantidade">${v.quantidade ? v.quantidade + ' un.' : ''}</span>
@@ -50,12 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="venda-valor">R$ ${v.valor.toFixed(2).replace('.', ',')}</span>
           <div class="venda-data-row">
             <span class="venda-data">${dataFormatada}</span>
-            <span class="icon-editar-data" title="Editar data">🗓️</span>
+            <span class="icon-editar-data" title="Editar data"><i class="fas fa-calendar-alt" style="color: #17acaf;"></i></span>
             <div class="date-popup">
               <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') ? v.data.split('/').reverse().join('-') : v.data || ''}" class="venda-data-input" />
               <div class="date-popup-actions">
-                <button class="btn-salvar-data" title="Salvar">✓</button>
-                <button class="btn-cancelar-data" title="Cancelar">✕</button>
+                <button class="btn-salvar-data" title="Salvar"><i class="fas fa-check" style="color: #38a169;"></i></button>
+                <button class="btn-cancelar-data" title="Cancelar"><i class="fas fa-times" style="color: #e53e3e;"></i></button>
               </div>
             </div>
           </div>

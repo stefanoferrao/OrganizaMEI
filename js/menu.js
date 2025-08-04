@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Criar botão do menu
     const menuToggle = document.createElement('button');
     menuToggle.className = 'menu-toggle';
-    menuToggle.innerHTML = '☰';
+    menuToggle.innerHTML = '<i class="fas fa-bars" style="color: #17acaf;"></i>';
     menuToggle.setAttribute('aria-label', 'Abrir menu');
     
     // Criar overlay
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openMenu() {
         aside.classList.add('open');
         overlay.classList.add('active');
-        menuToggle.innerHTML = '✕';
+        menuToggle.innerHTML = '<i class="fas fa-times" style="color: #17acaf;"></i>';
         menuToggle.setAttribute('aria-label', 'Fechar menu');
         // Prevenir scroll do body quando menu estiver aberto
         document.body.style.overflow = 'hidden';
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeMenu() {
         aside.classList.remove('open');
         overlay.classList.remove('active');
-        menuToggle.innerHTML = '☰';
+        menuToggle.innerHTML = '<i class="fas fa-bars" style="color: #17acaf;"></i>';
         menuToggle.setAttribute('aria-label', 'Abrir menu');
         // Restaurar scroll do body
         document.body.style.overflow = '';
