@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const saldo = totalReceitas - totalDespesas;
     
     let vendasMes = 0;
-    if (window.filtroMes && window.filtroAno) {
+    const filtroMes = window.filtroMes || localStorage.getItem("filtroMes");
+    const filtroAno = window.filtroAno || localStorage.getItem("filtroAno");
+    if (filtroMes && filtroAno) {
       vendasMes = lancamentos.filter(l => {
         if (l.tipo === "receita" && l.categoria === "Vendas" && l.data) {
           let d;
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             d = new Date(l.data);
           }
           if (!isNaN(d.getTime())) {
-            return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
+            return d.getMonth() + 1 === Number(filtroMes) && d.getFullYear() === Number(filtroAno);
           }
         }
         return false;
@@ -95,23 +97,29 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
   `;
   
-    // Animar cards um por vez
+    // Animação sequencial dos cards
+    const container = div.querySelector('.dashboard-container');
     const cards = div.querySelectorAll('.dashboard-card');
+    
+    // Adiciona classe de animação ao container
+    if (container) {
+      container.classList.add('animate');
+    }
+    
+    // Anima cards sequencialmente
     cards.forEach((card, index) => {
-      card.style.animation = `scaleIn 0.5s ease-out ${index * 0.1}s both`;
+      card.classList.add('animate');
+      setTimeout(() => {
+        card.style.animation = `scaleIn 0.5s ease-out forwards`;
+      }, index * 100);
     });
   }
 
   // Função para animar entrada do dashboard
   function animarEntradaDashboard() {
-    const dashboardSection = document.getElementById('dashboard');
-    if (dashboardSection && dashboardSection.classList.contains('active')) {
-      const resumoDiv = document.getElementById('dashboard-resumo');
-      if (resumoDiv) {
-        resumoDiv.style.animation = 'none';
-        resumoDiv.offsetHeight; // Trigger reflow
-        resumoDiv.style.animation = 'fadeInUp 0.8s ease-out forwards';
-      }
+    const resumoDiv = document.getElementById('dashboard-resumo');
+    if (resumoDiv) {
+      resumoDiv.classList.add('animate');
     }
   }
   

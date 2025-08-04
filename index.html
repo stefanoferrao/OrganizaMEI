@@ -2,17 +2,28 @@
 <html lang="pt-BR">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9STJF8HNCY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-9STJF8HNCY');
+    </script>
+    <!-- FIM do Google tag (gtag.js) -->
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OrganizaMEI</title>
-    
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="src/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="src/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="src/favicon/favicon-16x16.png">
     <link rel="manifest" href="src/favicon/site.webmanifest">
     <link rel="shortcut icon" href="src/favicon/favicon.ico">
-    
+
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#17acaf">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,7 +31,7 @@
     <meta name="apple-mobile-web-app-title" content="OrganizaMEI">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
+
     <!-- PWA Fullscreen Styles -->
     <style>
         @media all and (display-mode: fullscreen) {
@@ -28,30 +39,30 @@
                 padding-top: env(safe-area-inset-top);
                 padding-bottom: env(safe-area-inset-bottom);
             }
-            
+
             .menu-toggle {
                 top: calc(16px + env(safe-area-inset-top));
             }
-            
+
             aside {
                 padding-top: calc(16px + env(safe-area-inset-top));
             }
-            
+
             main {
                 padding-top: calc(24px + env(safe-area-inset-top));
             }
-            
+
             @media (max-width: 800px) {
                 main {
                     padding-top: calc(60px + env(safe-area-inset-top));
                 }
-                
+
                 aside {
                     padding-top: calc(60px + env(safe-area-inset-top));
                 }
             }
         }
-        
+
         @media all and (display-mode: standalone) {
             body {
                 padding-top: env(safe-area-inset-top);
@@ -59,42 +70,42 @@
             }
         }
     </style>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/menu.js"></script>
-    
+
     <!-- Estilos para efeitos de navegação -->
     <style>
         .tab-section {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        
+
         nav button {
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
+
         nav button.nav-active {
             background: #17acaf !important;
             color: #fff;
             box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
         }
-        
+
         nav button:hover {
             transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-        
+
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(0);
             animation: ripple-animation 0.6s linear;
             pointer-events: none;
         }
-        
+
         @keyframes ripple-animation {
             to {
                 transform: scale(4);
@@ -102,7 +113,7 @@
             }
         }
     </style>
-    
+
     <!-- CSS Modular -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pwa.css">
@@ -115,10 +126,10 @@
     <link rel="stylesheet" href="css/graficos.css">
     <link rel="stylesheet" href="css/configuracoes.css">
     <link rel="stylesheet" href="css/filtros.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-    
+
     <!-- JavaScript Modular -->
     <script defer src="js/utils.js"></script>
     <script defer src="js/filtros.js"></script>
@@ -293,7 +304,7 @@
                 <!-- Integração Google Sheets -->
                 <div class="sheets-integration">
                     <h3>🔗 Integração com Google Sheets</h3>
-                    
+
                     <!-- Status Geral -->
                     <div id="integration-status" class="integration-status">
                         <div class="status-icon">⚠️</div>
@@ -301,7 +312,7 @@
                             <strong>Status:</strong> <span id="status-message">Não configurado</span>
                         </div>
                     </div>
-                    
+
                     <!-- Configuração URL -->
                     <div class="sheets-config">
                         <label for="webAppUrl">URL do Web App:</label>
@@ -311,7 +322,7 @@
                             <button id="btn-clear-url" type="button">🗑️ Limpar</button>
                         </div>
                     </div>
-                    
+
                     <!-- Status das Abas -->
                     <div id="sheets-tabs-status" class="sheets-tabs-status" style="display: none;">
                         <div class="tab-status">
@@ -323,16 +334,17 @@
                             <span class="tab-icon">📦</span>
                             <span class="tab-name">Estoque</span>
                             <span id="estoque-status" class="tab-status-indicator">❌</span>
-                            <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar Aba</button>
+                            <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar
+                                Aba</button>
                         </div>
                     </div>
-                    
+
                     <!-- Ações de Sincronização -->
                     <div class="sheets-actions" style="display: none;">
                         <button id="btn-sync-all" type="button" class="btn-sync-primary">🔄 Ressincronizar Tudo</button>
                         <button id="btn-test-connection" type="button" class="btn-test">🔍 Testar Conexão</button>
                     </div>
-                    
+
                     <!-- Progresso -->
                     <div id="sync-progress" class="sync-progress" style="display: none;">
                         <div class="progress-bar">
@@ -350,56 +362,56 @@
         // Detectar modo PWA e ajustar interface
         function detectPWAMode() {
             const isPWA = window.matchMedia('(display-mode: fullscreen)').matches ||
-                         window.matchMedia('(display-mode: standalone)').matches ||
-                         window.navigator.standalone === true;
-            
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true;
+
             if (isPWA) {
                 document.body.classList.add('pwa-mode');
                 console.log('PWA Mode ativado - Interface otimizada para app nativo');
             }
         }
-        
+
         // Registrar Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 detectPWAMode();
                 navigator.serviceWorker.register('./js/sw.js')
-                    .then(function(registration) {
+                    .then(function (registration) {
                         console.log('SW registered: ', registration);
                     })
-                    .catch(function(registrationError) {
+                    .catch(function (registrationError) {
                         console.log('SW registration failed: ', registrationError);
                     });
             });
         } else {
             window.addEventListener('load', detectPWAMode);
         }
-        
+
         function changeTab(tabId) {
             // Adicionar efeito de transição suave
             const currentTab = document.querySelector('.tab-section.active');
             if (currentTab) {
                 currentTab.style.opacity = '0';
                 currentTab.style.transform = 'translateX(-20px)';
-                
+
                 setTimeout(() => {
                     document.querySelectorAll('.tab-section').forEach(tab => {
                         tab.classList.remove('active');
                         tab.style.opacity = '';
                         tab.style.transform = '';
                     });
-                    
+
                     const newTab = document.getElementById(tabId);
                     newTab.classList.add('active');
                     newTab.style.opacity = '0';
                     newTab.style.transform = 'translateX(20px)';
-                    
+
                     // Animar entrada da nova aba
                     setTimeout(() => {
                         newTab.style.transition = 'all 0.4s ease-out';
                         newTab.style.opacity = '1';
                         newTab.style.transform = 'translateX(0)';
-                        
+
                         // Remover estilos de transição após animação
                         setTimeout(() => {
                             newTab.style.transition = '';
@@ -412,17 +424,17 @@
                 });
                 document.getElementById(tabId).classList.add('active');
             }
-            
+
             localStorage.setItem('tabSelecionada', tabId);
-            
-            // Atualiza dashboard ao clicar na aba com efeitos visuais
+
+            // Atualiza dashboard ao clicar na aba com animações
             if (tabId === 'dashboard' && typeof renderizarDashboardResumo === 'function') {
                 setTimeout(() => {
                     renderizarDashboardResumo();
                     if (typeof animarEntradaDashboard === 'function') {
                         animarEntradaDashboard();
                     }
-                }, 250);
+                }, 100);
             }
             // Atualiza vendas ao clicar na aba
             if (tabId === 'vendas' && typeof renderizarVendas === 'function') {
@@ -434,7 +446,7 @@
                     // Limpa e recarrega elementos específicos
                     document.getElementById('resumo-financeiro').innerHTML = '';
                     document.getElementById('financeiro-lista').innerHTML = '';
-                    
+
                     // Chama as funções de renderização
                     if (typeof renderizarLancamentos === 'function') {
                         renderizarLancamentos();
@@ -442,7 +454,7 @@
                     if (typeof renderizarResumoFinanceiro === 'function') {
                         renderizarResumoFinanceiro();
                     }
-                    
+
                     // Verificar status de sincronização
                     verificarStatusSincronizacao();
                 }, 100);
@@ -465,22 +477,22 @@
                 }, 250);
             }
         }
-        
+
         // Adicionar efeito visual aos botões de navegação
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const navButtons = document.querySelectorAll('nav button');
             navButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     // Remover classe active de todos os botões
                     navButtons.forEach(btn => btn.classList.remove('nav-active'));
                     // Adicionar classe active ao botão clicado
                     this.classList.add('nav-active');
-                    
+
                     // Efeito de ripple
                     const ripple = document.createElement('span');
                     ripple.classList.add('ripple');
                     this.appendChild(ripple);
-                    
+
                     setTimeout(() => {
                         ripple.remove();
                     }, 600);
@@ -494,7 +506,7 @@
                 const savedTab = document.getElementById(tabSalva);
                 if (savedTab) {
                     savedTab.classList.add('active');
-                    
+
                     // Marcar botão de navegação correspondente como ativo
                     const navButtons = document.querySelectorAll('nav button');
                     navButtons.forEach(btn => {
@@ -506,7 +518,7 @@
             }
         });
     </script>
-    
+
 
 </body>
 
