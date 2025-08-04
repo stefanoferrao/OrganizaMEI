@@ -684,3 +684,133 @@
   width: 0%;
   transition: width 0.5s ease;
 }
+
+/* Estilos para status de integração */
+.integration-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  margin-bottom: 16px;
+}
+
+.integration-status.connected {
+  background: rgba(56, 161, 105, 0.1);
+  border-color: #38a169;
+}
+
+.integration-status.error {
+  background: rgba(229, 62, 62, 0.1);
+  border-color: #e53e3e;
+}
+
+.status-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+}
+
+.status-text {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.status-text strong {
+  color: #e2e8f0;
+}
+
+/* Estilos para status das abas */
+.sheets-tabs-status {
+  background: #2d3748;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #4a5568;
+}
+
+.tab-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #4a5568;
+}
+
+.tab-status:last-child {
+  border-bottom: none;
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+}
+
+.tab-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.tab-status-indicator {
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+}
+
+.btn-create-tab {
+  background: #805ad5;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s;
+}
+
+.btn-create-tab:hover {
+  background: #6b46c1;
+}
+
+/* Estilos para botões de ação */
+.btn-sync-primary {
+  background: #17acaf !important;
+}
+
+.btn-sync-primary:hover {
+  background: #2c5282 !important;
+}
+
+.btn-test {
+  background: #17acaf !important;
+}
+
+.btn-test:hover {
+  background: #2c5282 !important;
+}

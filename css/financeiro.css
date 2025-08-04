@@ -1,5 +1,22 @@
 /* Financeiro Styles */
 
+/* Resumo Financeiro */
+.resumo-financeiro {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #2d3748;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.resumo-financeiro strong {
+  color: #17acaf;
+  font-weight: 600;
+}
+
 /* Controles do Financeiro */
 .financeiro-controles {
   margin-bottom: 16px;
@@ -171,58 +188,75 @@
   margin-left: 12px;
 }
 
-/* Seletores de categoria do financeiro - discretos e elegantes */
-#tipo-lancamento,
-#categoria-lancamento,
-#subcategoria-lancamento {
+/* Estilos para o formulário financeiro integrado */
+#financeiro-form {
+  background: #2d3748;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #4a5568;
+  margin-bottom: 20px;
+}
+
+#financeiro-form input:not([type="radio"]) {
   background: #232b38;
   color: #e2e8f0;
-  border: 1px solid #4a5568;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  padding: 10px 12px;
   font-size: 0.95rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 14px;
-  padding-right: 28px;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-#tipo-lancamento:hover,
-#categoria-lancamento:hover,
-#subcategoria-lancamento:hover {
+/* Inputs dentro de form-row não precisam de margin-bottom */
+.form-row input:not([type="radio"]) {
+  margin-bottom: 0;
+}
+
+#financeiro-form input:not([type="radio"]):hover {
   border-color: #17acaf;
+  background-color: #374151;
 }
 
-#tipo-lancamento:focus,
-#categoria-lancamento:focus,
-#subcategoria-lancamento:focus {
+#financeiro-form input:not([type="radio"]):focus {
   outline: none;
   border-color: #38a169;
+  box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
 }
 
-#tipo-lancamento option,
-#categoria-lancamento option,
-#subcategoria-lancamento option {
-  background: #232b38;
-  color: #e2e8f0;
-  padding: 8px;
+#financeiro-form button[type="submit"] {
+  background: #38a169;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 8px;
 }
 
-/* Estilos para sincronização na tela financeiro */
-.sync-status-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 16px 0;
-  padding: 12px;
-  background: #2d3748;
-  border-radius: 8px;
+#financeiro-form button[type="submit"]:hover:not(:disabled) {
+  background: #2f855a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
 }
+
+#financeiro-form button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+#financeiro-form button[type="submit"]:disabled {
+  background: #4a5568;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+
 
 /* Estilos para integração unificada */
 .integration-status {
@@ -341,71 +375,7 @@
   background: #2d3748;
 }
 
-/* Indicador visual de sincronização */
-.sync-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: #2d3748;
-  border: 2px solid #4a5568;
-  transition: all 0.3s ease;
-}
 
-.sync-text {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #a0aec0;
-}
-
-.sync-indicator.sync-success {
-  background: rgba(56, 161, 105, 0.1);
-  border-color: #38a169;
-}
-
-.sync-indicator.sync-success .sync-text {
-  color: #38a169;
-}
-
-.sync-indicator.sync-error {
-  background: rgba(229, 62, 62, 0.1);
-  border-color: #e53e3e;
-}
-
-.sync-indicator.sync-error .sync-text {
-  color: #e53e3e;
-}
-
-.sync-indicator.sync-syncing {
-  background: rgba(236, 201, 75, 0.1);
-  border-color: #ecc94b;
-}
-
-.sync-indicator.sync-syncing .sync-text {
-  color: #ecc94b;
-}
-
-.sync-icon {
-  font-size: 1.2rem;
-  animation: none;
-}
-
-
-
-@keyframes spinSync {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.sync-indicator.sync-syncing .sync-icon {
-  animation: spinSync 1s linear infinite;
-}
 
 /* Aviso de importação */
 .aviso-importacao {
@@ -523,14 +493,7 @@
     align-self: stretch;
   }
 
-  .sync-status-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
 
-  .sync-indicator {
-    justify-content: center;
-  }
   
   .integration-status {
     flex-direction: column;
@@ -545,5 +508,22 @@
   .btn-test {
     width: 100%;
     margin: 4px 0;
+  }
+  
+  #financeiro-form {
+    padding: 12px;
+  }
+  
+  #financeiro-form input:not([type="radio"]) {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  
+  .form-row input:not([type="radio"]) {
+    margin-bottom: 8px;
+  }
+  
+  #financeiro-form button[type="submit"] {
+    padding: 12px 20px;
   }
 }

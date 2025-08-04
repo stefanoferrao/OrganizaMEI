@@ -10,13 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const isMobile = window.innerWidth <= 480;
     notificacao.style.cssText = `
       position: fixed;
-      ${isMobile ? 'top: 10px; left: 10px; right: 10px;' : 'top: 20px; right: 20px;'}
+      ${isMobile ? 'top: 70px; left: 10px; right: 10px;' : 'top: 80px; right: 20px;'}
       background: ${tipo === 'sucesso' ? '#2f855a' : '#e53e3e'};
       color: white;
       padding: 12px 20px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 10000;
+      z-index: 9998;
       font-weight: bold;
       transform: ${isMobile ? 'translateY(-100%)' : 'translateX(100%)'};
       transition: transform 0.3s ease;
@@ -144,6 +144,11 @@ document.addEventListener("DOMContentLoaded", function () {
   async function removerLancamento(index) {
     const lancamento = lancamentos[index];
     
+    if (!lancamento) {
+      console.error('Lançamento não encontrado no índice:', index);
+      return;
+    }
+    
     // Feedback visual imediato - marcar item como sendo removido
     const items = document.querySelectorAll('.lancamento-item');
     const itemParaRemover = items[index];
@@ -151,52 +156,62 @@ document.addEventListener("DOMContentLoaded", function () {
       itemParaRemover.classList.add('removendo');
     }
     
-    // Remover imediatamente da interface para melhor UX
-    lancamentos.splice(index, 1);
-    salvarLancamentos();
-    renderizarLancamentos();
+    // Primeiro tentar excluir do Google Sheets (se configurado)
+    let sucessoSheets = true;
+    const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
     
-    mostrarNotificacao('Lançamento removido com sucesso!');
-    
-    // Verificar sincronização com Google Sheets
-    if (lancamento.id && typeof excluirLancamentoSheets === 'function') {
+    if (webAppUrl && lancamento.id && typeof excluirLancamentoSheets === 'function') {
       try {
-        // Atualizar indicador para "sincronizando"
-        if (typeof updateSyncIndicator === 'function') {
-          updateSyncIndicator('syncing');
+        // Mostrar notificação de sincronização
+        if (typeof mostrarNotificacaoSync === 'function') {
+          // mostrarNotificacaoSync('Sincronizando exclusão...', 'info');
         }
         
-        const sucesso = await excluirLancamentoSheets(lancamento.id);
+        console.log('Tentando excluir do Google Sheets - ID:', lancamento.id);
+        sucessoSheets = await excluirLancamentoSheets(lancamento.id);
+        console.log('Resultado da exclusão no Google Sheets:', sucessoSheets);
         
-        if (sucesso) {
-          // Item deletado com sucesso do Google Sheets
-          if (typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('success');
+        if (sucessoSheets) {
+          if (typeof mostrarNotificacaoSync === 'function') {
+            mostrarNotificacaoSync('Item removido da planilha', 'success');
           }
         } else {
-          // Erro ao deletar do Google Sheets - mostrar aviso
-          if (typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('error');
+          console.warn('Falha ao excluir do Google Sheets, mas continuando com exclusão local');
+          if (typeof mostrarNotificacaoSync === 'function') {
+            mostrarNotificacaoSync('Erro ao sincronizar exclusão', 'warning');
           }
-          mostrarNotificacao('Erro ao sincronizar com planilha', 'erro');
-          mostrarAvisoImportacao();
         }
       } catch (error) {
         console.error('Erro ao excluir do Google Sheets:', error);
-        // Erro de conexão - mostrar aviso
-        if (typeof updateSyncIndicator === 'function') {
-          updateSyncIndicator('error');
+        sucessoSheets = false;
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync('Erro de conexão na exclusão', 'warning');
         }
-        mostrarNotificacao('Erro de conexão com planilha', 'erro');
+      }
+    }
+    
+    // Sempre remover localmente (independente do resultado do Google Sheets)
+    lancamentos.splice(index, 1);
+    salvarLancamentos();
+    renderizarLancamentos();
+    renderizarResumoFinanceiro();
+    
+    // Mostrar notificação de sucesso local
+    // mostrarNotificacao('Lançamento removido com sucesso!');
+    
+    // Atualizar outras interfaces se disponíveis
+    if (typeof renderizarDashboardResumo === 'function') {
+      renderizarDashboardResumo();
+    }
+    if (typeof atualizarFiltroMesAno === 'function') {
+      atualizarFiltroMesAno();
+    }
+    
+    // Se houve erro no Google Sheets, mostrar aviso (mas não bloquear a exclusão local)
+    if (webAppUrl && !sucessoSheets && lancamento.id) {
+      setTimeout(() => {
         mostrarAvisoImportacao();
-      }
-    } else {
-      // Item sem ID ou função não disponível - mostrar aviso
-      if (typeof updateSyncIndicator === 'function') {
-        updateSyncIndicator('error');
-      }
-      mostrarNotificacao('Item não sincronizado', 'erro');
-      mostrarAvisoImportacao();
+      }, 1000);
     }
   }
 
@@ -210,10 +225,10 @@ document.addEventListener("DOMContentLoaded", function () {
       avisoElement.id = 'aviso-importacao';
       avisoElement.className = 'aviso-importacao';
       
-      // Inserir após o sync-indicator
-      const syncContainer = document.querySelector('.sync-status-container');
-      if (syncContainer) {
-        syncContainer.appendChild(avisoElement);
+      // Inserir após o resumo financeiro
+      const resumoFinanceiro = document.getElementById('resumo-financeiro');
+      if (resumoFinanceiro) {
+        resumoFinanceiro.parentNode.insertBefore(avisoElement, resumoFinanceiro.nextSibling);
       }
     }
     
@@ -250,52 +265,79 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Categorias e subcategorias
+  // Categorias e subcategorias com nova interface
   function atualizarCategorias() {
-    const tipoInput = document.getElementById("tipo-lancamento");
+    const tipoInputs = document.querySelectorAll('input[name="tipo-lancamento"]');
     const categoriaInput = document.getElementById("categoria-lancamento");
     const subcategoriaInput = document.getElementById("subcategoria-lancamento");
-    if (!tipoInput || !categoriaInput || !subcategoriaInput) return;
     
-    categoriaInput.innerHTML = "";
-    subcategoriaInput.innerHTML = "";
-    const tipo = tipoInput.value;
-    const cats = categorias[tipo] || {};
+    if (!tipoInputs.length || !categoriaInput || !subcategoriaInput) return;
+    
+    // Obter tipo selecionado
+    const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked')?.value;
+    if (!tipoSelecionado) return;
+    
+    // Limpar e popular categorias
+    categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
+    subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+    
+    const cats = categorias[tipoSelecionado] || {};
     Object.keys(cats).forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
       opt.textContent = cat;
       categoriaInput.appendChild(opt);
     });
+    
+    // Adicionar classe de atualização para animação
+    const categoriaGroup = document.querySelector('.form-group-categoria');
+    if (categoriaGroup) {
+      categoriaGroup.classList.add('updated');
+      setTimeout(() => categoriaGroup.classList.remove('updated'), 300);
+    }
+    
+    // Resetar subcategoria
     atualizarSubcategorias();
   }
 
   function atualizarSubcategorias() {
-    const tipoInput = document.getElementById("tipo-lancamento");
+    const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked')?.value;
     const categoriaInput = document.getElementById("categoria-lancamento");
     const subcategoriaInput = document.getElementById("subcategoria-lancamento");
-    if (!tipoInput || !categoriaInput || !subcategoriaInput) return;
     
-    subcategoriaInput.innerHTML = "";
-    const tipo = tipoInput.value;
-    const cat = categoriaInput.value;
-    const subs = (categorias[tipo] && categorias[tipo][cat]) ? categorias[tipo][cat] : [];
+    if (!tipoSelecionado || !categoriaInput || !subcategoriaInput) return;
+    
+    subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+    
+    const categoria = categoriaInput.value;
+    if (!categoria) return;
+    
+    const subs = (categorias[tipoSelecionado] && categorias[tipoSelecionado][categoria]) ? categorias[tipoSelecionado][categoria] : [];
     subs.forEach(sub => {
       const opt = document.createElement("option");
       opt.value = sub;
       opt.textContent = sub;
       subcategoriaInput.appendChild(opt);
     });
+    
+    // Adicionar classe de atualização para animação
+    const subcategoriaGroup = document.querySelector('.form-group-subcategoria');
+    if (subcategoriaGroup) {
+      subcategoriaGroup.classList.add('updated');
+      setTimeout(() => subcategoriaGroup.classList.remove('updated'), 300);
+    }
   }
 
-  // Event listeners
-  const tipoLancamento = document.getElementById("tipo-lancamento");
+  // Event listeners para nova interface
+  const tipoInputs = document.querySelectorAll('input[name="tipo-lancamento"]');
   const categoriaLancamento = document.getElementById("categoria-lancamento");
   
-  if (tipoLancamento) {
-    tipoLancamento.addEventListener("change", atualizarCategorias);
-  }
+  // Listener para mudança de tipo (receita/despesa)
+  tipoInputs.forEach(input => {
+    input.addEventListener("change", atualizarCategorias);
+  });
   
+  // Listener para mudança de categoria
   if (categoriaLancamento) {
     categoriaLancamento.addEventListener("change", atualizarSubcategorias);
   }
@@ -305,7 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (financeiroForm) {
     financeiroForm.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const tipoInput = document.getElementById("tipo-lancamento");
+      const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked');
       const categoriaInput = document.getElementById("categoria-lancamento");
       const subcategoriaInput = document.getElementById("subcategoria-lancamento");
       const descInput = document.getElementById("descricao-lancamento");
@@ -314,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const dataInput = document.getElementById("data-lancamento");
       const submitBtn = financeiroForm.querySelector('button[type="submit"]');
       
-      const tipo = tipoInput.value;
+      const tipo = tipoSelecionado?.value;
       const categoria = categoriaInput.value;
       const subcategoria = subcategoriaInput.value;
       const descricao = descInput.value.trim();
@@ -322,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const valor = parseFloat(valorInput.value);
       const data = dataInput.value;
       
-      if ((tipo === "receita" || tipo === "despesa") && categoria && subcategoria && descricao && valor > 0 && data) {
+      if (tipo && categoria && subcategoria && descricao && valor > 0 && data) {
         // Feedback visual imediato - desabilitar botão e mostrar carregamento
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
@@ -344,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         
         // Feedback visual imediato - limpar campos
-        tipoInput.value = "receita";
+        document.getElementById('tipo-receita').checked = true;
         categoriaInput.value = "";
         subcategoriaInput.value = "";
         descInput.value = "";
@@ -396,16 +438,11 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Adicionar automaticamente ao Google Sheets
         if (typeof adicionarLancamentoSheets === 'function') {
-          if (typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('syncing');
-          }
-          
           const sucesso = await adicionarLancamentoSheets(novoLancamento);
-          if (sucesso && typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('success');
-          } else if (typeof updateSyncIndicator === 'function') {
-            updateSyncIndicator('error');
-            mostrarNotificacao('Erro ao sincronizar com planilha', 'erro');
+          if (sucesso && typeof mostrarNotificacaoSync === 'function') {
+            // mostrarNotificacaoSync('Lançamento sincronizado', 'success');
+          } else if (typeof mostrarNotificacaoSync === 'function') {
+            // mostrarNotificacaoSync('Erro ao sincronizar com planilha', 'error');
           }
         }
         
@@ -445,7 +482,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   
+  // Função para verificar status de sincronização
+  function verificarStatusSincronizacao() {
+    // Verificar se há URL configurada
+    const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
+    if (!webAppUrl) {
+      console.log('Google Sheets não configurado');
+      return;
+    }
+    
+    console.log('Google Sheets configurado');
+  }
+  
+  // Expor função globalmente
+  window.verificarStatusSincronizacao = verificarStatusSincronizacao;
+  
   // Inicializar
   atualizarCategorias();
   renderizarLancamentos();
+  verificarStatusSincronizacao();
 });

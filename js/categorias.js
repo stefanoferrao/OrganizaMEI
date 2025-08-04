@@ -187,16 +187,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function atualizarCategorias() {
-    // Atualizar selects do financeiro se existirem
-    const tipoInput = document.getElementById("tipo-lancamento");
+    // Atualizar selects do financeiro se existirem (nova interface)
+    const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked')?.value;
     const categoriaInput = document.getElementById("categoria-lancamento");
     const subcategoriaInput = document.getElementById("subcategoria-lancamento");
-    if (!tipoInput || !categoriaInput || !subcategoriaInput) return;
     
-    categoriaInput.innerHTML = "";
-    subcategoriaInput.innerHTML = "";
-    const tipo = tipoInput.value;
-    const cats = categorias[tipo] || {};
+    if (!tipoSelecionado || !categoriaInput || !subcategoriaInput) return;
+    
+    categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
+    subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+    
+    const cats = categorias[tipoSelecionado] || {};
     Object.keys(cats).forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
@@ -204,15 +205,17 @@ document.addEventListener("DOMContentLoaded", function () {
       categoriaInput.appendChild(opt);
     });
     
-    // Atualizar subcategorias
+    // Atualizar subcategorias se houver categoria selecionada
     const cat = categoriaInput.value;
-    const subs = (categorias[tipo] && categorias[tipo][cat]) ? categorias[tipo][cat] : [];
-    subs.forEach(sub => {
-      const opt = document.createElement("option");
-      opt.value = sub;
-      opt.textContent = sub;
-      subcategoriaInput.appendChild(opt);
-    });
+    if (cat) {
+      const subs = (categorias[tipoSelecionado] && categorias[tipoSelecionado][cat]) ? categorias[tipoSelecionado][cat] : [];
+      subs.forEach(sub => {
+        const opt = document.createElement("option");
+        opt.value = sub;
+        opt.textContent = sub;
+        subcategoriaInput.appendChild(opt);
+      });
+    }
   }
 
   // Cadastro de categoria

@@ -72,6 +72,7 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="js/menu.js"></script>
 
     <!-- Estilos para efeitos de navegação -->
@@ -126,9 +127,11 @@
     <link rel="stylesheet" href="css/graficos.css">
     <link rel="stylesheet" href="css/configuracoes.css">
     <link rel="stylesheet" href="css/filtros.css">
+    <link rel="stylesheet" href="css/form-categorias.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
 
     <!-- JavaScript Modular -->
     <script defer src="js/utils.js"></script>
@@ -224,24 +227,47 @@
 
             <div id="filtro-info" class="filtro-info"></div>
 
-            <div class="sync-status-container">
-                <div id="resumo-financeiro" class="resumo-financeiro"></div>
-                <div id="sync-indicator" class="sync-indicator">
-                    <div class="sync-icon">⚠️</div>
-                    <span class="sync-text">Verificando sincronização... Aguarde</span>
-                </div>
-            </div>
+            <div id="resumo-financeiro" class="resumo-financeiro"></div>
             <form id="financeiro-form">
-                <select id="tipo-lancamento">
-                    <option value="receita">Receita</option>
-                    <option value="despesa">Despesa</option>
-                </select>
-                <select id="categoria-lancamento"></select>
-                <select id="subcategoria-lancamento"></select>
+                <div class="form-group-tipo">
+                    <label for="tipo-lancamento">Tipo de Lançamento:</label>
+                    <div class="tipo-selector">
+                        <input type="radio" id="tipo-receita" name="tipo-lancamento" value="receita" checked>
+                        <label for="tipo-receita" class="tipo-label receita-label">
+                            <span class="tipo-icon">💰</span>
+                            <span class="tipo-text">Receita</span>
+                        </label>
+                        <input type="radio" id="tipo-despesa" name="tipo-lancamento" value="despesa">
+                        <label for="tipo-despesa" class="tipo-label despesa-label">
+                            <span class="tipo-icon">💸</span>
+                            <span class="tipo-text">Despesa</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group-categoria">
+                        <label for="categoria-lancamento">Categoria:</label>
+                        <select id="categoria-lancamento">
+                            <option value="">Selecione uma categoria...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-subcategoria">
+                        <label for="subcategoria-lancamento">Subcategoria:</label>
+                        <select id="subcategoria-lancamento">
+                            <option value="">Selecione uma subcategoria...</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <input id="descricao-lancamento" type="text" placeholder="Descrição" />
-                <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
-                <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
-                <input id="data-lancamento" type="date" />
+                
+                <div class="form-row">
+                    <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
+                    <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
+                    <input id="data-lancamento" type="date" />
+                </div>
                 <button type="submit">Adicionar</button>
             </form>
             <ul id="financeiro-lista"></ul>
@@ -358,6 +384,14 @@
         </section>
     </main>
 
+    <!-- Indicador Pequeno Sempre Ativo -->
+    <div id="mini-sync-indicator" class="mini-sync-indicator">
+        <div class="mini-sync-dot"></div>
+    </div>
+
+    <!-- Container para Notificações -->
+    <div id="notification-container" style="position: fixed; top: 50px; right: 20px; z-index: 9998;"></div>
+
     <script>
         // Detectar modo PWA e ajustar interface
         function detectPWAMode() {
@@ -456,7 +490,9 @@
                     }
 
                     // Verificar status de sincronização
-                    verificarStatusSincronizacao();
+                    if (typeof verificarStatusSincronizacaoGlobal === 'function') {
+                        verificarStatusSincronizacaoGlobal();
+                    }
                 }, 100);
             }
             // Atualiza status da integração ao clicar na aba de configurações
@@ -516,6 +552,13 @@
                     });
                 }
             }
+            
+            // Inicializar notificações
+            setTimeout(() => {
+                if (typeof inicializarNotificacoes === 'function') {
+                    inicializarNotificacoes();
+                }
+            }, 500);
         });
     </script>
 

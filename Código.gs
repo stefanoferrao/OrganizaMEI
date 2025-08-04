@@ -98,12 +98,12 @@ function insertFinanceiroData(data) {
     }
     
     // Verificar se já existe um lançamento com o mesmo ID
-    const identificador = data.id || gerarIdentificadorUnico();
+    const identificador = String(data.id || gerarIdentificadorUnico());
     
     // Verificar duplicatas
     const lastRow = sheet.getLastRow();
     if (lastRow > 1) {
-      const idsExistentes = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
+      const idsExistentes = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat().map(String);
       if (idsExistentes.includes(identificador)) {
         return ContentService
           .createTextOutput(JSON.stringify({success: false, message: 'Lançamento já existe (ID duplicado)'}))
@@ -129,9 +129,9 @@ function insertFinanceiroData(data) {
       }
     }
     
-    // Inserir dados financeiros
+    // Inserir dados financeiros (forçar ID como texto com ')
     sheet.appendRow([
-      identificador,
+      "'" + identificador, // Adicionar ' para forçar como texto
       data.tipo, 
       data.categoria, 
       data.subcategoria, 
@@ -194,7 +194,7 @@ function insertFinanceiroBatch(dataArray) {
         }
         
         rowsToInsert.push([
-          identificador,
+          "'" + identificador, // Adicionar ' para forçar como texto
           data.tipo,
           data.categoria,
           data.subcategoria,
@@ -234,12 +234,13 @@ function deleteFinanceiroData(id) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Encontrar linha com o ID
+    // Encontrar linha com o ID (comparar como string)
     const range = sheet.getRange(2, 1, lastRow - 1, 1);
     const values = range.getValues();
     
     for (let i = 0; i < values.length; i++) {
-      if (values[i][0] === id) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, ''); // Remover ' se existir
+      if (idPlanilha === String(id)) {
         sheet.deleteRow(i + 2); // +2 porque começamos na linha 2
         return ContentService
           .createTextOutput(JSON.stringify({success: true, message: 'Item excluído com sucesso'}))

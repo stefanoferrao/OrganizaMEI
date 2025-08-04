@@ -13,102 +13,6 @@ function gerarIdentificadorUnico() {
     return `${dia}${mes}${ano}${hora}${minuto}${segundo}`;
 }
 
-// Sistema de notificação global customizado
-function mostrarNotificacaoSync(message, type = 'info') {
-    const container = document.getElementById('notification-container');
-    if (!container) return;
-    
-    // Remover notificação existente
-    container.innerHTML = '';
-    
-    // Criar nova notificação
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        background: ${type === 'success' ? '#38a169' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ecc94b' : '#17acaf'} !important;
-        color: ${type === 'warning' ? '#1a202c' : 'white'} !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-        min-width: 120px !important;
-        text-align: center !important;
-        opacity: 0 !important;
-        transform: translateX(20px) !important;
-        transition: all 0.3s ease !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        white-space: nowrap !important;
-        font-family: Arial, sans-serif !important;
-    `;
-    
-    const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warning' ? '⚠' : 'ℹ';
-    notification.innerHTML = `<span style="font-weight: bold;">${icon}</span> ${message}`;
-    
-    container.appendChild(notification);
-    
-    // Mostrar com animação
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Remover após 2 segundos
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(20px)';
-        setTimeout(() => {
-            container.innerHTML = '';
-        }, 300);
-    }, 2000);
-}
-
-// Função de inicialização (compatibilidade)
-function inicializarNotificacoes() {
-    // Não precisa fazer nada, sistema já está pronto
-}
-
-// Atualizar indicador mini
-function updateMiniIndicator(type) {
-    const indicator = document.getElementById('mini-sync-indicator');
-    if (indicator) {
-        indicator.className = `mini-sync-indicator ${type}`;
-        
-        const dot = indicator.querySelector('.mini-sync-dot');
-        if (dot) {
-            if (type === 'syncing') {
-                dot.style.backgroundColor = '#17acaf';
-            } else if (type === 'success') {
-                dot.style.backgroundColor = '#38a169';
-            }
-        }
-    }
-}
-
-// Manter compatibilidade com código existente
-/* function updateSyncIndicator(type, message) {
-    const messages = {
-        'success': message || 'Dados sincronizados com sucesso',
-        'error': message || 'Erro na sincronização',
-        'syncing': message || 'Sincronizando dados...',
-        'not-configured': message || 'Google Sheets não configurado',
-        'checking': message || 'Verificando conexão...'
-    };
-    
-    const notificationTypes = {
-        'success': 'success',
-        'error': 'error', 
-        'syncing': 'info',
-        'not-configured': 'warning',
-        'checking': 'info'
-    };
-    
-    updateMiniIndicator(type);
-    mostrarNotificacaoSync(messages[type], notificationTypes[type]);
-}
-    */
-
 // Salvar URL do Web App no localStorage
 async function saveWebAppUrl() {
     const url = document.getElementById('webAppUrl').value.trim();
@@ -116,7 +20,9 @@ async function saveWebAppUrl() {
     const originalText = btn.textContent;
     
     if (!url) {
-        mostrarNotificacaoSync('Por favor, insira uma URL válida', 'error');
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Por favor, insira uma URL válida', 'erro');
+        }
         return;
     }
     
@@ -170,10 +76,13 @@ async function saveWebAppUrl() {
         btn.classList.add('success');
         progressContainer.remove();
         
-        mostrarNotificacaoSync('URL salva e dados sincronizados!', 'success');
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('URL salva e dados sincronizados!');
+        }
         
         // Atualizar status após salvar
         setTimeout(atualizarStatusIntegracao, 500);
+        setTimeout(verificarStatusSincronizacaoGlobal, 600);
         
         // Restaurar botão após 2 segundos
         setTimeout(() => {
@@ -192,7 +101,9 @@ async function saveWebAppUrl() {
         btn.classList.remove('loading');
         btn.classList.add('error');
         
-        mostrarNotificacaoSync('Erro ao salvar URL', 'error');
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Erro ao salvar URL', 'erro');
+        }
         
         // Restaurar botão após 2 segundos
         setTimeout(() => {
@@ -259,6 +170,48 @@ function updateSyncStatus(message, type) {
     }
 }
 
+// Atualizar indicador visual de sincronização global
+function updateSyncIndicator(type) {
+    const indicator = document.getElementById('global-sync-indicator');
+    const icon = indicator?.querySelector('.sync-icon');
+    const tooltip = indicator?.querySelector('.sync-tooltip');
+    
+    if (indicator && icon && tooltip) {
+        indicator.className = `global-sync-indicator sync-${type}`;
+        
+        switch(type) {
+            case 'success':
+                icon.innerHTML = '<i data-feather="check-circle" style="color: #38a169;"></i>';
+                tooltip.textContent = 'Sincronizado';
+                break;
+            case 'error':
+                icon.innerHTML = '<i data-feather="x-circle" style="color: #e53e3e;"></i>';
+                tooltip.textContent = 'Erro de sincronização';
+                break;
+            case 'syncing':
+                icon.innerHTML = '<i data-feather="refresh-cw" class="spin" style="color: #17acaf;"></i>';
+                tooltip.textContent = 'Sincronizando...';
+                break;
+            case 'not-configured':
+                icon.innerHTML = '<i data-feather="alert-triangle" style="color: #ecc94b;"></i>';
+                tooltip.textContent = 'Não configurado';
+                break;
+            case 'checking':
+                icon.innerHTML = '<i data-feather="loader" class="spin" style="color: #17acaf;"></i>';
+                tooltip.textContent = 'Verificando...';
+                break;
+            default:
+                icon.innerHTML = '<i data-feather="alert-triangle" style="color: #ecc94b;"></i>';
+                tooltip.textContent = 'Status desconhecido';
+        }
+        
+        // Renderizar ícones Feather
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+}
+
 // Mostrar barra de progresso
 function showProgress(message) {
     const progress = document.getElementById('sync-progress');
@@ -290,8 +243,6 @@ async function sincronizarFinanceiro() {
     try {
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
-        updateMiniIndicator('syncing');
-        mostrarNotificacaoSync('Sincronizando dados...', 'info');
         
         // Aguardar um pouco para mostrar o progresso
         await new Promise(resolve => setTimeout(resolve, 800));
@@ -303,7 +254,6 @@ async function sincronizarFinanceiro() {
         
         if (!resultRead.success) {
             updateSyncStatus('Erro ao ler planilha', 'error');
-            mostrarNotificacaoSync('Erro ao ler planilha', 'error');
             hideProgress();
             return;
         }
@@ -361,23 +311,20 @@ async function sincronizarFinanceiro() {
         await new Promise(resolve => setTimeout(resolve, 400));
         
         updateSyncStatus('Sincronizado', 'success');
-        updateMiniIndicator('success');
-        mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
+        updateSyncIndicator('success');
         hideProgress();
         
         // Aguardar 1500ms para compatibilidade com atualização dos dados
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
-        updateMiniIndicator('success');
         
         // Recarregar a página para garantir atualização completa
         window.location.reload();
         
     } catch (error) {
         updateSyncStatus('Erro na sincronização', 'error');
-        updateMiniIndicator('error');
-        mostrarNotificacaoSync('Erro na sincronização', 'error');
+        updateSyncIndicator('error');
         hideProgress();
     }
 }
@@ -424,16 +371,13 @@ async function excluirLancamentoSheets(id) {
     }
 
     try {
-        // Aguardar um pouco para garantir que a inclusão foi processada
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
                 action: 'delete',
-                id: String(id) // Garantir que o ID seja string
+                id: id
             })
         });
         
@@ -465,8 +409,10 @@ function clearWebAppUrl() {
         delete urlInput.dataset.realUrl;
     }
     atualizarStatusIntegracao();
-    updateMiniIndicator('not-configured');
-    mostrarNotificacaoSync('URL removida com sucesso', 'success');
+    updateSyncIndicator('not-configured');
+    if (typeof mostrarNotificacao === 'function') {
+        mostrarNotificacao('URL removida com sucesso', 'sucesso');
+    }
 }
 
 // Função para enviar todos os dados do OrganizaMEI para o Google Sheets
@@ -474,22 +420,25 @@ async function enviarTodosDados() {
     const url = getCurrentUrl();
     if (!url || url.includes('*')) {
         updateSyncStatus('Configure a URL do Web App primeiro!', 'error');
-        mostrarNotificacaoSync('Configure a URL do Google Sheets primeiro!', 'error');
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Configure a URL do Google Sheets primeiro!', 'erro');
+        }
         return;
     }
 
     try {
         showProgress('Preparando dados...');
         updateSyncStatus('Enviando dados...', 'syncing');
-        updateMiniIndicator('syncing');
-        mostrarNotificacaoSync('Enviando dados...', 'info');
+        updateSyncIndicator('syncing');
         
         const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
         
         if (lancamentos.length === 0) {
             updateSyncStatus('Nenhum dado para enviar', 'error');
             hideProgress();
-            mostrarNotificacaoSync('Nenhum lançamento para enviar', 'error');
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao('Nenhum lançamento para enviar', 'erro');
+            }
             return;
         }
         
@@ -500,6 +449,10 @@ async function enviarTodosDados() {
         }));
         
         showProgress(`Enviando ${lancamentosComID.length} registros...`);
+        
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao(`Enviando ${lancamentosComID.length} lançamentos...`);
+        }
         
         const response = await fetch(url, {
             method: 'POST',
@@ -518,21 +471,30 @@ async function enviarTodosDados() {
             localStorage.setItem('lancamentos', JSON.stringify(lancamentosComID));
             
             updateSyncStatus(`${result.inserted || lancamentosComID.length} registros enviados`, 'success');
-            updateMiniIndicator('success');
-            mostrarNotificacaoSync(`${result.inserted || lancamentosComID.length} registros enviados`, 'success');
+            updateSyncIndicator('success');
+            
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao(`${result.inserted || lancamentosComID.length} lançamentos enviados!`);
+            }
         } else {
             updateSyncStatus('Erro ao enviar dados', 'error');
-            updateMiniIndicator('error');
-            mostrarNotificacaoSync('Erro ao enviar dados', 'error');
+            updateSyncIndicator('error');
+            
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao('Erro ao enviar dados para planilha', 'erro');
+            }
         }
         
         hideProgress();
     } catch (error) {
         console.error('Erro ao enviar dados:', error);
         updateSyncStatus('Erro na conexão', 'error');
-        updateMiniIndicator('error');
-        mostrarNotificacaoSync('Erro na conexão', 'error');
+        updateSyncIndicator('error');
         hideProgress();
+        
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Erro de conexão com planilha', 'erro');
+        }
     }
 }
 
@@ -632,15 +594,19 @@ async function sincronizarTudo() {
         btn.textContent = 'Sincronizando...';
         
         showProgress('Iniciando sincronização completa...');
-        updateMiniIndicator('syncing');
-        mostrarNotificacaoSync('Iniciando sincronização completa...', 'info');
+        
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Iniciando sincronização completa...');
+        }
         
         // Sincronizar financeiro
         await sincronizarFinanceiro();
         
     } catch (error) {
         console.error('Erro na sincronização:', error);
-        mostrarNotificacaoSync('Erro na sincronização', 'error');
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Erro na sincronização', 'erro');
+        }
     } finally {
         btn.disabled = false;
         btn.textContent = originalText;
@@ -656,13 +622,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicionar IDs aos lançamentos existentes
     adicionarIDsLancamentosExistentes();
     
-    // Sistema de notificação já está pronto
-    
-    // Configurar clique no indicador mini
-    const miniIndicator = document.getElementById('mini-sync-indicator');
-    if (miniIndicator) {
-        miniIndicator.addEventListener('click', function() {
-            changeTab('configuracoes');
+    // Adicionar event listener ao indicador global
+    const globalIndicator = document.getElementById('global-sync-indicator');
+    if (globalIndicator) {
+        globalIndicator.addEventListener('click', function() {
+            const currentClass = this.className;
+            if (currentClass.includes('sync-not-configured') || currentClass.includes('sync-error')) {
+                changeTab('configuracoes');
+            }
         });
     }
     
@@ -699,14 +666,18 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const sucesso = await criarAbaEstoque();
                 if (sucesso) {
-                    mostrarNotificacaoSync('Aba Estoque criada com sucesso!', 'success');
+                    if (typeof mostrarNotificacao === 'function') {
+                        mostrarNotificacao('Aba Estoque criada com sucesso!');
+                    }
                     setTimeout(atualizarStatusIntegracao, 1000);
                 } else {
                     throw new Error('Falha na criação');
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                mostrarNotificacaoSync('Erro ao criar aba: ' + error.message, 'error');
+                if (typeof mostrarNotificacao === 'function') {
+                    mostrarNotificacao('Erro ao criar aba: ' + error.message, 'erro');
+                }
             } finally {
                 this.textContent = originalText;
                 this.disabled = false;
@@ -727,24 +698,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Status inicial
     setTimeout(atualizarStatusIntegracao, 500);
     
-    // Verificar status inicial
-    setTimeout(() => {
-        const url = localStorage.getItem('googleSheetsWebAppUrl');
-        if (!url) {
-            updateMiniIndicator('not-configured');
-            mostrarNotificacaoSync('Configure o Google Sheets para sincronização automática', 'warning');
-        } else {
-            updateMiniIndicator('success');
-        }
-    }, 2000);
+    // Verificar status global inicial
+    setTimeout(verificarStatusSincronizacaoGlobal, 100);
 });
 
 // Verificar status inicial de sincronização global
 function verificarStatusSincronizacaoGlobal() {
     const url = localStorage.getItem('googleSheetsWebAppUrl');
-    if (!url) {
-        // Não mostrar notificação automática aqui para evitar spam
-        console.log('Google Sheets não configurado');
+    if (url) {
+        updateSyncIndicator('success');
+    } else {
+        updateSyncIndicator('not-configured');
     }
 }
 
@@ -1008,9 +972,6 @@ async function atualizarStatusEstoque() {
 // Expor funções globalmente para uso em outros arquivos
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;
-window.mostrarNotificacaoSync = mostrarNotificacaoSync;
-window.inicializarNotificacoes = inicializarNotificacoes;
-window.updateMiniIndicator = updateMiniIndicator;
 window.updateSyncIndicator = updateSyncIndicator;
 window.verificarStatusSincronizacao = verificarStatusSincronizacaoGlobal;
 window.verificarStatusSincronizacaoGlobal = verificarStatusSincronizacaoGlobal;
