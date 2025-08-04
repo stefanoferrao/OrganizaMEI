@@ -132,7 +132,7 @@
 #categoria-lancamento:focus,
 #subcategoria-lancamento:focus {
   outline: none;
-  border-color: #38a169;
+  border-color: #17acaf22;
   box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
 }
 

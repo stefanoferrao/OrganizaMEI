@@ -217,17 +217,17 @@
 
 #financeiro-form input:not([type="radio"]):hover {
   border-color: #17acaf;
-  background-color: #374151;
+  background-color: #17acaf22;
 }
 
 #financeiro-form input:not([type="radio"]):focus {
   outline: none;
-  border-color: #38a169;
+  border-color: #17acaf22;
   box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
 }
 
 #financeiro-form button[type="submit"] {
-  background: #38a169;
+  background: #17acaf;
   color: white;
   border: none;
   border-radius: 4px;
@@ -239,7 +239,7 @@
 }
 
 #financeiro-form button[type="submit"]:hover:not(:disabled) {
-  background: #2f855a;
+  background: #17acaf22;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
 }

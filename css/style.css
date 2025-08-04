@@ -145,14 +145,14 @@ form input {
 }
 
 form button {
-  background: #38a169;
+  background: #17acaf;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
 }
 
 form button:hover {
-  background: #2f855a;
+  background: #17acaf22;
 }
 
 ul {

@@ -134,10 +134,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalDespesas = filtrados.filter(l => l.tipo === "despesa").reduce((acc, l) => acc + l.valor, 0);
     const saldo = totalReceitas - totalDespesas;
     
+    const receitasLabel = mostrarTodos ? "Receitas Totais:" : "Receitas:";
+    const despesasLabel = mostrarTodos ? "Despesas Totais:" : "Despesas:";
+    const saldoLabel = mostrarTodos ? "Saldo Total:" : "Saldo:";
+    
     div.innerHTML = `
-      <strong>Receitas:</strong> R$ ${totalReceitas.toFixed(2).replace('.', ',')}<br>
-      <strong>Despesas:</strong> R$ ${totalDespesas.toFixed(2).replace('.', ',')}<br>
-      <strong>Saldo:</strong> R$ ${saldo.toFixed(2).replace('.', ',')}
+      <strong>${receitasLabel}</strong> R$ ${totalReceitas.toFixed(2).replace('.', ',')}<br>
+      <strong>${despesasLabel}</strong> R$ ${totalDespesas.toFixed(2).replace('.', ',')}<br>
+      <strong>${saldoLabel}</strong> R$ ${saldo.toFixed(2).replace('.', ',')}
     `;
   }
 
@@ -173,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         if (sucessoSheets) {
           if (typeof mostrarNotificacaoSync === 'function') {
-            mostrarNotificacaoSync('Item removido da planilha', 'success');
+            mostrarNotificacaoSync('Item removido', 'success');
           }
         } else {
           console.warn('Falha ao excluir do Google Sheets, mas continuando com exclusão local');

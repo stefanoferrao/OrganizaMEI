@@ -700,8 +700,8 @@ document.addEventListener("DOMContentLoaded", function () {
           datasets: [{
             label: 'Receitas',
             data: receitasPorMes,
-            borderColor: '#38a169',
-            backgroundColor: 'rgba(56, 161, 105, 0.1)',
+            borderColor: '#17acaf',
+            backgroundColor: 'rgba(23, 172, 175, 0.1)',
             tension: 0.3,
             fill: false,
             pointBackgroundColor: '#3182ce',
@@ -711,7 +711,7 @@ document.addEventListener("DOMContentLoaded", function () {
               display: true,
               align: 'top',
               offset: 8,
-              color: '#38a169',
+              color: '#17acaf',
               font: {
                 size: 10,
                 weight: 'bold'
@@ -752,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
             title: { display: true, text: `Evolução Receitas vs Despesas - ${ano}`, color: "#e2e8f0", font: { size: 18 } },
             tooltip: {
               backgroundColor: "#232b38",
-              titleColor: "#38a169",
+              titleColor: "#17acaf",
               bodyColor: "#e2e8f0",
               borderColor: "#3182ce",
               borderWidth: 1,
@@ -841,7 +841,7 @@ document.addEventListener("DOMContentLoaded", function () {
             title: { display: true, text: `Top Categorias de Gastos - ${ano}`, color: "#e2e8f0", font: { size: 18 } },
             tooltip: {
               backgroundColor: "#232b38",
-              titleColor: "#38a169",
+              titleColor: "#17acaf",
               bodyColor: "#e2e8f0",
               borderColor: "#3182ce",
               borderWidth: 1,
@@ -1009,12 +1009,12 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
           label,
           data,
-          borderColor: chartType === "pie" ? "#232b38" : "#38a169",
-          backgroundColor: chartType === "pie" ? backgroundColors : "rgba(56, 161, 105, 0.18)",
+          borderColor: chartType === "pie" ? "#232b38" : "#17acaf",
+          backgroundColor: chartType === "pie" ? backgroundColors : "rgba(23, 172, 175, 0.18)",
           tension: 0.3,
           fill: false,
           pointBackgroundColor: "#3182ce",
-          pointBorderColor: "#38a169",
+          pointBorderColor: "#17acaf",
           pointRadius: 5,
           pointHoverRadius: 7
         }]
@@ -1026,7 +1026,7 @@ document.addEventListener("DOMContentLoaded", function () {
           title: { display: false },
           tooltip: {
             backgroundColor: "#232b38",
-            titleColor: "#38a169",
+            titleColor: "#17acaf",
             bodyColor: "#e2e8f0",
             borderColor: "#3182ce",
             borderWidth: 1,

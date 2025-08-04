@@ -87,7 +87,7 @@ function updateMiniIndicator(type) {
 }
 
 // Manter compatibilidade com código existente
-/* function updateSyncIndicator(type, message) {
+function updateSyncIndicator(type, message) {
     const messages = {
         'success': message || 'Dados sincronizados com sucesso',
         'error': message || 'Erro na sincronização',
@@ -107,7 +107,7 @@ function updateMiniIndicator(type) {
     updateMiniIndicator(type);
     mostrarNotificacaoSync(messages[type], notificationTypes[type]);
 }
-    */
+    
 
 // Salvar URL do Web App no localStorage
 async function saveWebAppUrl() {
