@@ -8,31 +8,23 @@ document.addEventListener("DOMContentLoaded", function () {
     notificacao.textContent = mensagem;
     
     const isMobile = window.innerWidth <= 480;
-    notificacao.style.cssText = `
-      position: fixed;
-      ${isMobile ? 'top: 70px; left: 10px; right: 10px;' : 'top: 80px; right: 20px;'}
-      background: ${tipo === 'sucesso' ? '#2f855a' : '#e53e3e'};
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 9998;
-      font-weight: bold;
-      transform: ${isMobile ? 'translateY(-100%)' : 'translateX(100%)'};
-      transition: transform 0.3s ease;
-      text-align: center;
-    `;
+    if (isMobile) {
+      notificacao.classList.add('mobile');
+    }
+    if (tipo === 'erro') {
+      notificacao.classList.add('erro');
+    }
     
     document.body.appendChild(notificacao);
     
     // Animar entrada
     setTimeout(() => {
-      notificacao.style.transform = isMobile ? 'translateY(0)' : 'translateX(0)';
+      notificacao.classList.add('show');
     }, 10);
     
     // Remover após 3 segundos
     setTimeout(() => {
-      notificacao.style.transform = isMobile ? 'translateY(-100%)' : 'translateX(100%)';
+      notificacao.classList.remove('show');
       setTimeout(() => {
         if (notificacao.parentNode) {
           notificacao.parentNode.removeChild(notificacao);
@@ -85,10 +77,17 @@ document.addEventListener("DOMContentLoaded", function () {
     
     filtrados.forEach((l) => {
       const item = document.createElement("li");
-      let tipoIcon = l.tipo === "receita" ? (l.categoria === "Vendas" ? '<i class="fas fa-shopping-cart" style="color: #fff;"></i>' : '<i class="fas fa-dollar-sign" style="color: #fff;"></i>') : '<i class="fas fa-credit-card" style="color: #fff;"></i>';
-      let tipoCor = l.tipo === "receita" ? (l.categoria === "Vendas" ? "#3182ce" : "#38a169") : "#e53e3e";
+      let tipoIcon = l.tipo === "receita" ? (l.categoria === "Vendas" ? '<i class="fas fa-shopping-cart"></i>' : '<i class="fas fa-dollar-sign"></i>') : '<i class="fas fa-credit-card"></i>';
       item.classList.add('lancamento-item');
-      item.style.background = tipoCor;
+      if (l.tipo === "receita") {
+        if (l.categoria === "Vendas") {
+          item.classList.add('receita-vendas');
+        } else {
+          item.classList.add('receita');
+        }
+      } else {
+        item.classList.add('despesa');
+      }
       item.innerHTML = `
         <span class="lancamento-info">
           <span class="lancamento-icon">${tipoIcon}</span>
@@ -102,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2).replace('.', ',')}">R$ ${l.valor.toFixed(2).replace('.', ',')}</span><br>
            <span class="lancamento-data">${l.data ? (typeof l.data === 'string' && l.data.includes('/') ? l.data : l.data.toLocaleDateString('pt-BR')) : ""}</span>
         </span>
-        <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
+        <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover"><i class="fas fa-trash"></i></button>
       `;
       lista.appendChild(item);
     });
@@ -407,10 +406,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (lista) {
           // Adicionar item temporário com animação
           const item = document.createElement("li");
-          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? '<i class="fas fa-shopping-cart" style="color: #fff;"></i>' : '<i class="fas fa-dollar-sign" style="color: #fff;"></i>') : '<i class="fas fa-credit-card" style="color: #fff;"></i>';
-          let tipoCor = tipo === "receita" ? (categoria === "Vendas" ? "#3182ce" : "#38a169") : "#e53e3e";
+          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? '<i class="fas fa-shopping-cart"></i>' : '<i class="fas fa-dollar-sign"></i>') : '<i class="fas fa-credit-card"></i>';
           item.classList.add('lancamento-item', 'novo', 'sucesso');
-          item.style.background = tipoCor;
+          if (tipo === "receita") {
+            if (categoria === "Vendas") {
+              item.classList.add('receita-vendas');
+            } else {
+              item.classList.add('receita');
+            }
+          } else {
+            item.classList.add('despesa');
+          }
           item.innerHTML = `
             <span class="lancamento-info">
               <span class="lancamento-icon">${tipoIcon}</span>
@@ -424,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="lancamento-valor" title="Valor unitário: R$ ${(valor / quantidade).toFixed(2).replace('.', ',')}">R$ ${valor.toFixed(2).replace('.', ',')}</span><br>
                <span class="lancamento-data">${dataFormatada}</span>
             </span>
-            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
+            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover"><i class="fas fa-trash"></i></button>
           `;
           lista.insertBefore(item, lista.firstChild);
           

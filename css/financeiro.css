@@ -101,6 +101,29 @@
   pointer-events: none;
 }
 
+/* Cores de fundo por tipo de lançamento */
+.lancamento-item.receita {
+  background: #38a169;
+}
+
+.lancamento-item.receita-vendas {
+  background: #3182ce;
+}
+
+.lancamento-item.despesa {
+  background: #CC0000;
+}
+
+/* Ícones dos lançamentos */
+.lancamento-item .lancamento-icon i {
+  color: #fff;
+}
+
+/* Botão de remover */
+.lancamento-btn-remover i {
+  color: #e53e3e;
+}
+
 /* Animação para novos itens */
 @keyframes slideInFinanceiro {
   from {
@@ -121,13 +144,45 @@
 .notificacao-financeiro {
   font-family: inherit;
   font-size: 0.9rem;
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: #2f855a;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9998;
+  font-weight: bold;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.notificacao-financeiro.erro {
+  background: #e53e3e;
+}
+
+.notificacao-financeiro.show {
+  transform: translateX(0);
+}
+
+.notificacao-financeiro.mobile {
+  top: 70px;
+  left: 10px;
+  right: 10px;
+  transform: translateY(-100%);
+}
+
+.notificacao-financeiro.mobile.show {
+  transform: translateY(0);
 }
 
 @media (max-width: 480px) {
   .notificacao-financeiro {
-    top: 10px;
-    right: 10px;
+    top: 70px;
     left: 10px;
+    right: 10px;
     transform: translateY(-100%);
   }
   
@@ -186,6 +241,11 @@
   cursor: pointer;
   margin-left: 12px;
   text-shadow: 1px 1px 2px rgb(0, 0, 0);
+}
+
+.lancamento-btn-remover:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
 }
 
 /* Estilos para o formulário financeiro integrado */
