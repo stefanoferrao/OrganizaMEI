@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>
             <strong>${l.categoria || "-"}</strong> / <em>${l.subcategoria || "-"}</em><br>
             <span class="lancamento-descricao">${l.descricao}</span>
-            ${l.quantidade && l.quantidade > 1 ? `<br><small>Qtd: ${l.quantidade}</small>` : ''}
+            ${l.quantidade && l.quantidade > 1 ? `<br><small>Qtd: ${l.quantidade} - R$ ${(l.valor / l.quantidade).toFixed(2).replace('.', ',')} cada</small>` : ''}
           </span>
         </span>
         <span class="lancamento-valor-container">
@@ -454,7 +454,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <span>
                 <strong>${categoria}</strong> / <em>${subcategoria}</em><br>
                 <span class="lancamento-descricao">${descricao}</span>
-                ${quantidade && quantidade > 1 ? `<br><small>Qtd: ${quantidade}</small>` : ''}
+                ${quantidade && quantidade > 1 ? `<br><small>Qtd: ${quantidade} - R$ ${(valor / quantidade).toFixed(2).replace('.', ',')} cada</small>` : ''}
               </span>
             </span>
             <span class="lancamento-valor-container">

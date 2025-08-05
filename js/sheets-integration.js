@@ -268,7 +268,6 @@ async function sincronizarFinanceiro() {
         await new Promise(resolve => setTimeout(resolve, 800));
         
         // Obter dados da planilha
-        console.log('Fazendo requisição para:', url + '?action=read');
         const responseRead = await fetch(url + '?action=read', { method: 'GET', mode: 'cors' });
         const resultRead = await responseRead.json();
         

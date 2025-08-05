@@ -46,11 +46,11 @@
 }
 
 #btn-apagar-todos {
-  background: #e53e3e !important;
+  background: #CC0000 !important;
 }
 
 #btn-apagar-todos:hover {
-  background: #c53030 !important;
+  background: #b70101 !important;
 }
 
 /* Estilos para integração com Google Sheets */

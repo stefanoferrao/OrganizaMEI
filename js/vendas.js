@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="venda-data">${dataFormatada}</span>
             <span class="icon-editar-data" title="Editar data"><i class="fas fa-calendar-alt" style="color: #17acaf;"></i></span>
             <div class="date-popup">
-              <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') ? v.data.split('/').reverse().join('-') : v.data || ''}" class="venda-data-input" />
+              <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') && v.data.split('/').length === 3 ? v.data.split('/').reverse().join('-') : ''}" class="venda-data-input" />
               <div class="date-popup-actions">
                 <button class="btn-salvar-data" title="Salvar"><i class="fas fa-check" style="color: #38a169;"></i></button>
                 <button class="btn-cancelar-data" title="Cancelar"><i class="fas fa-times" style="color: #e53e3e;"></i></button>
