@@ -138,11 +138,11 @@
 
 /* Botão Limpar URL com estilo diferenciado */
 #btn-clear-url {
-  background: #e53e3e;
+  background: #CC0000;
 }
 
 #btn-clear-url:hover {
-  background: #c53030;
+  background: #b70101;
 }
 
 #btn-clear-url:disabled {
