@@ -16,9 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
         html += `
           <div class="cat-card" id="cat-${tipo}-${cat}">
             <div class="cat-header">
-              <span class="cat-nome">${cat}</span>
-              <span class="cat-sub-count">${subs.length} subcategorias</span>
-              <div>
+              <div class="cat-info">
+                <div class="cat-nome">${cat}</div>
+                <div class="cat-sub-count">${subs.length} subcategorias</div>
+              </div>
+              <div class="cat-controls">
                 <button class="cat-btn-editar" title="Editar" onclick="editarCategoria('${tipo}','${cat}')"><i class="fas fa-edit" style="color: #17acaf;"></i></button>
                 <button class="cat-btn-remover" title="Remover" onclick="removerCategoria('${tipo}','${cat}')"><i class="fas fa-trash" style="color: #e53e3e;"></i></button>
               </div>

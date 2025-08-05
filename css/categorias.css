@@ -73,9 +73,21 @@
   gap: 12px;
 }
 
+.cat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cat-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
 @media (max-width: 480px) {
   .cat-header {
-    flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
   }
 
@@ -110,7 +122,9 @@
   box-shadow: 0 1px 4px #0002;
 }
 
-button .fas, button .far, button .fab {
+button .fas,
+button .far,
+button .fab {
   margin-right: 0px !important;
   background: none;
   border: none;
@@ -233,6 +247,7 @@ button .fas, button .far, button .fab {
     opacity: 0;
     transform: translateY(-10px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -412,8 +427,10 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
 
 /* Estilos para categorias */
 .cat-sub-count {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: #a0aec0;
+  font-style: italic;
+  opacity: 0.8;
 }
 
 .add-sub-div {
@@ -460,13 +477,14 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
 
 /* Touch targets para mobile */
 @media (max-width: 800px) {
+
   .cat-btn-remover,
   .cat-btn-editar,
   .cat-btn-remover-sub,
   .cat-btn-editar-sub {
-    min-height: 44px;
-    min-width: 44px;
-    padding: 8px 12px;
+    min-height: 25px;
+    min-width: 25px;
+    padding: 4px;
   }
 }
 
@@ -478,12 +496,12 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
     min-width: 250px;
     padding: 16px;
   }
-  
+
   .cat-edit-actions {
     justify-content: center;
     gap: 8px;
   }
-  
+
   .cat-btn-save,
   .cat-btn-cancel {
     min-width: 80px;
@@ -496,13 +514,13 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
     min-width: 200px;
     padding: 12px;
   }
-  
+
   input[id^="edit-cat-input-"],
   input[id^="edit-sub-input-"] {
     font-size: 0.9rem;
     padding: 8px 12px;
   }
-  
+
   .cat-btn-save,
   .cat-btn-cancel {
     font-size: 0.8rem;
@@ -513,6 +531,7 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
 
 /* Responsividade geral para formulários */
 @media (max-width: 480px) {
+
   input[id^="add-cat-"],
   input[id^="add-sub-"] {
     padding: 10px;
