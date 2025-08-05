@@ -516,6 +516,7 @@ button[onclick="adicionarCategoria('despesa')"]:hover {
   input[id^="add-cat-"],
   input[id^="add-sub-"] {
     padding: 10px;
+    width: 100%;
   }
 
   button[id^="btn-add-sub-"],
