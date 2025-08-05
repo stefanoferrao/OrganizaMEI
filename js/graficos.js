@@ -929,29 +929,29 @@ document.addEventListener("DOMContentLoaded", function () {
           <h3 class="kpi-title">Indicadores de Performance - ${ano}</h3>
           <div class="kpi-grid">
             <div class="kpi-card receitas">
-              <div class="kpi-icon">💰</div>
+              <div class="kpi-icon"><i class="fas fa-coins" style="color: #38a169;"></i></div>
               <div class="kpi-content">
                 <h4>Receitas Totais</h4>
                 <div class="kpi-value">${formatarMoedaBR(totalReceitas)}</div>
                 <div class="kpi-change ${crescimentoReceitas >= 0 ? 'positive' : 'negative'}">
-                  ${crescimentoReceitas >= 0 ? '↗' : '↘'} ${Math.abs(crescimentoReceitas).toFixed(1)}% vs ano anterior
+                  <i class="fas ${crescimentoReceitas >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(crescimentoReceitas).toFixed(1)}% vs ano anterior
                 </div>
               </div>
             </div>
             
             <div class="kpi-card despesas">
-              <div class="kpi-icon">💸</div>
+              <div class="kpi-icon"><i class="fas fa-credit-card" style="color: #e53e3e;"></i></div>
               <div class="kpi-content">
                 <h4>Despesas Totais</h4>
                 <div class="kpi-value">${formatarMoedaBR(totalDespesas)}</div>
                 <div class="kpi-change ${crescimentoDespesas <= 0 ? 'positive' : 'negative'}">
-                  ${crescimentoDespesas >= 0 ? '↗' : '↘'} ${Math.abs(crescimentoDespesas).toFixed(1)}% vs ano anterior
+                  <i class="fas ${crescimentoDespesas >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(crescimentoDespesas).toFixed(1)}% vs ano anterior
                 </div>
               </div>
             </div>
             
             <div class="kpi-card saldo">
-              <div class="kpi-icon">${saldo >= 0 ? '📈' : '📉'}</div>
+              <div class="kpi-icon"><i class="fas ${saldo >= 0 ? 'fa-chart-line' : 'fa-chart-area'}" style="color: ${saldo >= 0 ? '#3182ce' : '#e53e3e'};"></i></div>
               <div class="kpi-content">
                 <h4>Saldo</h4>
                 <div class="kpi-value ${saldo >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldo)}</div>
@@ -960,7 +960,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card margem">
-              <div class="kpi-icon">📊</div>
+              <div class="kpi-icon"><i class="fas fa-percentage" style="color: #805ad5;"></i></div>
               <div class="kpi-content">
                 <h4>Margem de Lucro</h4>
                 <div class="kpi-value ${margem >= 0 ? 'positive' : 'negative'}">${margem.toFixed(1)}%</div>
@@ -969,7 +969,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card vendas">
-              <div class="kpi-icon">🛒</div>
+              <div class="kpi-icon"><i class="fas fa-shopping-cart" style="color: #17acaf;"></i></div>
               <div class="kpi-content">
                 <h4>Vendas</h4>
                 <div class="kpi-value">${formatarMoedaBR(totalVendas)}</div>
@@ -978,7 +978,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card ticket">
-              <div class="kpi-icon">🎯</div>
+              <div class="kpi-icon"><i class="fas fa-bullseye" style="color: #d69e2e;"></i></div>
               <div class="kpi-content">
                 <h4>Ticket Médio</h4>
                 <div class="kpi-value">${formatarMoedaBR(ticketMedio)}</div>

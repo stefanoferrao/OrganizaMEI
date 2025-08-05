@@ -104,6 +104,35 @@ button:hover .fas,
   color: #ecc94b !important;
 }
 
+/* Ícones nos KPIs */
+.kpi-icon .fas {
+  font-size: 2.5rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.kpi-card:hover .kpi-icon .fas {
+  transform: scale(1.1);
+}
+
+.kpi-change .fas {
+  font-size: 0.9em;
+  margin-right: 4px;
+  transition: transform 0.2s ease;
+}
+
+/* Responsividade para ícones KPI */
+@media (max-width: 800px) {
+  .kpi-icon .fas {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-icon .fas {
+    font-size: 2.2rem;
+  }
+}
+
 /* Loading spinner customizado */
 .loading-spinner {
   display: inline-block;

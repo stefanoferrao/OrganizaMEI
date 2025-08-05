@@ -1,45 +1,7 @@
 // Estoque - Controle de Produtos
 document.addEventListener("DOMContentLoaded", function () {
   
-  // Função para mostrar notificações rápidas
-  function mostrarNotificacao(mensagem, tipo = 'sucesso') {
-    const notificacao = document.createElement('div');
-    notificacao.className = `notificacao-estoque ${tipo}`;
-    notificacao.textContent = mensagem;
-    
-    const isMobile = window.innerWidth <= 480;
-    notificacao.style.cssText = `
-      position: fixed;
-      ${isMobile ? 'top: 10px; left: 10px; right: 10px;' : 'top: 20px; right: 20px;'}
-      background: ${tipo === 'sucesso' ? '#2f855a' : '#e53e3e'};
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 10000;
-      font-weight: bold;
-      transform: ${isMobile ? 'translateY(-100%)' : 'translateX(100%)'};
-      transition: transform 0.3s ease;
-      text-align: center;
-    `;
-    
-    document.body.appendChild(notificacao);
-    
-    // Animar entrada
-    setTimeout(() => {
-      notificacao.style.transform = isMobile ? 'translateY(0)' : 'translateX(0)';
-    }, 10);
-    
-    // Remover após 3 segundos
-    setTimeout(() => {
-      notificacao.style.transform = isMobile ? 'translateY(-100%)' : 'translateX(100%)';
-      setTimeout(() => {
-        if (notificacao.parentNode) {
-          notificacao.parentNode.removeChild(notificacao);
-        }
-      }, 300);
-    }, 3000);
-  }
+
   
   function renderizarProdutos() {
     const lista = document.getElementById("estoque-lista");
@@ -58,10 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="estoque-acoes">
           <button class="btn-remover" title="Remover" onclick="removerProduto(${index})">
-            <span class="icon-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></span>
+            <span class="icon-remover"><i class="fas fa-trash"></i></span>
           </button>
           <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${index})">
-            <span class="icon-saida"><i class="fas fa-arrow-right" style="color: #17acaf;"></i></span>
+            <span class="icon-saida"><i class="fas fa-arrow-right"></i></span>
           </button>
         </div>
       `;
@@ -102,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
     
     const result = await Swal.fire({
       title: 'Excluir Produto',
-      html: `<div style="text-align: left; margin: 20px 0;">
-               <p style="margin-bottom: 15px;"><strong>Produto:</strong> ${produto.nome}</p>
-               <p style="margin-bottom: 15px;"><strong>Quantidade:</strong> ${produto.quantidade} unidades</p>
-               <p style="color: #ff6b6b; font-weight: bold;"><i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i> Esta ação é irreversível!</p>
+      html: `<div class="swal-content-container">
+               <p class="swal-info-item"><strong>Produto:</strong> ${produto.nome}</p>
+               <p class="swal-info-item"><strong>Quantidade:</strong> ${produto.quantidade} unidades</p>
+               <p class="swal-warning-text"><i class="fas fa-exclamation-triangle"></i> Esta ação é irreversível!</p>
              </div>`,
       icon: 'warning',
       showCancelButton: true,
@@ -232,10 +194,10 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
               <div class="estoque-acoes">
                 <button class="btn-remover" title="Remover" onclick="removerProduto(${produtos.length - 1})">
-                  <span class="icon-remover"><i class="fas fa-trash" style="color: #e53e3e;"></i></span>
+                  <span class="icon-remover"><i class="fas fa-trash"></i></span>
                 </button>
                 <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${produtos.length - 1})">
-                  <span class="icon-saida"><i class="fas fa-arrow-right" style="color: #17acaf;"></i></span>
+                  <span class="icon-saida"><i class="fas fa-arrow-right"></i></span>
                 </button>
               </div>
             `;
@@ -266,11 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
         salvarProdutos();
         atualizarSelectSaida();
         
-        if (idx >= 0) {
-          mostrarNotificacao(`Estoque atualizado: +${quantidade} ${nome}`);
-        } else {
-          mostrarNotificacao(`Produto adicionado: ${nome}`);
-        }
+
         
         if (typeof renderizarDashboardResumo === 'function') {
           renderizarDashboardResumo();
@@ -364,8 +322,7 @@ document.addEventListener("DOMContentLoaded", function () {
           renderizarVendas();
         }
         
-        // Adicionar automaticamente ao Google Sheets
-        mostrarNotificacao(`Saída registrada: ${qtd} ${produtos[idx].nome}`);
+
         
         if (typeof adicionarLancamentoSheets === 'function') {
           adicionarLancamentoSheets(novoLancamento).then(sucesso => {
@@ -381,7 +338,9 @@ document.addEventListener("DOMContentLoaded", function () {
           submitBtn.textContent = originalText;
         }, 1000);
       } else {
-        mostrarNotificacao('Preencha quantidade e valor válidos!', 'erro');
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync('Preencha quantidade e valor válidos!', 'error');
+        }
         
         // Reabilitar botão em caso de erro
         const submitBtn = saidaModalForm.querySelector('button[type="submit"]');

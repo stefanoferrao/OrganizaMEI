@@ -152,11 +152,28 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     
-    // Feedback visual imediato - marcar item como sendo removido
-    const items = document.querySelectorAll('.lancamento-item');
-    const itemParaRemover = items[index];
+    // Feedback visual IMEDIATO - encontrar e marcar o item correto
+    const lista = document.getElementById("financeiro-lista");
+    const items = lista ? lista.querySelectorAll('.lancamento-item') : [];
+    let itemParaRemover = null;
+    
+    // Encontrar o item correto baseado no índice original
+    items.forEach((item, i) => {
+      const btnRemover = item.querySelector('.lancamento-btn-remover');
+      if (btnRemover && btnRemover.getAttribute('onclick') === `removerLancamento(${index})`) {
+        itemParaRemover = item;
+      }
+    });
+    
+    // Aplicar feedback visual imediato
     if (itemParaRemover) {
       itemParaRemover.classList.add('removendo');
+      // Desabilitar o botão para evitar cliques duplos
+      const btnRemover = itemParaRemover.querySelector('.lancamento-btn-remover');
+      if (btnRemover) {
+        btnRemover.style.pointerEvents = 'none';
+        btnRemover.style.opacity = '0.5';
+      }
     }
     
     // Primeiro tentar excluir do Google Sheets (se configurado)
@@ -196,8 +213,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Sempre remover localmente (independente do resultado do Google Sheets)
     lancamentos.splice(index, 1);
     salvarLancamentos();
-    renderizarLancamentos();
-    renderizarResumoFinanceiro();
+    
+    // Animação de saída antes de re-renderizar
+    if (itemParaRemover) {
+      itemParaRemover.classList.remove('removendo');
+      itemParaRemover.classList.add('saindo');
+      
+      // Re-renderizar após a animação
+      setTimeout(() => {
+        renderizarLancamentos();
+        renderizarResumoFinanceiro();
+      }, 300);
+    } else {
+      // Fallback se não encontrou o item
+      renderizarLancamentos();
+      renderizarResumoFinanceiro();
+    }
     
     // Mostrar notificação de sucesso local
     // mostrarNotificacao('Lançamento removido com sucesso!');

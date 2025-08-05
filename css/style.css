@@ -103,6 +103,14 @@ nav button:hover {
   background: #4a5568;
 }
 
+nav button.nav-active i {
+  color: #000 !important;
+}
+
+nav button.nav-active {
+  color: #000 !important;
+}
+
 main {
   flex: 1;
   padding: 24px;

@@ -57,8 +57,8 @@ li.estoque-item:hover {
   background: #4a5568;
   border: none;
   color: #fff;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 8px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 1.1rem;
   transition: all 0.2s ease;
@@ -73,27 +73,36 @@ li.estoque-item:hover {
 }
 
 .btn-remover:hover {
-  background: #e53e3e;
+  background: #CC0000;
   color: #fff;
 }
 
 .btn-saida:hover {
-  background: #17acaf;
+  background: #17acaf22;
   color: #fff;
 }
 
 .icon-remover {
-  font-size: 1.2rem;
-  margin-right: 2px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
+}
+
+button .fas, button .far, button .fab {
+  margin-right: 0px;
 }
 
 .icon-remover .fas {
   font-size: 1.2rem;
+  margin-right: 0px;
 }
 
 .icon-saida {
   font-size: 1.2rem;
-  margin-right: 2px;
 }
 
 .icon-saida .fas {
@@ -177,7 +186,7 @@ li.estoque-item:hover {
 }
 
 .modal-confirm:hover {
-  background: #2f855a;
+  background: #17acaf22;
 }
 
 .modal-confirm:disabled {
@@ -236,7 +245,7 @@ li.estoque-item:hover {
 }
 
 .estoque-item.sucesso {
-  background: #2f855a !important;
+  background: #17acaf22 !important;
   transform: scale(1.02);
 }
 
@@ -358,4 +367,79 @@ li.estoque-item:hover {
     font-size: 1rem !important;
     min-height: 48px !important;
   }
+}
+/* Estilos removidos do JavaScript inline */
+.notificacao-estoque {
+  position: fixed;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.notificacao-estoque.sucesso {
+  background: #2f855a;
+}
+
+.notificacao-estoque.erro {
+  background: #e53e3e;
+}
+
+/* Desktop */
+@media (min-width: 481px) {
+  .notificacao-estoque {
+    top: 20px;
+    right: 20px;
+    transform: translateX(100%);
+  }
+  
+  .notificacao-estoque.show {
+    transform: translateX(0);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .notificacao-estoque {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    transform: translateY(-100%);
+  }
+  
+  .notificacao-estoque.show {
+    transform: translateY(0);
+  }
+}
+/* Estilos para ícones removidos do JavaScript inline */
+.icon-remover .fas {
+  color: #e53e3e;
+}
+
+.icon-saida .fas {
+  color: #17acaf;
+  margin-right: 0px;
+}
+
+/* Estilos para SweetAlert customizado */
+.swal-content-container {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.swal-info-item {
+  margin-bottom: 15px;
+}
+
+.swal-warning-text {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.swal-warning-text .fas {
+  color: #e53e3e;
 }
