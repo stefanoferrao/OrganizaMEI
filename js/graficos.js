@@ -15,6 +15,16 @@ document.addEventListener("DOMContentLoaded", function () {
       chartInstance.destroy();
     }
 
+    // Ocultar todos os containers especiais
+    const dreContainer = document.getElementById('dre-container');
+    const kpiContainer = document.getElementById('kpi-container');
+    if (dreContainer) dreContainer.style.display = 'none';
+    if (kpiContainer) kpiContainer.style.display = 'none';
+    
+    // Mostrar canvas por padrão
+    const canvas = document.getElementById("graficoDinamico");
+    if (canvas) canvas.style.display = 'block';
+
     let data = [], labels = [], label = '', chartType = "line", backgroundColors = [];
 
     if (tipo === "vendas") {
@@ -1466,13 +1476,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Mostrar canvas novamente para outros gráficos
-    const canvas = document.getElementById("graficoDinamico");
-    if (canvas) canvas.style.display = 'block';
-    const dreContainer = document.getElementById('dre-container');
-    if (dreContainer) dreContainer.style.display = 'none';
-    const kpiContainer = document.getElementById('kpi-container');
-    if (kpiContainer) kpiContainer.style.display = 'none';
+
 
     chartInstance = new Chart(ctx, {
       type: chartType,

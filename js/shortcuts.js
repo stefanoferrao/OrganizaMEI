@@ -30,6 +30,11 @@ class ShortcutSystem {
             'Escape': () => this.clearForm()
         };
         
+        this.graficosShortcuts = {
+            'ArrowUp': () => this.navigateGraficoOption(-1),
+            'ArrowDown': () => this.navigateGraficoOption(1)
+        };
+        
         this.form = null;
         this.fields = [];
         this.currentFieldIndex = 0;
@@ -98,6 +103,15 @@ class ShortcutSystem {
                 if (financeiroShortcut) {
                     e.preventDefault();
                     financeiroShortcut();
+                }
+            }
+            
+            // Atalhos dos gráficos (apenas na aba gráficos)
+            if (this.isGraficosTabActive()) {
+                const graficosShortcut = this.graficosShortcuts[e.key];
+                if (graficosShortcut) {
+                    e.preventDefault();
+                    graficosShortcut();
                 }
             }
         });
@@ -290,6 +304,38 @@ class ShortcutSystem {
     isFinanceiroTabActive() {
         const financeiroTab = document.getElementById('financeiro');
         return financeiroTab && financeiroTab.classList.contains('active');
+    }
+    
+    isGraficosTabActive() {
+        const graficosTab = document.getElementById('graficos');
+        return graficosTab && graficosTab.classList.contains('active');
+    }
+    
+    // Ações dos atalhos dos gráficos
+    navigateGraficoOption(direction) {
+        const tipoGrafico = document.getElementById('tipo-grafico');
+        if (!tipoGrafico) return;
+        
+        const currentIndex = tipoGrafico.selectedIndex;
+        const totalOptions = tipoGrafico.options.length;
+        
+        let newIndex;
+        if (direction === 1) { // Seta para baixo
+            newIndex = currentIndex < totalOptions - 1 ? currentIndex + 1 : 0;
+        } else { // Seta para cima
+            newIndex = currentIndex > 0 ? currentIndex - 1 : totalOptions - 1;
+        }
+        
+        tipoGrafico.selectedIndex = newIndex;
+        tipoGrafico.focus();
+        
+        // Disparar evento de mudança para atualizar o gráfico
+        const changeEvent = new Event('change', { bubbles: true });
+        tipoGrafico.dispatchEvent(changeEvent);
+        
+        // Mostrar notificação com o nome do gráfico selecionado
+        const selectedOption = tipoGrafico.options[newIndex];
+        this.showNotification(`Gráfico: ${selectedOption.text}`, 'field');
     }
 
     // Sistema de notificações

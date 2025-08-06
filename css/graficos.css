@@ -40,6 +40,18 @@ canvas#graficoDinamico {
   font-size: 1rem;
   font-weight: 500;
   min-width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grafico-container label i {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.grafico-container label:hover i {
+  transform: scale(1.1);
 }
 
 #tipo-grafico {
@@ -77,6 +89,54 @@ canvas#graficoDinamico {
   padding: 10px;
 }
 
+#tipo-grafico optgroup {
+  background: #2d3748;
+  color: #17acaf;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+#tipo-grafico optgroup option {
+  background: #232b38;
+  color: #e2e8f0;
+  font-weight: normal;
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+
+#tipo-grafico optgroup option:hover {
+  background: #17acaf;
+  color: #fff;
+}
+
+/* Estilos para títulos com ícones Font Awesome */
+.text-xl.font-semibold.mb-4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.text-xl.font-semibold.mb-4 i {
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.text-xl.font-semibold.mb-4:hover i {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+/* Animação sutil para os ícones dos títulos */
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.tab-section.active .text-xl.font-semibold.mb-4 i {
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
 @media (max-width: 800px) {
   .grafico-container {
     flex-direction: column;
@@ -86,11 +146,17 @@ canvas#graficoDinamico {
   
   .grafico-container label {
     margin-bottom: 4px;
+    justify-content: center;
   }
   
   #tipo-grafico {
     width: 100%;
     min-width: auto;
+  }
+  
+  .text-xl.font-semibold.mb-4 {
+    justify-content: center;
+    text-align: center;
   }
 }
 
