@@ -344,6 +344,19 @@
   box-shadow: none;
 }
 
+/* Navegação tipo planilha */
+#financeiro-form.navigation-active {
+  border-color: #17acaf;
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.2);
+}
+
+#financeiro-form input:focus,
+#financeiro-form select:focus {
+  border-color: #17acaf;
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.3);
+  outline: none;
+}
+
 
 
 /* Estilos para integração unificada */

@@ -64,7 +64,9 @@ function updateSyncIndicator(type, message) {
         'error': message || 'Erro na sincronização',
         'syncing': message || 'Sincronizando dados...',
         'not-configured': message || 'Google Sheets não configurado',
-        'checking': message || 'Verificando conexão...'
+        'checking': message || 'Verificando conexão...',
+        'connected-working': message || 'Conectado e funcionando',
+        'connected-pending': message || 'Conectado com pendências'
     };
     
     const notificationTypes = {
@@ -72,10 +74,19 @@ function updateSyncIndicator(type, message) {
         'error': 'error', 
         'syncing': 'info',
         'not-configured': 'warning',
-        'checking': 'info'
+        'checking': 'info',
+        'connected-working': 'success',
+        'connected-pending': 'warning'
     };
     
-    updateMiniIndicator(type);
+    // Mapear tipos antigos para novos
+    const typeMapping = {
+        'success': 'connected-working',
+        'syncing': 'checking'
+    };
+    
+    const mappedType = typeMapping[type] || type;
+    updateMiniIndicator(mappedType);
     mostrarNotificacaoSync(messages[type], notificationTypes[type]);
 }
     
@@ -234,10 +245,19 @@ function updateSyncStatus(message, type) {
 function showProgress(message) {
     const progress = document.getElementById('sync-progress');
     const text = progress?.querySelector('.progress-text');
+    const statusContainer = document.getElementById('integration-status');
+    const statusMessage = document.getElementById('status-message');
     
     if (progress && text) {
         progress.style.display = 'block';
         text.textContent = message;
+        
+        // Manter status "Verificando, aguarde" durante o progresso
+        if (statusContainer && statusMessage) {
+            statusContainer.className = 'integration-status checking';
+            statusMessage.textContent = 'Verificando, aguarde';
+            updateMiniIndicator('checking');
+        }
     }
 }
 
@@ -261,7 +281,7 @@ async function sincronizarFinanceiro() {
     try {
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
-        updateMiniIndicator('syncing');
+        updateMiniIndicator('checking');
         mostrarNotificacaoSync('Sincronizando dados...', 'info');
         
         // Aguardar um pouco para mostrar o progresso
@@ -331,7 +351,7 @@ async function sincronizarFinanceiro() {
         await new Promise(resolve => setTimeout(resolve, 400));
         
         updateSyncStatus('Sincronizado', 'success');
-        updateMiniIndicator('success');
+        updateMiniIndicator('connected-working');
         mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
         hideProgress();
         
@@ -339,7 +359,7 @@ async function sincronizarFinanceiro() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
-        updateMiniIndicator('success');
+        updateMiniIndicator('connected-working');
         
         // Recarregar a página para garantir atualização completa
         window.location.reload();
@@ -435,7 +455,7 @@ function clearWebAppUrl() {
         delete urlInput.dataset.realUrl;
     }
     atualizarStatusIntegracao();
-    updateMiniIndicator('error');
+    updateMiniIndicator('not-configured');
     mostrarNotificacaoSync('Url removida', 'error');
 }
 
@@ -451,7 +471,7 @@ async function enviarTodosDados() {
     try {
         showProgress('Preparando dados...');
         updateSyncStatus('Enviando dados...', 'syncing');
-        updateMiniIndicator('syncing');
+        updateMiniIndicator('checking');
         mostrarNotificacaoSync('Enviando dados...', 'info');
         
         const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
@@ -488,7 +508,7 @@ async function enviarTodosDados() {
             localStorage.setItem('lancamentos', JSON.stringify(lancamentosComID));
             
             updateSyncStatus(`${result.inserted || lancamentosComID.length} registros enviados`, 'success');
-            updateMiniIndicator('success');
+            updateMiniIndicator('connected-working');
             mostrarNotificacaoSync(`${result.inserted || lancamentosComID.length} registros enviados`, 'success');
         } else {
             updateSyncStatus('Erro ao enviar dados', 'error');
@@ -537,8 +557,8 @@ async function atualizarStatusIntegracao() {
     const url = localStorage.getItem('googleSheetsWebAppUrl');
     
     if (!url) {
-        // Não configurado
-        statusContainer.className = 'integration-status error';
+        // Status: Não configurado
+        statusContainer.className = 'integration-status not-configured';
         statusMessage.textContent = 'Não configurado';
         statusIcon.innerHTML = '<i class="fas fa-times"></i>';
         tabsStatus.style.display = 'none';
@@ -548,10 +568,11 @@ async function atualizarStatusIntegracao() {
     }
     
     try {
-        // Configurado - verificar conexão
-        statusContainer.className = 'integration-status';
-        statusMessage.textContent = 'Sincronizando';
+        // Status: Verificando, aguarde
+        statusContainer.className = 'integration-status checking';
+        statusMessage.textContent = 'Verificando, aguarde';
         statusIcon.innerHTML = '<div class="loading-spinner"></div>';
+        updateMiniIndicator('checking');
         
         // Testar conexão
         const response = await fetch(url, {
@@ -563,7 +584,6 @@ async function atualizarStatusIntegracao() {
         const result = await response.json();
         
         if (result.success) {
-            statusContainer.className = 'integration-status connected';
             tabsStatus.style.display = 'block';
             sheetsActions.style.display = 'block';
             
@@ -574,18 +594,20 @@ async function atualizarStatusIntegracao() {
                 estoqueStatus.innerHTML = '<i class="fas fa-check-circle"></i>';
                 btnCriarAba.style.display = 'none';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'true');
-                // Conectado sem pendências
+                // Status: Conectado e funcionando
+                statusContainer.className = 'integration-status connected-working';
                 statusMessage.textContent = 'Conectado e funcionando';
                 statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-                updateMiniIndicator('success');
+                updateMiniIndicator('connected-working');
             } else {
                 estoqueStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 btnCriarAba.style.display = 'inline-block';
                 localStorage.setItem('estoqueGoogleSheetsAtivo', 'false');
-                // Conectado com pendências
+                // Status: Conectado com pendências
+                statusContainer.className = 'integration-status connected-pending';
                 statusMessage.textContent = 'Conectado com pendências';
                 statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-                updateMiniIndicator('success');
+                updateMiniIndicator('connected-pending');
             }
             
             // Financeiro sempre ativo se conectado
@@ -707,6 +729,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Definir mini-sync-dot como azul ao carregar a página
+    updateMiniIndicator('page-load');
+    
     // Status inicial
     setTimeout(atualizarStatusIntegracao, 500);
     
@@ -716,10 +741,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (statusContainer) {
             if (statusContainer.classList.contains('error')) {
                 updateMiniIndicator('error');
-            } else if (statusContainer.classList.contains('connected')) {
-                updateMiniIndicator('success');
-            } else {
+            } else if (statusContainer.classList.contains('connected-working')) {
+                updateMiniIndicator('connected-working');
+            } else if (statusContainer.classList.contains('connected-pending')) {
+                updateMiniIndicator('connected-pending');
+            } else if (statusContainer.classList.contains('not-configured')) {
                 updateMiniIndicator('not-configured');
+            } else {
+                updateMiniIndicator('checking');
             }
         }
     }, 2000);

@@ -314,6 +314,31 @@
     text-align: center;
 }
 
+/* Novos estados para sincronização visual */
+.integration-status.checking {
+    background: #37b09f1a;
+    border: 1px solid #37b09f4d;
+    color: #17acaf;
+}
+
+.integration-status.connected-working {
+    background: #38a1691a;
+    border: 1px solid #38a1694d;
+    color: #17acaf;
+}
+
+.integration-status.not-configured {
+    background: #a138381a;
+    border: 1px solid #a138384d;
+    color: #e53e3e;
+}
+
+.integration-status.connected-pending {
+    background: #a19f381a;
+    border: 1px solid #a19f384d;
+    color: #17acaf;
+}
+
 /* URL carregada */
 .url-loaded {
     color: #38a169;

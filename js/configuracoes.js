@@ -204,7 +204,7 @@ A planilha deve conter as seguintes colunas, nessa ordem:
       btnApagarTodos.className = 'config-btn';
       btnApagarTodos.style.background = '#e53e3e';
       btnApagarTodos.style.marginTop = '16px';
-      btnApagarTodos.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #fff;"></i> Apagar TODOS os dados';
+      btnApagarTodos.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #fff; margin-right: 8px !important;"></i> Apagar TODOS os dados desse dispositivo';
       div.appendChild(btnApagarTodos);
     }
   }

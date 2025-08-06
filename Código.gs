@@ -325,7 +325,7 @@ function testarScript() {
     const nome = planilha.getName();
     
     return ContentService
-      .createTextOutput(JSON.stringify({success: true, message: 'Integração funcionando perfeitamente! Planilha: ' + nome}))
+      .createTextOutput(JSON.stringify({success: true, message: 'Integração funcionando perfeitamente!\nPlanilha: ' + nome}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService

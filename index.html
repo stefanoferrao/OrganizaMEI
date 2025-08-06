@@ -133,6 +133,7 @@
     <link rel="stylesheet" href="css/filtros.css">
     <link rel="stylesheet" href="css/form-categorias.css">
     <link rel="stylesheet" href="css/sheets-integration.css">
+    <link rel="stylesheet" href="css/shortcuts.css">
     <link rel="stylesheet" href="css/font-awesome-custom.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -140,6 +141,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
 
     <!-- JavaScript Modular -->
+    <script defer src="js/shortcuts.js"></script>
     <script defer src="js/utils.js"></script>
     <script defer src="js/filtros.js"></script>
     <script defer src="js/dashboard.js"></script>
@@ -150,6 +152,7 @@
     <script defer src="js/graficos.js"></script>
     <script defer src="js/configuracoes.js"></script>
     <script defer src="js/sheets-integration.js"></script>
+    <script defer src="js/financeiro-navigation.js"></script>
     <script defer src="js/tutorial.js"></script>
     <script defer src="js/main.js"></script>
 </head>
@@ -234,7 +237,7 @@
             <div id="filtro-info" class="filtro-info"></div>
 
             <div id="resumo-financeiro" class="resumo-financeiro"></div>
-            <form id="financeiro-form">
+            <form id="financeiro-form" tabindex="0">
                 <div class="form-group-tipo">
                     <label for="tipo-lancamento">Tipo de Lançamento:</label>
                     <div class="tipo-selector">
@@ -387,6 +390,53 @@
                             <div class="progress-fill"></div>
                         </div>
                         <span class="progress-text">Preparando...</span>
+                    </div>
+                </div>
+
+                <!-- Atalhos Globais -->
+                <div class="shortcuts-config">
+                    <div class="shortcuts-header" id="shortcuts-header">
+                        <h3><i class="fas fa-keyboard" style="color: #17acaf;"></i> Atalhos Globais</h3>
+                        <i class="fas fa-chevron-right shortcuts-arrow" id="shortcuts-arrow"></i>
+                    </div>
+                    
+                    <div class="shortcuts-content" id="shortcuts-content" style="display: none;">
+                        <div class="shortcuts-toggle-container">
+                            <label class="checkbox-atalhos">
+                                <input type="checkbox" id="atalhos-financeiro-enabled">
+                                <span class="checkmark"></span>
+                                Ativar atalhos de teclado globais (funcionam em qualquer tela)
+                            </label>
+                            
+                            <label class="checkbox-atalhos">
+                                <input type="checkbox" id="atalhos-feedback-enabled">
+                                <span class="checkmark"></span>
+                                Mostrar notificações de feedback visual
+                            </label>
+                        </div>
+                        
+                        <div id="shortcuts-info" class="shortcuts-info" style="display: none;">
+                            <div class="shortcuts-header-config">
+                                <p style="color: #e2e8f0; font-size: 0.9rem; margin-bottom: 12px;"><strong>Atalhos de Navegação (funcionam em qualquer tela):</strong></p>
+                                <div class="shortcuts-list-config">
+                                    <div class="shortcut-item-config"><kbd>F1</kbd> Dashboard</div>
+                                    <div class="shortcut-item-config"><kbd>F2</kbd> Estoque</div>
+                                    <div class="shortcut-item-config"><kbd>F3</kbd> Financeiro</div>
+                                    <div class="shortcut-item-config"><kbd>F4</kbd> Vendas</div>
+                                    <div class="shortcut-item-config"><kbd>F5</kbd> Atualizar página</div>
+                                    <div class="shortcut-item-config"><kbd>F6</kbd> Categorias</div>
+                                    <div class="shortcut-item-config"><kbd>F7</kbd> Gráficos</div>
+                                    <div class="shortcut-item-config"><kbd>F8</kbd> Configurações</div>
+                                </div>
+                                <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do Financeiro (apenas na aba Financeiro):</strong></p>
+                                <div class="shortcuts-list-config">
+                                    <div class="shortcut-item-config"><kbd>←</kbd> Selecionar Receita</div>
+                                    <div class="shortcut-item-config"><kbd>→</kbd> Selecionar Despesa</div>
+                                    <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento</div>
+                                    <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

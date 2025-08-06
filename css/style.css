@@ -429,6 +429,27 @@ body {
   animation: spin 1s linear infinite;
 }
 
+/* Novas classes para sincronização visual */
+.mini-sync-indicator.checking .mini-sync-dot {
+  background: #17acaf;
+}
+
+.mini-sync-indicator.connected-working .mini-sync-dot {
+  background: #38a169;
+}
+
+.mini-sync-indicator.not-configured .mini-sync-dot {
+  background: #e53e3e;
+}
+
+.mini-sync-indicator.connected-pending .mini-sync-dot {
+  background: #ecc94b;
+}
+
+.mini-sync-indicator.page-load .mini-sync-dot {
+  background: #17acaf;
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }

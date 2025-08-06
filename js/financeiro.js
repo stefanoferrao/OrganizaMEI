@@ -1,37 +1,7 @@
 // Financeiro - Receitas e Despesas
 document.addEventListener("DOMContentLoaded", function () {
   
-  // Função para mostrar notificações rápidas
-  function mostrarNotificacao(mensagem, tipo = 'sucesso') {
-    const notificacao = document.createElement('div');
-    notificacao.className = `notificacao-financeiro ${tipo}`;
-    notificacao.textContent = mensagem;
-    
-    const isMobile = window.innerWidth <= 480;
-    if (isMobile) {
-      notificacao.classList.add('mobile');
-    }
-    if (tipo === 'erro') {
-      notificacao.classList.add('erro');
-    }
-    
-    document.body.appendChild(notificacao);
-    
-    // Animar entrada
-    setTimeout(() => {
-      notificacao.classList.add('show');
-    }, 10);
-    
-    // Remover após 3 segundos
-    setTimeout(() => {
-      notificacao.classList.remove('show');
-      setTimeout(() => {
-        if (notificacao.parentNode) {
-          notificacao.parentNode.removeChild(notificacao);
-        }
-      }, 300);
-    }, 3000);
-  }
+
   
   function renderizarLancamentos() {
     const lista = document.getElementById("financeiro-lista");
@@ -475,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Mostrar notificação de sucesso
         const tipoTexto = tipo === 'receita' ? 'Receita' : 'Despesa';
-        mostrarNotificacao(`${tipoTexto} adicionada: ${descricao}`);
+        mostrarNotificacaoSync(`${tipoTexto} adicionada: ${descricao}`, 'success');
         
         // Adicionar automaticamente ao Google Sheets
         if (typeof adicionarLancamentoSheets === 'function') {
@@ -500,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
           submitBtn.textContent = originalText;
         }, 1000);
       } else {
-        mostrarNotificacao('Preencha todos os campos obrigatórios!', 'erro');
+        mostrarNotificacaoSync('Preencha todos os campos obrigatórios!', 'error');
       }
     });
   }
@@ -512,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.mostrarAvisoImportacao = mostrarAvisoImportacao;
   window.irParaConfiguracoes = irParaConfiguracoes;
   window.fecharAviso = fecharAviso;
-  window.mostrarNotificacao = mostrarNotificacao;
+
   
   // Event listener para o checkbox
   const mostrarTodosCheckbox = document.getElementById("mostrar-todos-registros");
