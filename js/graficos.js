@@ -11,6 +11,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const ctx = document.getElementById("graficoDinamico")?.getContext("2d");
     if (!ctx) return;
     
+    // Verificar se as variáveis globais estão disponíveis
+    if (typeof window.lancamentos === 'undefined' || typeof window.formatarMoedaBR === 'undefined') {
+      console.error('Variáveis globais não carregadas ainda');
+      setTimeout(() => renderizarGrafico(tipo), 100);
+      return;
+    }
+    
+    const lancamentos = window.lancamentos;
+    const formatarMoedaBR = window.formatarMoedaBR;
+    
     if (chartInstance) {
       chartInstance.destroy();
     }
@@ -882,7 +892,9 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       return;
       
-    } else if (tipo === "kpis-dashboard") {
+
+      
+    } else if (tipo === "kpis-operacionais") {
       const canvas = document.getElementById("graficoDinamico");
       canvas.style.display = 'none';
       
@@ -894,12 +906,15 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       const ano = window.filtroAno || new Date().getFullYear();
-      const mes = window.filtroMes || new Date().getMonth() + 1;
-      
-      let totalReceitas = 0, totalDespesas = 0, totalVendas = 0, ticketMedio = 0;
+      let totalReceitas = 0, totalDespesas = 0, totalVendas = 0;
+      let receitasPorCategoria = {}, despesasPorCategoria = {};
+      let diasComVendasSet = new Set(), transacoes = 0;
       let receitasAnoAnterior = 0, despesasAnoAnterior = 0;
-      let transacoes = 0;
+      let produtosMaisVendidos = {}, valoresVendas = [];
+      let top5Gastos = {}, totalItensVendidos = 0;
+      let primeiraData = null, diasVendasMensal = new Set();
       
+      // Calcular dados unificados
       lancamentos.forEach(l => {
         let d;
         if (typeof l.data === 'string' && l.data.includes('/')) {
@@ -909,15 +924,37 @@ document.addEventListener("DOMContentLoaded", function () {
           d = new Date(l.data);
         }
         
+        // Calcular primeira data de operação
+        if (!primeiraData || d < primeiraData) {
+          primeiraData = d;
+        }
+        
         if (d.getFullYear() === Number(ano)) {
           if (l.tipo === 'receita') {
             totalReceitas += l.valor;
+            receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
             if (l.categoria === 'Vendas') {
               totalVendas += l.valor;
               transacoes++;
+              valoresVendas.push(l.valor);
+              diasComVendasSet.add(l.data);
+              
+              // Contar dias de vendas no mês atual
+              const mesAtual = new Date().getMonth() + 1;
+              const anoAtual = new Date().getFullYear();
+              if (d.getMonth() + 1 === mesAtual && d.getFullYear() === anoAtual) {
+                diasVendasMensal.add(d.getDate());
+              }
+              
+              const produto = l.descricao || l.subcategoria || 'Produto';
+              const quantidade = l.quantidade || 1;
+              produtosMaisVendidos[produto] = (produtosMaisVendidos[produto] || 0) + quantidade;
+              totalItensVendidos += quantidade;
             }
           } else {
             totalDespesas += l.valor;
+            despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
+            top5Gastos[l.categoria] = (top5Gastos[l.categoria] || 0) + l.valor;
           }
         } else if (d.getFullYear() === Number(ano) - 1) {
           if (l.tipo === 'receita') {
@@ -928,48 +965,60 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
       
-      ticketMedio = transacoes > 0 ? totalVendas / transacoes : 0;
-      
-      // Cálculo do Valor Médio por Item (igual ao dashboard)
-      const vendasTotais = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas");
-      const totalItensVendidos = vendasTotais.reduce((acc, l) => acc + (l.quantidade || 1), 0);
-      const valorMedioPorItem = totalItensVendidos > 0 ? vendasTotais.reduce((acc, l) => acc + l.valor, 0) / totalItensVendidos : 0;
       const saldo = totalReceitas - totalDespesas;
+      const ticketMedio = transacoes > 0 ? totalVendas / transacoes : 0;
       const margem = totalReceitas > 0 ? ((saldo / totalReceitas) * 100) : 0;
       const crescimentoReceitas = receitasAnoAnterior > 0 ? (((totalReceitas - receitasAnoAnterior) / receitasAnoAnterior) * 100) : 0;
-      const crescimentoDespesas = despesasAnoAnterior > 0 ? (((totalDespesas - despesasAnoAnterior) / despesasAnoAnterior) * 100) : 0;
       
-      // Calcular produtos mais vendidos por quantidade de itens
-      const produtosMaisVendidos = {};
+      // Calcular valor médio por item
+      const valorMedioPorItem = totalItensVendidos > 0 ? totalVendas / totalItensVendidos : 0;
       
-      vendasTotais.forEach(l => {
-        if (l.data) {
-          let d;
-          if (typeof l.data === 'string' && l.data.includes('/')) {
-            const [dia, m, a] = l.data.split('/');
-            d = new Date(a, m - 1, dia);
-          } else {
-            d = new Date(l.data);
-          }
-          
-          if (d.getFullYear() === Number(ano)) {
-            const produto = l.descricao || l.subcategoria || 'Produto';
-            const quantidade = l.quantidade || 1;
-            
-            produtosMaisVendidos[produto] = (produtosMaisVendidos[produto] || 0) + quantidade;
-          }
-        }
+      // Calcular dias de operação
+      const hoje = new Date();
+      const diasOperacao = primeiraData ? Math.ceil((hoje - primeiraData) / (1000 * 60 * 60 * 24)) : 0;
+      
+      // Calcular reserva de emergência
+      const mediaDespesasMensal = totalDespesas / 12;
+      const reservaEmergencia = mediaDespesasMensal > 0 ? (saldo / mediaDespesasMensal) : 0;
+      
+      // Calcular concentração
+      const maiorReceita = Math.max(...Object.values(receitasPorCategoria));
+      const concentracaoReceitas = totalReceitas > 0 ? (maiorReceita / totalReceitas * 100) : 0;
+      
+      // Calcular variação do ticket
+      let somaQuadrados = 0;
+      valoresVendas.forEach(valor => {
+        somaQuadrados += Math.pow(valor - ticketMedio, 2);
       });
+      const variacao = valoresVendas.length > 1 ? Math.sqrt(somaQuadrados / (valoresVendas.length - 1)) : 0;
       
+      // Semáforo financeiro
+      let semaforoTexto = 'Situação Boa';
+      let semaforoIcon = 'fa-check-circle';
+      let semaforoCor = '#38a169';
+      
+      if (saldo < 0) {
+        semaforoTexto = 'Atenção Necessária';
+        semaforoIcon = 'fa-exclamation-circle';
+        semaforoCor = '#e53e3e';
+      } else if (saldo < totalDespesas * 0.1) {
+        semaforoTexto = 'Situação Alerta';
+        semaforoIcon = 'fa-exclamation-triangle';
+        semaforoCor = '#ecc94b';
+      }
+      
+      // Top produtos e gastos
       const topProdutos = Object.entries(produtosMaisVendidos)
         .sort(([,a], [,b]) => b - a)
-        .slice(0, 5);
+        .slice(0, 3);
       
-
+      const topGastos = Object.entries(top5Gastos)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 3);
       
       const html = `
         <div class="kpi-dashboard">
-          <h3 class="kpi-title">Indicadores de Performance - ${ano}</h3>
+          <h3 class="kpi-title">KPIs Operacionais - ${ano}</h3>
           <div class="kpi-grid">
             <div class="kpi-card receitas">
               <div class="kpi-icon"><i class="fas fa-coins" style="color: #38a169;"></i></div>
@@ -978,17 +1027,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="kpi-value">${formatarMoedaBR(totalReceitas)}</div>
                 <div class="kpi-change ${crescimentoReceitas >= 0 ? 'positive' : 'negative'}">
                   <i class="fas ${crescimentoReceitas >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(crescimentoReceitas).toFixed(1)}% vs ano anterior
-                </div>
-              </div>
-            </div>
-            
-            <div class="kpi-card despesas">
-              <div class="kpi-icon"><i class="fas fa-credit-card" style="color: #e53e3e;"></i></div>
-              <div class="kpi-content">
-                <h4>Despesas Totais</h4>
-                <div class="kpi-value">${formatarMoedaBR(totalDespesas)}</div>
-                <div class="kpi-change ${crescimentoDespesas <= 0 ? 'positive' : 'negative'}">
-                  <i class="fas ${crescimentoDespesas >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(crescimentoDespesas).toFixed(1)}% vs ano anterior
                 </div>
               </div>
             </div>
@@ -1011,21 +1049,57 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
             
-            <div class="kpi-card vendas">
-              <div class="kpi-icon"><i class="fas fa-shopping-cart" style="color: #17acaf;"></i></div>
-              <div class="kpi-content">
-                <h4>Vendas</h4>
-                <div class="kpi-value">${formatarMoedaBR(totalVendas)}</div>
-                <div class="kpi-subtitle">${transacoes} transações</div>
-              </div>
-            </div>
-            
             <div class="kpi-card ticket">
               <div class="kpi-icon"><i class="fas fa-bullseye" style="color: #d69e2e;"></i></div>
               <div class="kpi-content">
                 <h4>Ticket Médio</h4>
                 <div class="kpi-value">${formatarMoedaBR(ticketMedio)}</div>
-                <div class="kpi-subtitle">Por transação</div>
+                <div class="kpi-subtitle">${transacoes} transações</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card receitas">
+              <div class="kpi-icon"><i class="fas fa-chart-pie" style="color: #38a169;"></i></div>
+              <div class="kpi-content">
+                <h4>Concentração Receitas</h4>
+                <div class="kpi-value">${concentracaoReceitas.toFixed(1)}%</div>
+                <div class="kpi-subtitle">Maior categoria sobre total</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card margem">
+              <div class="kpi-icon"><i class="fas fa-shield-alt" style="color: #805ad5;"></i></div>
+              <div class="kpi-content">
+                <h4>Reserva Emergência</h4>
+                <div class="kpi-value ${reservaEmergencia >= 6 ? 'positive' : reservaEmergencia >= 3 ? '' : 'negative'}">${reservaEmergencia.toFixed(1)}</div>
+                <div class="kpi-subtitle">Meses de cobertura</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card vendas">
+              <div class="kpi-icon"><i class="fas fa-calendar-check" style="color: #17acaf;"></i></div>
+              <div class="kpi-content">
+                <h4>Frequência Vendas</h4>
+                <div class="kpi-value">${diasComVendasSet.size}</div>
+                <div class="kpi-subtitle">Dias com vendas no ano</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card vendas">
+              <div class="kpi-icon"><i class="fas fa-calendar-day" style="color: #17acaf;"></i></div>
+              <div class="kpi-content">
+                <h4>Frequência Vendas Mensal</h4>
+                <div class="kpi-value">${diasVendasMensal.size}</div>
+                <div class="kpi-subtitle">Dias com vendas no mês atual</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card ticket">
+              <div class="kpi-icon"><i class="fas fa-chart-bar" style="color: #d69e2e;"></i></div>
+              <div class="kpi-content">
+                <h4>Variação Ticket</h4>
+                <div class="kpi-value">±${formatarMoedaBR(variacao)}</div>
+                <div class="kpi-subtitle">Desvio padrão</div>
               </div>
             </div>
             
@@ -1038,9 +1112,27 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
             
+            <div class="kpi-card saldo">
+              <div class="kpi-icon"><i class="fas fa-calendar-alt" style="color: #3182ce;"></i></div>
+              <div class="kpi-content">
+                <h4>Dias de Operação</h4>
+                <div class="kpi-value">${diasOperacao}</div>
+                <div class="kpi-subtitle">Desde ${primeiraData ? primeiraData.toLocaleDateString('pt-BR') : 'N/A'}</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card ${semaforoCor === '#38a169' ? 'receitas' : semaforoCor === '#ecc94b' ? 'ticket' : 'despesas'}">
+              <div class="kpi-icon"><i class="fas ${semaforoIcon}" style="color: ${semaforoCor};"></i></div>
+              <div class="kpi-content">
+                <h4>Semáforo Financeiro</h4>
+                <div class="kpi-value" style="color: ${semaforoCor};">${semaforoTexto}</div>
+                <div class="kpi-subtitle">Status geral</div>
+              </div>
+            </div>
+            
             <div class="kpi-card produtos-chart">
               <div class="kpi-content-full">
-                <h4>Produtos Mais Vendidos</h4>
+                <h4>Top Produtos Vendidos</h4>
                 <div class="ranking-container">
                   ${topProdutos.length > 0 ? topProdutos.map(([produto, qtd], index) => {
                     const maxQtd = Math.max(...topProdutos.map(([,q]) => q));
@@ -1059,400 +1151,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      `;
-      
-      kpiContainer.style.display = 'block';
-      kpiContainer.innerHTML = html;
-      return;
-      
-    } else if (tipo === "kpis-operacionais") {
-      const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
-      
-      let kpiContainer = document.getElementById('kpi-container');
-      if (!kpiContainer) {
-        kpiContainer = document.createElement('div');
-        kpiContainer.id = 'kpi-container';
-        canvas.parentNode.appendChild(kpiContainer);
-      }
-      
-      const ano = window.filtroAno || new Date().getFullYear();
-      let totalReceitas = 0, totalDespesas = 0, diasComVendas = 0;
-      let receitasPorCategoria = {}, despesasPorCategoria = {};
-      let ultimosTresMeses = [];
-      
-      // Calcular dados
-      lancamentos.forEach(l => {
-        let d;
-        if (typeof l.data === 'string' && l.data.includes('/')) {
-          const [dia, m, a] = l.data.split('/');
-          d = new Date(a, m - 1, dia);
-        } else {
-          d = new Date(l.data);
-        }
-        
-        if (d.getFullYear() === Number(ano)) {
-          if (l.tipo === 'receita') {
-            totalReceitas += l.valor;
-            receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
-            if (l.categoria === 'Vendas') diasComVendas++;
-          } else {
-            totalDespesas += l.valor;
-            despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
-          }
-        }
-      });
-      
-      const saldoAtual = totalReceitas - totalDespesas;
-      const mediaDespesasMensal = totalDespesas / 12;
-      const diasCaixa = mediaDespesasMensal > 0 ? Math.floor(saldoAtual / (mediaDespesasMensal / 30)) : 0;
-      
-      const maiorReceita = Math.max(...Object.values(receitasPorCategoria));
-      const concentracaoReceitas = totalReceitas > 0 ? (maiorReceita / totalReceitas * 100) : 0;
-      
-      const maiorDespesa = Math.max(...Object.values(despesasPorCategoria));
-      const concentracaoDespesas = totalDespesas > 0 ? (maiorDespesa / totalDespesas * 100) : 0;
-      
-      const regularidadeVendas = Math.floor(diasComVendas / 12); // média por mês
-      
-      const html = `
-        <div class="kpi-dashboard">
-          <h3 class="kpi-title">Indicadores Operacionais - ${ano}</h3>
-          <div class="kpi-grid">
-            <div class="kpi-card saldo">
-              <div class="kpi-icon"><i class="fas fa-calendar-day" style="color: #3182ce;"></i></div>
-              <div class="kpi-content">
-                <h4>Dias de Caixa</h4>
-                <div class="kpi-value ${diasCaixa >= 30 ? 'positive' : diasCaixa >= 15 ? '' : 'negative'}">${diasCaixa}</div>
-                <div class="kpi-subtitle">Dias de operação com saldo atual</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card receitas">
-              <div class="kpi-icon"><i class="fas fa-chart-pie" style="color: #38a169;"></i></div>
-              <div class="kpi-content">
-                <h4>Concentração Receitas</h4>
-                <div class="kpi-value">${concentracaoReceitas.toFixed(1)}%</div>
-                <div class="kpi-subtitle">Maior categoria sobre total</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card despesas">
-              <div class="kpi-icon"><i class="fas fa-chart-pie" style="color: #e53e3e;"></i></div>
-              <div class="kpi-content">
-                <h4>Concentração Despesas</h4>
-                <div class="kpi-value">${concentracaoDespesas.toFixed(1)}%</div>
-                <div class="kpi-subtitle">Maior categoria sobre total</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card vendas">
-              <div class="kpi-icon"><i class="fas fa-clock" style="color: #17acaf;"></i></div>
-              <div class="kpi-content">
-                <h4>Regularidade Vendas</h4>
-                <div class="kpi-value">${regularidadeVendas}</div>
-                <div class="kpi-subtitle">Dias com vendas/mês</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      kpiContainer.style.display = 'block';
-      kpiContainer.innerHTML = html;
-      return;
-      
-    } else if (tipo === "kpis-controle") {
-      const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
-      
-      let kpiContainer = document.getElementById('kpi-container');
-      if (!kpiContainer) {
-        kpiContainer = document.createElement('div');
-        kpiContainer.id = 'kpi-container';
-        canvas.parentNode.appendChild(kpiContainer);
-      }
-      
-      const ano = window.filtroAno || new Date().getFullYear();
-      let totalReceitas = 0, totalDespesas = 0, totalVendas = 0;
-      let receitasPorCategoria = {}, despesasPorCategoria = {};
-      
-      lancamentos.forEach(l => {
-        let d;
-        if (typeof l.data === 'string' && l.data.includes('/')) {
-          const [dia, m, a] = l.data.split('/');
-          d = new Date(a, m - 1, dia);
-        } else {
-          d = new Date(l.data);
-        }
-        
-        if (d.getFullYear() === Number(ano)) {
-          if (l.tipo === 'receita') {
-            totalReceitas += l.valor;
-            receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
-            if (l.categoria === 'Vendas') totalVendas += l.valor;
-          } else {
-            totalDespesas += l.valor;
-            despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
-          }
-        }
-      });
-      
-      const saldoAtual = totalReceitas - totalDespesas;
-      const mediaDespesasMensal = totalDespesas / 12;
-      const reservaEmergencia = mediaDespesasMensal > 0 ? (saldoAtual / mediaDespesasMensal) : 0;
-      
-      // Calcular eficiência por categoria
-      let melhorEficiencia = 0;
-      let piorEficiencia = 0;
-      Object.keys(receitasPorCategoria).forEach(cat => {
-        if (despesasPorCategoria[cat]) {
-          const eficiencia = receitasPorCategoria[cat] / despesasPorCategoria[cat];
-          if (eficiencia > melhorEficiencia) melhorEficiencia = eficiencia;
-          if (piorEficiencia === 0 || eficiencia < piorEficiencia) piorEficiencia = eficiencia;
-        }
-      });
-      
-      const pontoEquilibrio = mediaDespesasMensal;
-      
-      const html = `
-        <div class="kpi-dashboard">
-          <h3 class="kpi-title">Indicadores de Controle - ${ano}</h3>
-          <div class="kpi-grid">
-            <div class="kpi-card margem">
-              <div class="kpi-icon"><i class="fas fa-shield-alt" style="color: #805ad5;"></i></div>
-              <div class="kpi-content">
-                <h4>Reserva Emergência</h4>
-                <div class="kpi-value ${reservaEmergencia >= 6 ? 'positive' : reservaEmergencia >= 3 ? '' : 'negative'}">${reservaEmergencia.toFixed(1)}</div>
-                <div class="kpi-subtitle">Meses de cobertura</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card saldo">
-              <div class="kpi-icon"><i class="fas fa-balance-scale" style="color: #3182ce;"></i></div>
-              <div class="kpi-content">
-                <h4>Ponto Equilíbrio</h4>
-                <div class="kpi-value">${formatarMoedaBR(pontoEquilibrio)}</div>
-                <div class="kpi-subtitle">Receita mínima mensal</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card receitas">
-              <div class="kpi-icon"><i class="fas fa-chart-line" style="color: #38a169;"></i></div>
-              <div class="kpi-content">
-                <h4>Melhor Eficiência</h4>
-                <div class="kpi-value">${melhorEficiencia.toFixed(2)}x</div>
-                <div class="kpi-subtitle">Receita/Despesa por categoria</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card despesas">
-              <div class="kpi-icon"><i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i></div>
-              <div class="kpi-content">
-                <h4>Pior Eficiência</h4>
-                <div class="kpi-value">${piorEficiencia.toFixed(2)}x</div>
-                <div class="kpi-subtitle">Categoria menos eficiente</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      kpiContainer.style.display = 'block';
-      kpiContainer.innerHTML = html;
-      return;
-      
-    } else if (tipo === "kpis-vendas") {
-      const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
-      
-      let kpiContainer = document.getElementById('kpi-container');
-      if (!kpiContainer) {
-        kpiContainer = document.createElement('div');
-        kpiContainer.id = 'kpi-container';
-        canvas.parentNode.appendChild(kpiContainer);
-      }
-      
-      const ano = window.filtroAno || new Date().getFullYear();
-      let totalVendas = 0, transacoes = 0;
-      let produtosMaisVendidos = {};
-      let valoresVendas = [];
-      let diasComVendas = new Set();
-      
-      lancamentos.forEach(l => {
-        let d;
-        if (typeof l.data === 'string' && l.data.includes('/')) {
-          const [dia, m, a] = l.data.split('/');
-          d = new Date(a, m - 1, dia);
-        } else {
-          d = new Date(l.data);
-        }
-        
-        if (d.getFullYear() === Number(ano) && l.tipo === 'receita' && l.categoria === 'Vendas') {
-          totalVendas += l.valor;
-          transacoes++;
-          valoresVendas.push(l.valor);
-          diasComVendas.add(l.data);
-          
-          // Extrair produto da descrição
-          const produto = l.descricao.split(' ')[0] || 'Produto';
-          const match = l.descricao.match(/(\d+)\s*unidade/i);
-          const quantidade = match ? parseInt(match[1]) : 1;
-          produtosMaisVendidos[produto] = (produtosMaisVendidos[produto] || 0) + quantidade;
-        }
-      });
-      
-      const ticketMedio = transacoes > 0 ? totalVendas / transacoes : 0;
-      
-      // Calcular variação do ticket
-      let somaQuadrados = 0;
-      valoresVendas.forEach(valor => {
-        somaQuadrados += Math.pow(valor - ticketMedio, 2);
-      });
-      const variacao = valoresVendas.length > 1 ? Math.sqrt(somaQuadrados / (valoresVendas.length - 1)) : 0;
-      
-      const frequenciaVendas = diasComVendas.size;
-      const receitaPorDiaUtil = frequenciaVendas > 0 ? totalVendas / frequenciaVendas : 0;
-      
-      // Top 3 produtos
-      const topProdutos = Object.entries(produtosMaisVendidos)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 3);
-      
-      const html = `
-        <div class="kpi-dashboard">
-          <h3 class="kpi-title">Indicadores de Vendas - ${ano}</h3>
-          <div class="kpi-grid">
-            
-            <div class="kpi-card ticket">
-              <div class="kpi-icon"><i class="fas fa-chart-bar" style="color: #d69e2e;"></i></div>
-              <div class="kpi-content">
-                <h4>Variação Ticket</h4>
-                <div class="kpi-value">±${formatarMoedaBR(variacao)}</div>
-                <div class="kpi-subtitle">Desvio padrão</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card vendas">
-              <div class="kpi-icon"><i class="fas fa-calendar-check" style="color: #17acaf;"></i></div>
-              <div class="kpi-content">
-                <h4>Frequência Vendas</h4>
-                <div class="kpi-value">${frequenciaVendas}</div>
-                <div class="kpi-subtitle">Dias com vendas no ano</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card receitas">
-              <div class="kpi-icon"><i class="fas fa-business-time" style="color: #38a169;"></i></div>
-              <div class="kpi-content">
-                <h4>Receita/Dia Útil</h4>
-                <div class="kpi-value">${formatarMoedaBR(receitaPorDiaUtil)}</div>
-                <div class="kpi-subtitle">Média por dia ativo</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      kpiContainer.style.display = 'block';
-      kpiContainer.innerHTML = html;
-      return;
-      
-    } else if (tipo === "kpis-visuais") {
-      const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
-      
-      let kpiContainer = document.getElementById('kpi-container');
-      if (!kpiContainer) {
-        kpiContainer = document.createElement('div');
-        kpiContainer.id = 'kpi-container';
-        canvas.parentNode.appendChild(kpiContainer);
-      }
-      
-      const ano = window.filtroAno || new Date().getFullYear();
-      let totalReceitas = 0, totalDespesas = 0;
-      let top5Gastos = {};
-      let ultimasQuatroSemanas = [0, 0, 0, 0];
-      
-      const hoje = new Date();
-      const quatroSemanasAtras = new Date(hoje.getTime() - (28 * 24 * 60 * 60 * 1000));
-      
-      lancamentos.forEach(l => {
-        let d;
-        if (typeof l.data === 'string' && l.data.includes('/')) {
-          const [dia, m, a] = l.data.split('/');
-          d = new Date(a, m - 1, dia);
-        } else {
-          d = new Date(l.data);
-        }
-        
-        if (d.getFullYear() === Number(ano)) {
-          if (l.tipo === 'receita') {
-            totalReceitas += l.valor;
-          } else {
-            totalDespesas += l.valor;
-            top5Gastos[l.categoria] = (top5Gastos[l.categoria] || 0) + l.valor;
-          }
-          
-          // Últimas 4 semanas
-          if (d >= quatroSemanasAtras) {
-            const semanaIndex = Math.floor((hoje - d) / (7 * 24 * 60 * 60 * 1000));
-            if (semanaIndex >= 0 && semanaIndex < 4) {
-              ultimasQuatroSemanas[3 - semanaIndex] += l.tipo === 'receita' ? l.valor : -l.valor;
-            }
-          }
-        }
-      });
-      
-      const saldo = totalReceitas - totalDespesas;
-      let semaforoFinanceiro = 'verde';
-      let semaforoTexto = 'Situação Boa';
-      let semaforoIcon = 'fa-check-circle';
-      let semaforoCor = '#38a169';
-      
-      if (saldo < 0) {
-        semaforoFinanceiro = 'vermelho';
-        semaforoTexto = 'Atenção Necessária';
-        semaforoIcon = 'fa-exclamation-circle';
-        semaforoCor = '#e53e3e';
-      } else if (saldo < totalDespesas * 0.1) {
-        semaforoFinanceiro = 'amarelo';
-        semaforoTexto = 'Situação Alerta';
-        semaforoIcon = 'fa-exclamation-triangle';
-        semaforoCor = '#ecc94b';
-      }
-      
-      const topGastos = Object.entries(top5Gastos)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5);
-      
-      const html = `
-        <div class="kpi-dashboard">
-          <h3 class="kpi-title">Dashboard Resumido - ${ano}</h3>
-          <div class="kpi-grid">
-            <div class="kpi-card ${semaforoFinanceiro === 'verde' ? 'receitas' : semaforoFinanceiro === 'amarelo' ? 'ticket' : 'despesas'}">
-              <div class="kpi-icon"><i class="fas ${semaforoIcon}" style="color: ${semaforoCor};"></i></div>
-              <div class="kpi-content">
-                <h4>Semáforo Financeiro</h4>
-                <div class="kpi-value" style="color: ${semaforoCor};">${semaforoTexto}</div>
-                <div class="kpi-subtitle">Saldo: ${formatarMoedaBR(saldo)}</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card saldo">
-              <div class="kpi-icon"><i class="fas fa-chart-line" style="color: #3182ce;"></i></div>
-              <div class="kpi-content">
-                <h4>Evolução 4 Semanas</h4>
-                <div class="kpi-value">${ultimasQuatroSemanas[3] >= 0 ? '+' : ''}${formatarMoedaBR(ultimasQuatroSemanas[3])}</div>
-                <div class="kpi-subtitle">Última semana</div>
-              </div>
-            </div>
             
             <div class="kpi-card produtos-chart">
               <div class="kpi-content-full">
-                <h4>Top 5 Maiores Gastos</h4>
+                <h4>Maiores Gastos</h4>
                 <div class="ranking-container">
                   ${topGastos.length > 0 ? topGastos.map(([categoria, valor], i) => `
                     <div class="ranking-item">
@@ -1474,9 +1176,8 @@ document.addEventListener("DOMContentLoaded", function () {
       kpiContainer.style.display = 'block';
       kpiContainer.innerHTML = html;
       return;
+      
     }
-
-
 
     chartInstance = new Chart(ctx, {
       type: chartType,
