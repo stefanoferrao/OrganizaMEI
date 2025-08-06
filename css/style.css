@@ -301,7 +301,7 @@ h2.text-xl.font-semibold.mb-4:hover i {
   h2.text-xl.font-semibold.mb-4 {
     justify-content: center;
     text-align: center;
-    font-size: 1.3rem;
+    font-size: 35px;
   }
   
   h2.text-xl.font-semibold.mb-4 i {
@@ -311,7 +311,7 @@ h2.text-xl.font-semibold.mb-4:hover i {
 
 @media (max-width: 480px) {
   h2.text-xl.font-semibold.mb-4 {
-    font-size: 1.2rem;
+    font-size: 30px;
     gap: 6px;
   }
   

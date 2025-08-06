@@ -212,6 +212,31 @@
   .notificacao-financeiro.show {
     transform: translateY(0);
   }
+
+  /* Reduzir fontes dos itens financeiros */
+  .lancamento-icon {
+    font-size: 1.2rem !important;
+  }
+
+  .lancamento-descricao {
+    font-size: 0.85rem !important;
+  }
+
+  .lancamento-valor {
+    font-size: 0.95rem !important;
+  }
+
+  .lancamento-data {
+    font-size: 0.8rem !important;
+  }
+
+  .lancamento-btn-remover {
+    font-size: 1rem !important;
+  }
+
+  .lancamento-valor-container {
+    min-width: 100px !important;
+  }
 }
 
 .lancamento-info {
