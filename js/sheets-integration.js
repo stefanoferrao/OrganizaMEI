@@ -324,6 +324,9 @@ async function sincronizarFinanceiro() {
             window.lancamentos.push(...lancamentosSincronizados);
         }
         
+        // Atualizar timestamp de modificação
+        atualizarTimestampModificacao();
+        
         // Sincronizar estoque se a aba existir
         showProgress('Sincronizando estoque...');
         await sincronizarEstoque();
@@ -398,6 +401,9 @@ async function adicionarLancamentoSheets(lancamento) {
         });
         
         const result = await response.json();
+        if (result.success) {
+            atualizarTimestampModificacao();
+        }
         return result.success;
     } catch (error) {
         console.error('Erro ao adicionar no Google Sheets:', error);
@@ -434,6 +440,9 @@ async function excluirLancamentoSheets(id) {
         
         const result = await response.json();
         console.log('Resultado da exclusão:', result);
+        if (result.success === true) {
+            atualizarTimestampModificacao();
+        }
         return result.success === true;
     } catch (error) {
         console.error('Erro ao excluir do Google Sheets:', error);
@@ -506,6 +515,7 @@ async function enviarTodosDados() {
         if (result.success) {
             // Atualizar localStorage com os IDs gerados
             localStorage.setItem('lancamentos', JSON.stringify(lancamentosComID));
+            atualizarTimestampModificacao();
             
             updateSyncStatus(`${result.inserted || lancamentosComID.length} registros enviados`, 'success');
             updateMiniIndicator('connected-working');
@@ -1020,6 +1030,84 @@ async function atualizarStatusEstoque() {
     }
 }
 
+// Função para gerar hash dos dados locais
+function gerarHashDadosLocais() {
+    const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+    const produtos = JSON.parse(localStorage.getItem('produtos') || '[]');
+    
+    // Criar hash mais detalhado para melhor comparação
+    const dadosCombinados = {
+        totalLancamentos: lancamentos.length,
+        totalProdutos: produtos.length,
+        ultimoLancamento: lancamentos.length > 0 ? lancamentos[lancamentos.length - 1].id : null
+    };
+    
+    return btoa(JSON.stringify(dadosCombinados));
+}
+
+// Função para atualizar timestamp de modificação
+function atualizarTimestampModificacao() {
+    localStorage.setItem('ultimaModificacao', Date.now().toString());
+}
+
+// Função para verificar sincronização automática
+async function verificarSincronizacaoAutomatica() {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        updateMiniIndicator('not-configured');
+        return true; // Considera sincronizado se não há configuração
+    }
+    
+    try {
+        updateMiniIndicator('checking');
+        
+        const hashLocal = gerarHashDadosLocais();
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ 
+                action: 'verificarSincronizacao',
+                hashLocal: hashLocal
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            if (result.sincronizado) {
+                updateMiniIndicator('connected-working');
+                return true; // Está sincronizado
+            } else {
+                updateMiniIndicator('connected-pending');
+                return false; // Precisa sincronizar
+            }
+        } else {
+            updateMiniIndicator('error');
+            return true; // Em caso de erro, não tenta sincronizar
+        }
+    } catch (error) {
+        updateMiniIndicator('error');
+        return true; // Em caso de erro, não tenta sincronizar
+    }
+}
+
+// Verificação periódica a cada 20 minutos
+let intervalVerificacao = null;
+
+function iniciarVerificacaoAutomatica() {
+    if (intervalVerificacao) clearInterval(intervalVerificacao);
+    
+    intervalVerificacao = setInterval(async () => {
+        const estaSincronizado = await verificarSincronizacaoAutomatica();
+        
+        if (!estaSincronizado) {
+            mostrarNotificacaoSync('Sincronizando', 'info');
+            await sincronizarTudo();
+        }
+    }, 1200000); // 20 minutos
+}
+
 // Expor funções globalmente para uso em outros arquivos
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;
@@ -1037,3 +1125,6 @@ window.atualizarStatusIntegracao = atualizarStatusIntegracao;
 window.testarConexaoSheets = testarConexaoSheets;
 window.sincronizarEstoque = sincronizarEstoque;
 window.sincronizarTudo = sincronizarTudo;
+window.verificarSincronizacaoAutomatica = verificarSincronizacaoAutomatica;
+window.atualizarTimestampModificacao = atualizarTimestampModificacao;
+window.iniciarVerificacaoAutomatica = iniciarVerificacaoAutomatica;

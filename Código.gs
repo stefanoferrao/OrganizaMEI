@@ -53,6 +53,10 @@ function doPost(e) {
       return deleteFinanceiroData(data.id);
     }
     
+    if (data.action === 'verificarSincronizacao') {
+      return verificarSincronizacao(data.hashLocal);
+    }
+    
     if (data.action === 'verificarAbaEstoque') {
       return verificarAbaEstoque();
     }
@@ -81,6 +85,36 @@ function doPost(e) {
       .createTextOutput(JSON.stringify({success: false, message: 'Ação não reconhecida'}))
       .setMimeType(ContentService.MimeType.JSON);
       
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function verificarSincronizacao(hashLocal) {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getActiveSheet();
+    
+    const dados = sheet.getDataRange().getValues();
+    const lancamentos = dados.slice(1);
+    
+    const dadosSheets = {
+      totalLancamentos: lancamentos.length,
+      totalProdutos: 0,
+      ultimoLancamento: lancamentos.length > 0 ? lancamentos[lancamentos.length - 1][0] : null
+    };
+    
+    const hashSheets = Utilities.base64Encode(JSON.stringify(dadosSheets));
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        sincronizado: hashLocal === hashSheets,
+        hashSheets: hashSheets,
+        totalRegistros: lancamentos.length
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
