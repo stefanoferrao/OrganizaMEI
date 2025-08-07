@@ -364,8 +364,7 @@ async function sincronizarFinanceiro() {
         updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
         updateMiniIndicator('connected-working');
         
-        // Recarregar a página para garantir atualização completa
-        window.location.reload();
+        // Interface já foi atualizada com os dados sincronizados
         
     } catch (error) {
         updateSyncStatus('Erro na sincronização', 'error');
