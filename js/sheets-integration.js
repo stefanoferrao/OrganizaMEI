@@ -1091,20 +1091,20 @@ async function verificarSincronizacaoAutomatica() {
     }
 }
 
-// Verificação periódica a cada 20 minutos
+// Verificação periódica desabilitada para evitar sincronização automática
 let intervalVerificacao = null;
 
 function iniciarVerificacaoAutomatica() {
-    if (intervalVerificacao) clearInterval(intervalVerificacao);
-    
-    intervalVerificacao = setInterval(async () => {
-        const estaSincronizado = await verificarSincronizacaoAutomatica();
-        
-        if (!estaSincronizado) {
-            mostrarNotificacaoSync('Sincronizando', 'info');
-            await sincronizarTudo();
-        }
-    }, 1200000); // 20 minutos
+    // Função desabilitada - sincronização apenas manual
+    console.log('Verificação automática desabilitada');
+    // if (intervalVerificacao) clearInterval(intervalVerificacao);
+    // intervalVerificacao = setInterval(async () => {
+    //     const estaSincronizado = await verificarSincronizacaoAutomatica();
+    //     if (!estaSincronizado) {
+    //         mostrarNotificacaoSync('Sincronizando', 'info');
+    //         await sincronizarTudo();
+    //     }
+    // }, 1200000); // 20 minutos
 }
 
 // Expor funções globalmente para uso em outros arquivos

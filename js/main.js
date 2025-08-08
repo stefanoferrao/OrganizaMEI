@@ -1,48 +1,11 @@
 // Main.js - Arquivo principal (agora apenas com código essencial)
 // Todo o código foi modularizado em arquivos específicos
 
-// Função para verificar e sincronizar se necessário
-async function verificarESincronizar() {
-  try {
-    if (typeof verificarSincronizacaoAutomatica === 'function') {
-      const estaSincronizado = await verificarSincronizacaoAutomatica();
-      
-      if (!estaSincronizado) {
-        mostrarNotificacaoSync('Sincronizando', 'info');
-        await sincronizarTudo();
-      }
-    }
-  } catch (error) {
-    console.error('Erro na verificação de sincronização:', error);
-  }
-}
-
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     // Ativa apenas a aba dashboard ao iniciar
     document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
     document.getElementById('dashboard').classList.add('active');
-    
-    // Inicialização com Promise.all para melhor performance
-    await Promise.all([
-      // Verificação automática de sincronização
-      new Promise(resolve => {
-        setTimeout(async () => {
-          await verificarESincronizar();
-          resolve();
-        }, 1000);
-      }),
-      
-      // Iniciar verificação periódica
-      new Promise(resolve => {
-        setTimeout(() => {
-          if (typeof iniciarVerificacaoAutomatica === 'function') {
-            iniciarVerificacaoAutomatica();
-          }
-          resolve();
-        }, 2000);
-      })
-    ]);
     
     // Exemplo de JS para trocar o conteúdo da análise
     const tipoAnalise = document.getElementById('tipo-analise');
@@ -62,10 +25,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
-// Interceptar F5 para verificar sincronização
-document.addEventListener('keydown', async function(event) {
-  if (event.key === 'F5') {
-    event.preventDefault();
-    await verificarESincronizar();
-  }
-});
+// F5 agora apenas recarrega a página normalmente (sem sincronização automática)
+// document.addEventListener('keydown', function(event) {
+//   if (event.key === 'F5') {
+//     // Deixa o comportamento padrão do F5 (recarregar página)
+//   }
+// });
