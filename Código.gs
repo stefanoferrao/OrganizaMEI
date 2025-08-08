@@ -81,6 +81,12 @@ function doPost(e) {
       return testarScript();
     }
     
+    if (data.action === 'verificarTimestamp') {
+      return ContentService
+        .createTextOutput(JSON.stringify(verificarTimestamp(data.timestampLocal)))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: 'Ação não reconhecida'}))
       .setMimeType(ContentService.MimeType.JSON);
@@ -94,15 +100,47 @@ function doPost(e) {
 
 function verificarSincronizacao(hashLocal) {
   try {
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getActiveSheet();
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
     
-    const dados = sheet.getDataRange().getValues();
-    const lancamentos = dados.slice(1);
+    // Dados do Financeiro
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    let dadosFinanceiro = [];
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      dadosFinanceiro = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1).getValues().flat();
+    }
+    
+    // Dados do Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    let produtosEstoque = [];
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const movimentacoes = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 9).getValues();
+      const estoqueCalculado = {};
+      
+      movimentacoes.forEach(mov => {
+        const produto = mov[1];
+        const quantidade = mov[3];
+        const tipo = mov[7];
+        
+        if (!estoqueCalculado[produto]) estoqueCalculado[produto] = 0;
+        
+        if (tipo === 'Entrada') {
+          estoqueCalculado[produto] += quantidade;
+        } else if (tipo === 'Saída' || tipo === 'Venda' || tipo === 'Exclusão') {
+          estoqueCalculado[produto] -= quantidade;
+        }
+      });
+      
+      produtosEstoque = Object.keys(estoqueCalculado)
+        .filter(nome => nome && estoqueCalculado[nome] > 0)
+        .map(nome => String(nome))
+        .sort();
+    }
     
     const dadosSheets = {
-      totalLancamentos: lancamentos.length,
-      totalProdutos: 0,
-      ultimoLancamento: lancamentos.length > 0 ? lancamentos[lancamentos.length - 1][0] : null
+      totalFinanceiro: dadosFinanceiro.length,
+      totalEstoque: produtosEstoque.length,
+      idsFinanceiro: dadosFinanceiro.map(id => String(id || '').replace(/^'/, '')).filter(id => id).sort(),
+      produtosEstoque: produtosEstoque.filter(nome => nome).sort()
     };
     
     const hashSheets = Utilities.base64Encode(JSON.stringify(dadosSheets));
@@ -112,7 +150,7 @@ function verificarSincronizacao(hashLocal) {
         success: true,
         sincronizado: hashLocal === hashSheets,
         hashSheets: hashSheets,
-        totalRegistros: lancamentos.length
+        totalRegistros: dadosFinanceiro.length + produtosEstoque.length
       }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
@@ -540,5 +578,66 @@ function deleteEstoqueData(nomeProduto) {
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
       .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function verificarTimestamp(timestampLocal) {
+  try {
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    
+    // Verificar aba Financeiro
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    let ultimoIdFinanceiro = null;
+    
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      const dadosFinanceiro = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1).getValues();
+      if (dadosFinanceiro.length > 0) {
+        ultimoIdFinanceiro = String(dadosFinanceiro[dadosFinanceiro.length - 1][0]).replace(/^'/, '');
+      }
+    }
+    
+    // Verificar aba Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    let ultimoIdEstoque = null;
+    
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const dadosEstoque = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 1).getValues();
+      if (dadosEstoque.length > 0) {
+        ultimoIdEstoque = String(dadosEstoque[dadosEstoque.length - 1][0]).replace(/^'/, '');
+      }
+    }
+    
+    // Encontrar o ID mais recente entre Financeiro e Estoque
+    let ultimoIdRemoto = null;
+    if (ultimoIdFinanceiro && ultimoIdEstoque) {
+      ultimoIdRemoto = ultimoIdFinanceiro > ultimoIdEstoque ? ultimoIdFinanceiro : ultimoIdEstoque;
+    } else if (ultimoIdFinanceiro) {
+      ultimoIdRemoto = ultimoIdFinanceiro;
+    } else if (ultimoIdEstoque) {
+      ultimoIdRemoto = ultimoIdEstoque;
+    }
+    
+    // Se não há dados remotos, considera atualizado
+    if (!ultimoIdRemoto) {
+      return {
+        success: true,
+        dadosAtualizados: true,
+        ultimoIdRemoto: null,
+        timestampLocal: timestampLocal
+      };
+    }
+    
+    // Comparar com timestamp local (último ID local)
+    const dadosAtualizados = !timestampLocal || ultimoIdRemoto <= timestampLocal;
+    
+    return {
+      success: true,
+      dadosAtualizados: dadosAtualizados,
+      ultimoIdRemoto: ultimoIdRemoto,
+      timestampLocal: timestampLocal
+    };
+    
+  } catch (error) {
+    return { success: false, message: error.toString() };
   }
 }
