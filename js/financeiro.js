@@ -42,7 +42,15 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!a.data && !b.data) return 0;
       if (!a.data) return 1;
       if (!b.data) return -1;
-      return b.data - a.data;
+      
+      // Primeiro critério: ordenar por data (mais recente primeiro)
+      const diffData = b.data - a.data;
+      if (diffData !== 0) return diffData;
+      
+      // Segundo critério: se as datas são iguais, ordenar por ID (mais recente primeiro)
+      const idA = String(a.id || '');
+      const idB = String(b.id || '');
+      return idB.localeCompare(idA);
     });
     
     filtrados.forEach((l) => {

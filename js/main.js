@@ -60,6 +60,11 @@ async function acionarSincronizacaoSeNecessario() {
   const dadosAtualizados = await verificarDadosAtualizados();
   
   if (!dadosAtualizados) {
+    // Ativar loading manager se disponível
+    if (typeof window.loadingManager !== 'undefined') {
+      window.loadingManager.startSyncLoading();
+    }
+    
     if (typeof mostrarNotificacaoSync === 'function') {
       mostrarNotificacaoSync('Dados desatualizados - sincronizando...', 'info');
     }
@@ -70,8 +75,19 @@ async function acionarSincronizacaoSeNecessario() {
         try {
           await sincronizarTudo();
           localStorage.setItem('ultimaVerificacaoSync', Date.now().toString());
+          
+          // Desativar loading após sucesso
+          setTimeout(() => {
+            if (typeof window.loadingManager !== 'undefined') {
+              window.loadingManager.stopSyncLoading();
+            }
+          }, 1500);
         } catch (error) {
           console.error('Erro na sincronização automática:', error);
+          // Desativar loading em caso de erro
+          if (typeof window.loadingManager !== 'undefined') {
+            window.loadingManager.stopSyncLoading();
+          }
         }
       }
     }, 2000);
@@ -106,6 +122,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.error('Erro na inicialização:', error);
   }
 });
+
+// Expor funções globalmente para integração com loading manager
+window.acionarSincronizacaoSeNecessario = acionarSincronizacaoSeNecessario;
+window.verificarDadosAtualizados = verificarDadosAtualizados;
+window.gerarHashDadosLocais = gerarHashDadosLocais;
 
 // F5 agora apenas recarrega a página normalmente (sem sincronização automática)
 // document.addEventListener('keydown', function(event) {
