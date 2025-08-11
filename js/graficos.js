@@ -7,6 +7,29 @@ document.addEventListener("DOMContentLoaded", function () {
     Chart.register(ChartDataLabels);
   }
 
+  // Função auxiliar para verificar filtros
+  function aplicarFiltroData(d) {
+    if (!window.filtroMes || !window.filtroAno) return true;
+    
+    // Se ambos são "todos", mostrar todos os dados
+    if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+      return true;
+    }
+    
+    // Se apenas o ano é "todos", filtrar apenas por mês
+    if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+      return d.getMonth() + 1 === Number(window.filtroMes);
+    }
+    
+    // Se apenas o mês é "todos", filtrar apenas por ano
+    if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+      return d.getFullYear() === Number(window.filtroAno);
+    }
+    
+    // Filtro normal por mês e ano específicos
+    return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
+  }
+
   function renderizarGrafico(tipo) {
     const ctx = document.getElementById("graficoDinamico")?.getContext("2d");
     if (!ctx) return;
@@ -57,19 +80,16 @@ document.addEventListener("DOMContentLoaded", function () {
             mes = String(d.getMonth() + 1).padStart(2, '0');
           }
           
-          // Filtra pelo mês/ano selecionado
-          if (window.filtroMes && window.filtroAno) {
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
-          }
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
+          
           const chave = `${dia}/${mes}`;
           vendasPorDia[chave] = (vendasPorDia[chave] || 0) + l.valor;
         }
       });
       
       // Ordenar as datas corretamente (DD/MM)
-      const anoReferencia = window.filtroAno || new Date().getFullYear();
+      const anoReferencia = window.filtroAno === "todos" ? new Date().getFullYear() : (window.filtroAno || new Date().getFullYear());
       Object.keys(vendasPorDia).sort((a, b) => {
         const [diaA, mesA] = a.split('/');
         const [diaB, mesB] = b.split('/');
@@ -99,12 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
             d = new Date(l.data);
           }
           
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
-          }
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
           
           const chave = `${mes}/${ano}`;
           ticketPorMes[chave] = (ticketPorMes[chave] || 0) + l.valor;
@@ -125,20 +141,18 @@ document.addEventListener("DOMContentLoaded", function () {
       let saldo = 0;
       const porData = {};
       
-      // Filtrar lançamentos por mês/ano se definido
-      let lancamentosFiltrados = lancamentos.filter(l => l.data);
-      if (window.filtroMes && window.filtroAno) {
-        lancamentosFiltrados = lancamentosFiltrados.filter(l => {
-          let d;
-          if (typeof l.data === 'string' && l.data.includes('/')) {
-            const [dia, mes, ano] = l.data.split('/');
-            d = new Date(ano, mes - 1, dia);
-          } else {
-            d = new Date(l.data);
-          }
-          return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
-        });
-      }
+      // Filtrar lançamentos
+      let lancamentosFiltrados = lancamentos.filter(l => {
+        if (!l.data) return false;
+        let d;
+        if (typeof l.data === 'string' && l.data.includes('/')) {
+          const [dia, mes, ano] = l.data.split('/');
+          d = new Date(ano, mes - 1, dia);
+        } else {
+          d = new Date(l.data);
+        }
+        return aplicarFiltroData(d);
+      });
       
       lancamentosFiltrados
         .sort((a, b) => {
@@ -185,12 +199,8 @@ document.addEventListener("DOMContentLoaded", function () {
             d = new Date(l.data);
           }
           
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
-          }
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
           
           const chave = `${mes}/${ano}`;
           fluxoPorMes[chave] = (fluxoPorMes[chave] || 0) + (l.tipo === "receita" ? l.valor : -l.valor);
@@ -207,25 +217,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const despesasPorCategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "despesa" && l.categoria) {
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            let d;
-            if (typeof l.data === 'string' && l.data.includes('/')) {
-              const [dia, mes, ano] = l.data.split('/');
-              d = new Date(ano, mes - 1, dia);
-            } else {
-              d = new Date(l.data);
-            }
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
+          
           despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
         }
       });
       Object.keys(despesasPorCategoria).forEach((cat, i) => {
-        labels.push(cat);
-        data.push(despesasPorCategoria[cat]);
+        const valor = despesasPorCategoria[cat];
+        labels.push(`${cat} - ${formatarMoedaBR(valor)}`);
+        data.push(valor);
         backgroundColors.push(["#e53e3e", "#3182ce", "#38a169", "#ecc94b", "#805ad5", "#ed8936", "#319795", "#d53f8c"][i % 8]);
       });
       label = "Despesas por categoria";
@@ -235,25 +244,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const receitasPorCategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.categoria) {
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            let d;
-            if (typeof l.data === 'string' && l.data.includes('/')) {
-              const [dia, mes, ano] = l.data.split('/');
-              d = new Date(ano, mes - 1, dia);
-            } else {
-              d = new Date(l.data);
-            }
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
+          
           receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
         }
       });
       Object.keys(receitasPorCategoria).forEach((cat, i) => {
-        labels.push(cat);
-        data.push(receitasPorCategoria[cat]);
+        const valor = receitasPorCategoria[cat];
+        labels.push(`${cat} - ${formatarMoedaBR(valor)}`);
+        data.push(valor);
         backgroundColors.push(["#38a169", "#3182ce", "#e53e3e", "#ecc94b", "#805ad5", "#ed8936", "#319795", "#d53f8c"][i % 8]);
       });
       label = "Receitas por categoria";
@@ -263,26 +271,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const despesasPorSubcategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "despesa" && l.subcategoria) {
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            let d;
-            if (typeof l.data === 'string' && l.data.includes('/')) {
-              const [dia, mes, ano] = l.data.split('/');
-              d = new Date(ano, mes - 1, dia);
-            } else {
-              d = new Date(l.data);
-            }
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
+          
           const chave = `${l.categoria} - ${l.subcategoria}`;
           despesasPorSubcategoria[chave] = (despesasPorSubcategoria[chave] || 0) + l.valor;
         }
       });
       Object.keys(despesasPorSubcategoria).forEach((sub, i) => {
-        labels.push(sub);
-        data.push(despesasPorSubcategoria[sub]);
+        const valor = despesasPorSubcategoria[sub];
+        labels.push(`${sub} - ${formatarMoedaBR(valor)}`);
+        data.push(valor);
         backgroundColors.push(["#e53e3e", "#3182ce", "#38a169", "#ecc94b", "#805ad5", "#ed8936", "#319795", "#d53f8c"][i % 8]);
       });
       label = "Despesas por subcategoria";
@@ -292,26 +299,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const receitasPorSubcategoria = {};
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.subcategoria) {
-          // Aplicar filtro de mês/ano se definido
-          if (window.filtroMes && window.filtroAno) {
-            let d;
-            if (typeof l.data === 'string' && l.data.includes('/')) {
-              const [dia, mes, ano] = l.data.split('/');
-              d = new Date(ano, mes - 1, dia);
-            } else {
-              d = new Date(l.data);
-            }
-            if (d.getMonth() + 1 !== Number(window.filtroMes) || d.getFullYear() !== Number(window.filtroAno)) {
-              return;
-            }
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
           }
+          
+          // Aplicar filtro
+          if (!aplicarFiltroData(d)) return;
+          
           const chave = `${l.categoria} - ${l.subcategoria}`;
           receitasPorSubcategoria[chave] = (receitasPorSubcategoria[chave] || 0) + l.valor;
         }
       });
       Object.keys(receitasPorSubcategoria).forEach((sub, i) => {
-        labels.push(sub);
-        data.push(receitasPorSubcategoria[sub]);
+        const valor = receitasPorSubcategoria[sub];
+        labels.push(`${sub} - ${formatarMoedaBR(valor)}`);
+        data.push(valor);
         backgroundColors.push(["#38a169", "#3182ce", "#e53e3e", "#ecc94b", "#805ad5", "#ed8936", "#319795", "#d53f8c"][i % 8]);
       });
       label = "Receitas por subcategoria";
@@ -330,20 +336,17 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       // Calcular dados do DRE
-      let filtrados = lancamentos;
-      if (window.filtroMes && window.filtroAno) {
-        filtrados = lancamentos.filter(l => {
-          if (!l.data) return false;
-          let d;
-          if (typeof l.data === 'string' && l.data.includes('/')) {
-            const [dia, mes, ano] = l.data.split('/');
-            d = new Date(ano, mes - 1, dia);
-          } else {
-            d = new Date(l.data);
-          }
-          return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
-        });
-      }
+      let filtrados = lancamentos.filter(l => {
+        if (!l.data) return false;
+        let d;
+        if (typeof l.data === 'string' && l.data.includes('/')) {
+          const [dia, mes, ano] = l.data.split('/');
+          d = new Date(ano, mes - 1, dia);
+        } else {
+          d = new Date(l.data);
+        }
+        return aplicarFiltroData(d);
+      });
       
       const receitas = filtrados.filter(l => l.tipo === 'receita');
       const despesas = filtrados.filter(l => l.tipo === 'despesa');
@@ -366,8 +369,18 @@ document.addEventListener("DOMContentLoaded", function () {
         despesasPorCategoria[l.categoria] += l.valor;
       });
       
-      const periodo = window.filtroMes && window.filtroAno ? 
-        `${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}` : 'Todos os períodos';
+      let periodo = 'Todos os períodos';
+      if (window.filtroMes && window.filtroAno) {
+        if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+          periodo = 'Todos os períodos';
+        } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+          periodo = `Mês ${String(window.filtroMes).padStart(2, '0')} - Todos os anos`;
+        } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+          periodo = `Ano ${window.filtroAno} - Todos os meses`;
+        } else {
+          periodo = `${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
+        }
+      }
       
       dreContainer.style.display = 'block';
       dreContainer.innerHTML = `
@@ -402,44 +415,16 @@ document.addEventListener("DOMContentLoaded", function () {
       
       return; // Não criar gráfico para DRE
       
-    } else if (tipo === "dre-detalhado") {
+    } else if (tipo === "top-categorias-gastos") {
       const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
+      canvas.style.display = 'block';
+      const dreContainer = document.getElementById('dre-container');
+      if (dreContainer) dreContainer.style.display = 'none';
       
-      let dreContainer = document.getElementById('dre-container');
-      if (!dreContainer) {
-        dreContainer = document.createElement('div');
-        dreContainer.id = 'dre-container';
-        canvas.parentNode.appendChild(dreContainer);
-      }
+      const categoriasDespesas = {};
       
-      const ano = window.filtroAno || new Date().getFullYear();
-      const meses = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-      const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      
-      // Usar categorias existentes do sistema
-      const categoriasExistentes = JSON.parse(localStorage.getItem('categorias')) || {
-        receita: { "Vendas": [], "Investimentos": [], "Outros": [] },
-        despesa: { "Operacional": [], "Pessoal": [], "Compras": [], "Outros": [] }
-      };
-      
-      // Inicializar dados
-      const dadosPorCategoria = { receita: {}, despesa: {} };
-      
-      // Inicializar todas as categorias existentes
-      Object.keys(categoriasExistentes.receita).forEach(cat => {
-        dadosPorCategoria.receita[cat] = {};
-        meses.forEach(m => dadosPorCategoria.receita[cat][m] = 0);
-      });
-      
-      Object.keys(categoriasExistentes.despesa).forEach(cat => {
-        dadosPorCategoria.despesa[cat] = {};
-        meses.forEach(m => dadosPorCategoria.despesa[cat][m] = 0);
-      });
-      
-      // Processar lançamentos
       lancamentos.forEach(l => {
-        if (!l.data) return;
+        if (l.tipo !== 'despesa') return;
         let d;
         if (typeof l.data === 'string' && l.data.includes('/')) {
           const [dia, m, a] = l.data.split('/');
@@ -448,239 +433,96 @@ document.addEventListener("DOMContentLoaded", function () {
           d = new Date(l.data);
         }
         
-        if (d.getFullYear() !== Number(ano)) return;
+        // Aplicar filtro
+        if (!aplicarFiltroData(d)) return;
         
-        const mes = String(d.getMonth() + 1).padStart(2, '0');
-        const categoria = l.categoria || 'Outros';
-        
-        if (l.tipo === 'receita' && dadosPorCategoria.receita[categoria]) {
-          dadosPorCategoria.receita[categoria][mes] += l.valor;
-        } else if (l.tipo === 'despesa' && dadosPorCategoria.despesa[categoria]) {
-          dadosPorCategoria.despesa[categoria][mes] += l.valor;
+        if (!categoriasDespesas[l.categoria]) {
+          categoriasDespesas[l.categoria] = 0;
         }
+        categoriasDespesas[l.categoria] += l.valor;
       });
       
-      // Gerar HTML
-      let html = `
-        <div class="dre-detalhado">
-          <h3 class="dre-title">DRE Detalhado - Ano ${ano}</h3>
-          <div class="dre-table-container">
-            <table class="dre-table">
-              <thead>
-                <tr class="dre-header">
-                  <th class="dre-cell"></th>
-                  ${nomesMeses.map(m => `<th class="dre-cell">${m}</th>`).join('')}
-                  <th class="dre-cell">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-      `;
+      const categoriasOrdenadas = Object.entries(categoriasDespesas)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 8);
       
-      // Receitas
-      html += '<tr class="dre-section-header receitas"><td colspan="14">RECEITAS</td></tr>';
-      let totalReceitasPorMes = meses.map(() => 0);
+      const labels = categoriasOrdenadas.map(([categoria, valor]) => `${categoria} - ${formatarMoedaBR(valor)}`);
+      const data = categoriasOrdenadas.map(([,valor]) => valor);
+      const cores = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#3182ce', '#805ad5', '#d53f8c', '#718096'];
       
-      Object.keys(categoriasExistentes.receita).forEach(cat => {
-        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
-        let totalCategoria = 0;
-        
-        meses.forEach((mes, i) => {
-          const valor = dadosPorCategoria.receita[cat] ? dadosPorCategoria.receita[cat][mes] : 0;
-          totalReceitasPorMes[i] += valor;
-          totalCategoria += valor;
-          html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
-        });
-        
-        html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
-      });
-      
-      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
-      const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
-      totalReceitasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
-      });
-      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
-      
-      // Despesas
-      html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
-      let totalDespesasPorMes = meses.map(() => 0);
-      
-      Object.keys(categoriasExistentes.despesa).forEach(cat => {
-        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
-        let totalCategoria = 0;
-        
-        meses.forEach((mes, i) => {
-          const valor = dadosPorCategoria.despesa[cat] ? dadosPorCategoria.despesa[cat][mes] : 0;
-          totalDespesasPorMes[i] += valor;
-          totalCategoria += valor;
-          html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
-        });
-        
-        html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
-      });
-      
-      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
-      const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
-      totalDespesasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
-      });
-      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
-      
-      // Saldo
-      html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
-      const saldoTotal = totalReceitas - totalDespesas;
-      
-      meses.forEach((mes, i) => {
-        const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
-        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
-      });
-      
-      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
-      
-      html += '</tbody></table></div></div>';
-      dreContainer.style.display = 'block';
-      dreContainer.innerHTML = html;
-      
-      return;
-      
-    } else if (tipo === "dre-detalhado-subcategorias") {
-      const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'none';
-      
-      let dreContainer = document.getElementById('dre-container');
-      if (!dreContainer) {
-        dreContainer = document.createElement('div');
-        dreContainer.id = 'dre-container';
-        canvas.parentNode.appendChild(dreContainer);
+      let tituloGrafico = 'Top Categorias de Gastos';
+      if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+        tituloGrafico += ' - Todos os períodos';
+      } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+        tituloGrafico += ` - Mês ${String(window.filtroMes).padStart(2, '0')} (Todos os anos)`;
+      } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+        tituloGrafico += ` - ${window.filtroAno}`;
+      } else {
+        tituloGrafico += ` - ${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
       }
       
-      const ano = window.filtroAno || new Date().getFullYear();
-      const meses = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-      const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      
-      const categoriasExistentes = JSON.parse(localStorage.getItem('categorias')) || {
-        receita: { "Vendas": [], "Investimentos": [], "Outros": [] },
-        despesa: { "Operacional": [], "Pessoal": [], "Compras": [], "Outros": [] }
-      };
-      
-      // Organizar dados por categoria e subcategoria
-      const dadosOrganizados = { receita: {}, despesa: {} };
-      
-      // Processar lançamentos
-      lancamentos.forEach(l => {
-        if (!l.data || !l.categoria || !l.subcategoria) return;
-        let d;
-        if (typeof l.data === 'string' && l.data.includes('/')) {
-          const [dia, m, a] = l.data.split('/');
-          d = new Date(a, m - 1, dia);
-        } else {
-          d = new Date(l.data);
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Gastos por Categoria',
+            data,
+            backgroundColor: cores.slice(0, data.length),
+            borderColor: cores.slice(0, data.length),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              display: true,
+              color: '#ffffff',
+              font: {
+                size: 12,
+                weight: 'bold'
+              },
+              formatter: function(value) {
+                return formatarMoedaBR(value);
+              },
+              anchor: 'end',
+              align: 'right'
+            },
+            title: { display: true, text: tituloGrafico, color: "#e2e8f0", font: { size: 18 } },
+            tooltip: {
+              backgroundColor: "#232b38",
+              titleColor: "#17acaf",
+              bodyColor: "#e2e8f0",
+              borderColor: "#3182ce",
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return formatarMoedaBR(context.parsed.x);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { 
+                color: "#e2e8f0", 
+                font: { weight: 'bold' },
+                callback: function(value) {
+                  return formatarMoedaBR(value);
+                }
+              },
+              grid: { color: "#2d3748" }
+            },
+            y: {
+              ticks: { color: "#e2e8f0", font: { weight: 'bold' } },
+              grid: { color: "#2d3748" }
+            }
+          }
         }
-        
-        if (d.getFullYear() !== Number(ano)) return;
-        
-        const mes = String(d.getMonth() + 1).padStart(2, '0');
-        
-        if (!dadosOrganizados[l.tipo][l.categoria]) {
-          dadosOrganizados[l.tipo][l.categoria] = {};
-        }
-        if (!dadosOrganizados[l.tipo][l.categoria][l.subcategoria]) {
-          dadosOrganizados[l.tipo][l.categoria][l.subcategoria] = {};
-          meses.forEach(m => dadosOrganizados[l.tipo][l.categoria][l.subcategoria][m] = 0);
-        }
-        
-        dadosOrganizados[l.tipo][l.categoria][l.subcategoria][mes] += l.valor;
       });
-      
-      // Gerar HTML
-      let html = `
-        <div class="dre-detalhado">
-          <h3 class="dre-title">DRE Detalhado por Subcategorias - Ano ${ano}</h3>
-          <div class="dre-table-container">
-            <table class="dre-table">
-              <thead>
-                <tr class="dre-header">
-                  <th class="dre-cell"></th>
-                  ${nomesMeses.map(m => `<th class="dre-cell">${m}</th>`).join('')}
-                  <th class="dre-cell">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-      `;
-      
-      // Receitas por categoria e subcategoria
-      html += '<tr class="dre-section-header receitas"><td colspan="14">RECEITAS</td></tr>';
-      let totalReceitasPorMes = meses.map(() => 0);
-      
-      Object.keys(dadosOrganizados.receita).sort().forEach(categoria => {
-        html += `<tr class="dre-categoria-header"><td class="dre-cell dre-categoria-nome" colspan="14">${categoria}</td></tr>`;
-        
-        Object.keys(dadosOrganizados.receita[categoria]).sort().forEach(subcategoria => {
-          html += `<tr class="dre-row"><td class="dre-cell dre-subcategoria">${subcategoria}</td>`;
-          let totalSubcategoria = 0;
-          
-          meses.forEach((mes, i) => {
-            const valor = dadosOrganizados.receita[categoria][subcategoria][mes];
-            totalReceitasPorMes[i] += valor;
-            totalSubcategoria += valor;
-            html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
-          });
-          
-          html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
-        });
-      });
-      
-      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
-      const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
-      totalReceitasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
-      });
-      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
-      
-      // Despesas por categoria e subcategoria
-      html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
-      let totalDespesasPorMes = meses.map(() => 0);
-      
-      Object.keys(dadosOrganizados.despesa).sort().forEach(categoria => {
-        html += `<tr class="dre-categoria-header"><td class="dre-cell dre-categoria-nome" colspan="14">${categoria}</td></tr>`;
-        
-        Object.keys(dadosOrganizados.despesa[categoria]).sort().forEach(subcategoria => {
-          html += `<tr class="dre-row"><td class="dre-cell dre-subcategoria">${subcategoria}</td>`;
-          let totalSubcategoria = 0;
-          
-          meses.forEach((mes, i) => {
-            const valor = dadosOrganizados.despesa[categoria][subcategoria][mes];
-            totalDespesasPorMes[i] += valor;
-            totalSubcategoria += valor;
-            html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
-          });
-          
-          html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
-        });
-      });
-      
-      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
-      const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
-      totalDespesasPorMes.forEach(total => {
-        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
-      });
-      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
-      
-      // Saldo
-      html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
-      const saldoTotal = totalReceitas - totalDespesas;
-      
-      meses.forEach((mes, i) => {
-        const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
-        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
-      });
-      
-      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
-      
-      html += '</tbody></table></div></div>';
-      dreContainer.style.display = 'block';
-      dreContainer.innerHTML = html;
-      
       return;
       
     } else if (tipo === "evolucao-receitas-despesas") {
@@ -689,7 +531,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const dreContainer = document.getElementById('dre-container');
       if (dreContainer) dreContainer.style.display = 'none';
       
-      const ano = window.filtroAno || new Date().getFullYear();
+      // Determinar período baseado nos filtros
+      let anos = [];
+      if (window.filtroAno === "todos") {
+        // Obter todos os anos dos dados
+        anos = Array.from(new Set(lancamentos.map(l => {
+          if (!l.data) return null;
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
+          }
+          return d.getFullYear();
+        }).filter(a => a))).sort();
+      } else {
+        anos = [Number(window.filtroAno) || new Date().getFullYear()];
+      }
+      
       const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
       const receitasPorMes = new Array(12).fill(0);
       const despesasPorMes = new Array(12).fill(0);
@@ -703,15 +563,27 @@ document.addEventListener("DOMContentLoaded", function () {
           d = new Date(l.data);
         }
         
-        if (d.getFullYear() === Number(ano)) {
-          const mesIndex = d.getMonth();
-          if (l.tipo === 'receita') {
-            receitasPorMes[mesIndex] += l.valor;
-          } else {
-            despesasPorMes[mesIndex] += l.valor;
-          }
+        // Aplicar filtro
+        if (!aplicarFiltroData(d)) return;
+        
+        const mesIndex = d.getMonth();
+        if (l.tipo === 'receita') {
+          receitasPorMes[mesIndex] += l.valor;
+        } else {
+          despesasPorMes[mesIndex] += l.valor;
         }
       });
+      
+      let tituloGrafico = 'Evolução Receitas vs Despesas';
+      if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+        tituloGrafico += ' - Todos os períodos';
+      } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+        tituloGrafico += ` - Mês ${String(window.filtroMes).padStart(2, '0')} (Todos os anos)`;
+      } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+        tituloGrafico += ` - ${window.filtroAno}`;
+      } else {
+        tituloGrafico += ` - ${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
+      }
       
       chartInstance = new Chart(ctx, {
         type: 'line',
@@ -769,7 +641,7 @@ document.addEventListener("DOMContentLoaded", function () {
           responsive: true,
           plugins: {
             legend: { labels: { color: "#e2e8f0", font: { weight: 'bold', size: 15 } } },
-            title: { display: true, text: `Evolução Receitas vs Despesas - ${ano}`, color: "#e2e8f0", font: { size: 18 } },
+            title: { display: true, text: tituloGrafico, color: "#e2e8f0", font: { size: 18 } },
             tooltip: {
               backgroundColor: "#232b38",
               titleColor: "#17acaf",
@@ -806,17 +678,39 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       return;
       
-    } else if (tipo === "top-categorias-gastos") {
+    } else if (tipo === "dre-detalhado") {
       const canvas = document.getElementById("graficoDinamico");
-      canvas.style.display = 'block';
-      const dreContainer = document.getElementById('dre-container');
-      if (dreContainer) dreContainer.style.display = 'none';
+      canvas.style.display = 'none';
       
-      const ano = window.filtroAno || new Date().getFullYear();
-      const categoriasDespesas = {};
+      let dreContainer = document.getElementById('dre-container');
+      if (!dreContainer) {
+        dreContainer = document.createElement('div');
+        dreContainer.id = 'dre-container';
+        canvas.parentNode.appendChild(dreContainer);
+      }
+      
+      const meses = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+      const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      
+      const categoriasExistentes = JSON.parse(localStorage.getItem('categorias')) || {
+        receita: { "Vendas": [], "Investimentos": [], "Outros": [] },
+        despesa: { "Operacional": [], "Pessoal": [], "Compras": [], "Outros": [] }
+      };
+      
+      const dadosPorCategoria = { receita: {}, despesa: {} };
+      
+      Object.keys(categoriasExistentes.receita).forEach(cat => {
+        dadosPorCategoria.receita[cat] = {};
+        meses.forEach(m => dadosPorCategoria.receita[cat][m] = 0);
+      });
+      
+      Object.keys(categoriasExistentes.despesa).forEach(cat => {
+        dadosPorCategoria.despesa[cat] = {};
+        meses.forEach(m => dadosPorCategoria.despesa[cat][m] = 0);
+      });
       
       lancamentos.forEach(l => {
-        if (l.tipo !== 'despesa') return;
+        if (!l.data) return;
         let d;
         if (typeof l.data === 'string' && l.data.includes('/')) {
           const [dia, m, a] = l.data.split('/');
@@ -825,74 +719,246 @@ document.addEventListener("DOMContentLoaded", function () {
           d = new Date(l.data);
         }
         
-        if (d.getFullYear() === Number(ano)) {
-          if (!categoriasDespesas[l.categoria]) {
-            categoriasDespesas[l.categoria] = 0;
-          }
-          categoriasDespesas[l.categoria] += l.valor;
+        if (!aplicarFiltroData(d)) return;
+        
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const categoria = l.categoria || 'Outros';
+        
+        if (l.tipo === 'receita' && dadosPorCategoria.receita[categoria]) {
+          dadosPorCategoria.receita[categoria][mes] += l.valor;
+        } else if (l.tipo === 'despesa' && dadosPorCategoria.despesa[categoria]) {
+          dadosPorCategoria.despesa[categoria][mes] += l.valor;
         }
       });
       
-      const categoriasOrdenadas = Object.entries(categoriasDespesas)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 8);
+      let tituloRelatorio = 'DRE Detalhado';
+      if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+        tituloRelatorio += ' - Todos os períodos';
+      } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+        tituloRelatorio += ` - Mês ${String(window.filtroMes).padStart(2, '0')} (Todos os anos)`;
+      } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+        tituloRelatorio += ` - Ano ${window.filtroAno}`;
+      } else {
+        tituloRelatorio += ` - ${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
+      }
       
-      const labels = categoriasOrdenadas.map(([categoria]) => categoria);
-      const data = categoriasOrdenadas.map(([,valor]) => valor);
-      const cores = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#3182ce', '#805ad5', '#d53f8c', '#718096'];
+      let html = `
+        <div class="dre-detalhado">
+          <h3 class="dre-title">${tituloRelatorio}</h3>
+          <div class="dre-table-container">
+            <table class="dre-table">
+              <thead>
+                <tr class="dre-header">
+                  <th class="dre-cell"></th>
+                  ${nomesMeses.map(m => `<th class="dre-cell">${m}</th>`).join('')}
+                  <th class="dre-cell">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
       
-      chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Gastos por Categoria',
-            data,
-            backgroundColor: cores.slice(0, data.length),
-            borderColor: cores.slice(0, data.length),
-            borderWidth: 1
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: `Top Categorias de Gastos - ${ano}`, color: "#e2e8f0", font: { size: 18 } },
-            tooltip: {
-              backgroundColor: "#232b38",
-              titleColor: "#17acaf",
-              bodyColor: "#e2e8f0",
-              borderColor: "#3182ce",
-              borderWidth: 1,
-              callbacks: {
-                label: function(context) {
-                  return formatarMoedaBR(context.parsed.x);
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              ticks: { 
-                color: "#e2e8f0", 
-                font: { weight: 'bold' },
-                callback: function(value) {
-                  return formatarMoedaBR(value);
-                }
-              },
-              grid: { color: "#2d3748" }
-            },
-            y: {
-              ticks: { color: "#e2e8f0", font: { weight: 'bold' } },
-              grid: { color: "#2d3748" }
-            }
-          }
-        }
+      html += '<tr class="dre-section-header receitas"><td colspan="14">RECEITAS</td></tr>';
+      let totalReceitasPorMes = meses.map(() => 0);
+      
+      Object.keys(categoriasExistentes.receita).forEach(cat => {
+        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
+        let totalCategoria = 0;
+        
+        meses.forEach((mes, i) => {
+          const valor = dadosPorCategoria.receita[cat] ? dadosPorCategoria.receita[cat][mes] : 0;
+          totalReceitasPorMes[i] += valor;
+          totalCategoria += valor;
+          html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
+        });
+        
+        html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
       });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
+      const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
+      totalReceitasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
+      });
+      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
+      
+      html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
+      let totalDespesasPorMes = meses.map(() => 0);
+      
+      Object.keys(categoriasExistentes.despesa).forEach(cat => {
+        html += `<tr class="dre-row"><td class="dre-cell dre-categoria">${cat}</td>`;
+        let totalCategoria = 0;
+        
+        meses.forEach((mes, i) => {
+          const valor = dadosPorCategoria.despesa[cat] ? dadosPorCategoria.despesa[cat][mes] : 0;
+          totalDespesasPorMes[i] += valor;
+          totalCategoria += valor;
+          html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
+        });
+        
+        html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalCategoria)}</td></tr>`;
+      });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
+      const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
+      totalDespesasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
+      });
+      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
+      
+      html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
+      const saldoTotal = totalReceitas - totalDespesas;
+      
+      meses.forEach((mes, i) => {
+        const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
+        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
+      });
+      
+      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
+      
+      html += '</tbody></table></div></div>';
+      dreContainer.style.display = 'block';
+      dreContainer.innerHTML = html;
+      
       return;
       
-
+    } else if (tipo === "dre-detalhado-subcategorias") {
+      const canvas = document.getElementById("graficoDinamico");
+      canvas.style.display = 'none';
+      
+      let dreContainer = document.getElementById('dre-container');
+      if (!dreContainer) {
+        dreContainer = document.createElement('div');
+        dreContainer.id = 'dre-container';
+        canvas.parentNode.appendChild(dreContainer);
+      }
+      
+      const meses = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+      const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      
+      const dadosOrganizados = { receita: {}, despesa: {} };
+      
+      lancamentos.forEach(l => {
+        if (!l.data || !l.categoria || !l.subcategoria) return;
+        let d;
+        if (typeof l.data === 'string' && l.data.includes('/')) {
+          const [dia, m, a] = l.data.split('/');
+          d = new Date(a, m - 1, dia);
+        } else {
+          d = new Date(l.data);
+        }
+        
+        if (!aplicarFiltroData(d)) return;
+        
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        
+        if (!dadosOrganizados[l.tipo][l.categoria]) {
+          dadosOrganizados[l.tipo][l.categoria] = {};
+        }
+        if (!dadosOrganizados[l.tipo][l.categoria][l.subcategoria]) {
+          dadosOrganizados[l.tipo][l.categoria][l.subcategoria] = {};
+          meses.forEach(m => dadosOrganizados[l.tipo][l.categoria][l.subcategoria][m] = 0);
+        }
+        
+        dadosOrganizados[l.tipo][l.categoria][l.subcategoria][mes] += l.valor;
+      });
+      
+      let tituloRelatorio = 'DRE Detalhado por Subcategorias';
+      if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+        tituloRelatorio += ' - Todos os períodos';
+      } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+        tituloRelatorio += ` - Mês ${String(window.filtroMes).padStart(2, '0')} (Todos os anos)`;
+      } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+        tituloRelatorio += ` - Ano ${window.filtroAno}`;
+      } else {
+        tituloRelatorio += ` - ${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
+      }
+      
+      let html = `
+        <div class="dre-detalhado">
+          <h3 class="dre-title">${tituloRelatorio}</h3>
+          <div class="dre-table-container">
+            <table class="dre-table">
+              <thead>
+                <tr class="dre-header">
+                  <th class="dre-cell"></th>
+                  ${nomesMeses.map(m => `<th class="dre-cell">${m}</th>`).join('')}
+                  <th class="dre-cell">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      html += '<tr class="dre-section-header receitas"><td colspan="14">RECEITAS</td></tr>';
+      let totalReceitasPorMes = meses.map(() => 0);
+      
+      Object.keys(dadosOrganizados.receita).sort().forEach(categoria => {
+        html += `<tr class="dre-categoria-header"><td class="dre-cell dre-categoria-nome" colspan="14">${categoria}</td></tr>`;
+        
+        Object.keys(dadosOrganizados.receita[categoria]).sort().forEach(subcategoria => {
+          html += `<tr class="dre-row"><td class="dre-cell dre-subcategoria">${subcategoria}</td>`;
+          let totalSubcategoria = 0;
+          
+          meses.forEach((mes, i) => {
+            const valor = dadosOrganizados.receita[categoria][subcategoria][mes];
+            totalReceitasPorMes[i] += valor;
+            totalSubcategoria += valor;
+            html += `<td class="dre-cell dre-receita">${formatarMoedaBR(valor)}</td>`;
+          });
+          
+          html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
+        });
+      });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Receitas</td>';
+      const totalReceitas = totalReceitasPorMes.reduce((a, b) => a + b, 0);
+      totalReceitasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-receita">${formatarMoedaBR(total)}</td>`;
+      });
+      html += `<td class="dre-cell dre-receita dre-total">${formatarMoedaBR(totalReceitas)}</td></tr>`;
+      
+      html += '<tr class="dre-section-header despesas"><td colspan="14">DESPESAS</td></tr>';
+      let totalDespesasPorMes = meses.map(() => 0);
+      
+      Object.keys(dadosOrganizados.despesa).sort().forEach(categoria => {
+        html += `<tr class="dre-categoria-header"><td class="dre-cell dre-categoria-nome" colspan="14">${categoria}</td></tr>`;
+        
+        Object.keys(dadosOrganizados.despesa[categoria]).sort().forEach(subcategoria => {
+          html += `<tr class="dre-row"><td class="dre-cell dre-subcategoria">${subcategoria}</td>`;
+          let totalSubcategoria = 0;
+          
+          meses.forEach((mes, i) => {
+            const valor = dadosOrganizados.despesa[categoria][subcategoria][mes];
+            totalDespesasPorMes[i] += valor;
+            totalSubcategoria += valor;
+            html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(valor)}</td>`;
+          });
+          
+          html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalSubcategoria)}</td></tr>`;
+        });
+      });
+      
+      html += '<tr class="dre-subtotal"><td class="dre-cell">Total de Despesas</td>';
+      const totalDespesas = totalDespesasPorMes.reduce((a, b) => a + b, 0);
+      totalDespesasPorMes.forEach(total => {
+        html += `<td class="dre-cell dre-despesa">${formatarMoedaBR(total)}</td>`;
+      });
+      html += `<td class="dre-cell dre-despesa dre-total">${formatarMoedaBR(totalDespesas)}</td></tr>`;
+      
+      html += '<tr class="dre-result-row"><td class="dre-cell">Saldo</td>';
+      const saldoTotal = totalReceitas - totalDespesas;
+      
+      meses.forEach((mes, i) => {
+        const saldoMes = totalReceitasPorMes[i] - totalDespesasPorMes[i];
+        html += `<td class="dre-cell dre-resultado ${saldoMes >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoMes)}</td>`;
+      });
+      
+      html += `<td class="dre-cell dre-resultado dre-total ${saldoTotal >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldoTotal)}</td></tr>`;
+      
+      html += '</tbody></table></div></div>';
+      dreContainer.style.display = 'block';
+      dreContainer.innerHTML = html;
+      
+      return;
       
     } else if (tipo === "kpis-operacionais") {
       const canvas = document.getElementById("graficoDinamico");
@@ -905,16 +971,13 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas.parentNode.appendChild(kpiContainer);
       }
       
-      const ano = window.filtroAno || new Date().getFullYear();
       let totalReceitas = 0, totalDespesas = 0, totalVendas = 0;
       let receitasPorCategoria = {}, despesasPorCategoria = {};
       let diasComVendasSet = new Set(), transacoes = 0;
-      let receitasAnoAnterior = 0, despesasAnoAnterior = 0;
       let produtosMaisVendidos = {}, valoresVendas = [];
       let top5Gastos = {}, totalItensVendidos = 0;
       let primeiraData = null, diasVendasMensal = new Set();
       
-      // Calcular dados unificados
       lancamentos.forEach(l => {
         let d;
         if (typeof l.data === 'string' && l.data.includes('/')) {
@@ -924,75 +987,56 @@ document.addEventListener("DOMContentLoaded", function () {
           d = new Date(l.data);
         }
         
-        // Calcular primeira data de operação
+        if (!aplicarFiltroData(d)) return;
+        
         if (!primeiraData || d < primeiraData) {
           primeiraData = d;
         }
         
-        if (d.getFullYear() === Number(ano)) {
-          if (l.tipo === 'receita') {
-            totalReceitas += l.valor;
-            receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
-            if (l.categoria === 'Vendas') {
-              totalVendas += l.valor;
-              transacoes++;
-              valoresVendas.push(l.valor);
-              diasComVendasSet.add(l.data);
-              
-              // Contar dias de vendas no mês atual
-              const mesAtual = new Date().getMonth() + 1;
-              const anoAtual = new Date().getFullYear();
-              if (d.getMonth() + 1 === mesAtual && d.getFullYear() === anoAtual) {
-                diasVendasMensal.add(d.getDate());
-              }
-              
-              const produto = l.descricao || l.subcategoria || 'Produto';
-              const quantidade = l.quantidade || 1;
-              produtosMaisVendidos[produto] = (produtosMaisVendidos[produto] || 0) + quantidade;
-              totalItensVendidos += quantidade;
+        if (l.tipo === 'receita') {
+          totalReceitas += l.valor;
+          receitasPorCategoria[l.categoria] = (receitasPorCategoria[l.categoria] || 0) + l.valor;
+          if (l.categoria === 'Vendas') {
+            totalVendas += l.valor;
+            transacoes++;
+            valoresVendas.push(l.valor);
+            diasComVendasSet.add(l.data);
+            
+            const mesAtual = new Date().getMonth() + 1;
+            const anoAtual = new Date().getFullYear();
+            if (d.getMonth() + 1 === mesAtual && d.getFullYear() === anoAtual) {
+              diasVendasMensal.add(d.getDate());
             }
-          } else {
-            totalDespesas += l.valor;
-            despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
-            top5Gastos[l.categoria] = (top5Gastos[l.categoria] || 0) + l.valor;
+            
+            const produto = l.descricao || l.subcategoria || 'Produto';
+            const quantidade = l.quantidade || 1;
+            produtosMaisVendidos[produto] = (produtosMaisVendidos[produto] || 0) + quantidade;
+            totalItensVendidos += quantidade;
           }
-        } else if (d.getFullYear() === Number(ano) - 1) {
-          if (l.tipo === 'receita') {
-            receitasAnoAnterior += l.valor;
-          } else {
-            despesasAnoAnterior += l.valor;
-          }
+        } else {
+          totalDespesas += l.valor;
+          despesasPorCategoria[l.categoria] = (despesasPorCategoria[l.categoria] || 0) + l.valor;
+          top5Gastos[l.categoria] = (top5Gastos[l.categoria] || 0) + l.valor;
         }
       });
       
       const saldo = totalReceitas - totalDespesas;
       const ticketMedio = transacoes > 0 ? totalVendas / transacoes : 0;
       const margem = totalReceitas > 0 ? ((saldo / totalReceitas) * 100) : 0;
-      const crescimentoReceitas = receitasAnoAnterior > 0 ? (((totalReceitas - receitasAnoAnterior) / receitasAnoAnterior) * 100) : 0;
-      
-      // Calcular valor médio por item
       const valorMedioPorItem = totalItensVendidos > 0 ? totalVendas / totalItensVendidos : 0;
-      
-      // Calcular dias de operação
       const hoje = new Date();
       const diasOperacao = primeiraData ? Math.ceil((hoje - primeiraData) / (1000 * 60 * 60 * 24)) : 0;
-      
-      // Calcular reserva de emergência
       const mediaDespesasMensal = totalDespesas / 12;
       const reservaEmergencia = mediaDespesasMensal > 0 ? (saldo / mediaDespesasMensal) : 0;
-      
-      // Calcular concentração
       const maiorReceita = Math.max(...Object.values(receitasPorCategoria));
       const concentracaoReceitas = totalReceitas > 0 ? (maiorReceita / totalReceitas * 100) : 0;
       
-      // Calcular variação do ticket
       let somaQuadrados = 0;
       valoresVendas.forEach(valor => {
         somaQuadrados += Math.pow(valor - ticketMedio, 2);
       });
       const variacao = valoresVendas.length > 1 ? Math.sqrt(somaQuadrados / (valoresVendas.length - 1)) : 0;
       
-      // Semáforo financeiro
       let semaforoTexto = 'Situação Boa';
       let semaforoIcon = 'fa-check-circle';
       let semaforoCor = '#38a169';
@@ -1007,7 +1051,6 @@ document.addEventListener("DOMContentLoaded", function () {
         semaforoCor = '#ecc94b';
       }
       
-      // Top produtos e gastos
       const topProdutos = Object.entries(produtosMaisVendidos)
         .sort(([,a], [,b]) => b - a)
         .slice(0, 3);
@@ -1016,18 +1059,26 @@ document.addEventListener("DOMContentLoaded", function () {
         .sort(([,a], [,b]) => b - a)
         .slice(0, 3);
       
+      let tituloKPI = 'KPIs Operacionais';
+      if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+        tituloKPI += ' - Todos os períodos';
+      } else if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+        tituloKPI += ` - Mês ${String(window.filtroMes).padStart(2, '0')} (Todos os anos)`;
+      } else if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+        tituloKPI += ` - Ano ${window.filtroAno}`;
+      } else {
+        tituloKPI += ` - ${String(window.filtroMes).padStart(2, '0')}/${window.filtroAno}`;
+      }
+      
       const html = `
         <div class="kpi-dashboard">
-          <h3 class="kpi-title">KPIs Operacionais - ${ano}</h3>
+          <h3 class="kpi-title">${tituloKPI}</h3>
           <div class="kpi-grid">
             <div class="kpi-card receitas">
               <div class="kpi-icon"><i class="fas fa-coins" style="color: #38a169;"></i></div>
               <div class="kpi-content">
                 <h4>Receitas Totais</h4>
                 <div class="kpi-value">${formatarMoedaBR(totalReceitas)}</div>
-                <div class="kpi-change ${crescimentoReceitas >= 0 ? 'positive' : 'negative'}">
-                  <i class="fas ${crescimentoReceitas >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(crescimentoReceitas).toFixed(1)}% vs ano anterior
-                </div>
               </div>
             </div>
             
@@ -1081,16 +1132,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <div class="kpi-content">
                 <h4>Frequência Vendas</h4>
                 <div class="kpi-value">${diasComVendasSet.size}</div>
-                <div class="kpi-subtitle">Dias com vendas no ano</div>
-              </div>
-            </div>
-            
-            <div class="kpi-card vendas">
-              <div class="kpi-icon"><i class="fas fa-calendar-day" style="color: #17acaf;"></i></div>
-              <div class="kpi-content">
-                <h4>Frequência Vendas Mensal</h4>
-                <div class="kpi-value">${diasVendasMensal.size}</div>
-                <div class="kpi-subtitle">Dias com vendas no mês atual</div>
+                <div class="kpi-subtitle">Dias com vendas</div>
               </div>
             </div>
             
@@ -1176,7 +1218,6 @@ document.addEventListener("DOMContentLoaded", function () {
       kpiContainer.style.display = 'block';
       kpiContainer.innerHTML = html;
       return;
-      
     }
 
     chartInstance = new Chart(ctx, {
@@ -1252,14 +1293,26 @@ document.addEventListener("DOMContentLoaded", function () {
   // Evento para trocar o gráfico
   const selectGrafico = document.getElementById("tipo-grafico");
   if (selectGrafico) {
+    // Carregar último gráfico selecionado
+    const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado');
+    if (ultimoGrafico) {
+      selectGrafico.value = ultimoGrafico;
+    }
+    
     selectGrafico.addEventListener("change", function () {
+      localStorage.setItem('ultimoGraficoSelecionado', this.value);
       renderizarGrafico(this.value);
     });
   }
 
   // Renderiza o gráfico padrão ao abrir a aba
   if (document.getElementById("graficoDinamico")) {
-    renderizarGrafico(document.getElementById("tipo-grafico")?.value || "vendas");
+    const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || "vendas";
+    const selectGrafico = document.getElementById("tipo-grafico");
+    if (selectGrafico) {
+      selectGrafico.value = ultimoGrafico;
+    }
+    renderizarGrafico(ultimoGrafico);
   }
 
   // Expor função globalmente

@@ -700,17 +700,6 @@
   background: #2d3748;
   border: 1px solid #4a5568;
   margin-bottom: 16px;
-
-
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #2d3748;
-  border: 1px solid #4a5568;
-  margin-bottom: 16px;
 }
 
 .integration-status.connected {
@@ -733,6 +722,7 @@
   height: 24px;
   text-align: center;
   position: relative;
+  flex-shrink: 0;
 }
 
 .status-icon .loading-spinner {
@@ -742,6 +732,7 @@
   border-top: 2px solid #17acaf;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin: 0;
 }
 
 .status-text {

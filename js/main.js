@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Verificar se os dados estão atualizados após carregar a página
     setTimeout(() => {
       acionarSincronizacaoSeNecessario();
-    }, 3000);
+    }, 500);
     
     // Exemplo de JS para trocar o conteúdo da análise
     const tipoAnalise = document.getElementById('tipo-analise');

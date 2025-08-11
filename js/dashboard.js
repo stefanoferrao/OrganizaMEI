@@ -25,6 +25,19 @@ document.addEventListener("DOMContentLoaded", function () {
             d = new Date(l.data);
           }
           if (!isNaN(d.getTime())) {
+            // Se ambos são "todos", mostrar todos os dados
+            if (filtroMes === "todos" && filtroAno === "todos") {
+              return true;
+            }
+            // Se apenas o ano é "todos", filtrar apenas por mês
+            if (filtroAno === "todos" && filtroMes !== "todos") {
+              return d.getMonth() + 1 === Number(filtroMes);
+            }
+            // Se apenas o mês é "todos", filtrar apenas por ano
+            if (filtroMes === "todos" && filtroAno !== "todos") {
+              return d.getFullYear() === Number(filtroAno);
+            }
+            // Filtro normal por mês e ano específicos
             return d.getMonth() + 1 === Number(filtroMes) && d.getFullYear() === Number(filtroAno);
           }
         }
@@ -53,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <span class="dashboard-icon"><i class="fas fa-shopping-cart" style="color: #fff;"></i></span>
         <span class="dashboard-label dashboard-label-vendas">Vendas no Mês</span>
         <span class="dashboard-value dashboard-value-vendas">R$ ${vendasMes.toFixed(2).replace('.', ',')}</span>
-        <span class="dashboard-periodo">${filtroMes && filtroAno ? `Referente a ${filtroMes.toString().padStart(2, '0')}/${filtroAno}` : 'Escolha o mês'}</span>
+        <span class="dashboard-periodo">${filtroMes && filtroAno ? (filtroMes === "todos" && filtroAno === "todos" ? 'Todos os períodos' : filtroAno === "todos" && filtroMes !== "todos" ? `Mês ${filtroMes.toString().padStart(2, '0')} - Todos os anos` : filtroMes === "todos" && filtroAno !== "todos" ? `Ano ${filtroAno} - Todos os meses` : `Referente a ${filtroMes.toString().padStart(2, '0')}/${filtroAno}`) : 'Escolha o mês'}</span>
       </div>
       <div class="dashboard-card dashboard-card-receitas" data-card="1">
         <span class="dashboard-icon"><i class="fas fa-dollar-sign" style="color: #fff;"></i></span>

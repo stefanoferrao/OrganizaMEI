@@ -279,6 +279,11 @@ async function sincronizarFinanceiro() {
     }
 
     try {
+        // Inativar botões CRUD se não estiver já inativo
+        if (!document.body.classList.contains('sync-disabled')) {
+            document.body.classList.add('sync-disabled');
+        }
+        
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
         updateMiniIndicator('checking');
@@ -371,6 +376,14 @@ async function sincronizarFinanceiro() {
         updateMiniIndicator('error');
         mostrarNotificacaoSync('Erro na sincronização', 'error');
         hideProgress();
+    } finally {
+        // Reativar botões CRUD apenas se foi esta função que os desativou
+        // (evita conflito com sincronizarTudo)
+        setTimeout(() => {
+            if (document.body.classList.contains('sync-disabled')) {
+                document.body.classList.remove('sync-disabled');
+            }
+        }, 500);
     }
 }
 
@@ -642,6 +655,9 @@ async function sincronizarTudo() {
     const originalText = btn.textContent;
     
     try {
+        // Inativar todos os botões CRUD
+        document.body.classList.add('sync-disabled');
+        
         btn.disabled = true;
         btn.textContent = 'Sincronizando...';
         
@@ -656,6 +672,9 @@ async function sincronizarTudo() {
         console.error('Erro na sincronização:', error);
         mostrarNotificacaoSync('Erro na sincronização', 'error');
     } finally {
+        // Reativar todos os botões CRUD
+        document.body.classList.remove('sync-disabled');
+        
         btn.disabled = false;
         btn.textContent = originalText;
         hideProgress();

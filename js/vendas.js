@@ -7,9 +7,45 @@ document.addEventListener("DOMContentLoaded", function () {
     
     lista.innerHTML = "";
     
-    const vendas = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas");
+    let vendas = lancamentos.filter(l => l.tipo === "receita" && l.categoria === "Vendas");
+    
+    // Aplicar filtros de mês/ano
+    const filtroMes = window.filtroMes || localStorage.getItem("filtroMes");
+    const filtroAno = window.filtroAno || localStorage.getItem("filtroAno");
+    
+    if (filtroMes && filtroAno) {
+      vendas = vendas.filter(l => {
+        if (l.data) {
+          let d;
+          if (typeof l.data === 'string' && l.data.includes('/')) {
+            const [dia, mes, ano] = l.data.split('/');
+            d = new Date(ano, mes - 1, dia);
+          } else {
+            d = new Date(l.data);
+          }
+          if (!isNaN(d.getTime())) {
+            // Se ambos são "todos", mostrar todos os dados
+            if (filtroMes === "todos" && filtroAno === "todos") {
+              return true;
+            }
+            // Se apenas o ano é "todos", filtrar apenas por mês
+            if (filtroAno === "todos" && filtroMes !== "todos") {
+              return d.getMonth() + 1 === Number(filtroMes);
+            }
+            // Se apenas o mês é "todos", filtrar apenas por ano
+            if (filtroMes === "todos" && filtroAno !== "todos") {
+              return d.getFullYear() === Number(filtroAno);
+            }
+            // Filtro normal por mês e ano específicos
+            return d.getMonth() + 1 === Number(filtroMes) && d.getFullYear() === Number(filtroAno);
+          }
+        }
+        return false;
+      });
+    }
+    
     if (vendas.length === 0) {
-      lista.innerHTML = '<li class="venda-empty">Nenhuma venda registrada.</li>';
+      lista.innerHTML = '<li class="venda-empty">Nenhuma venda registrada para o período selecionado.</li>';
       return;
     }
     

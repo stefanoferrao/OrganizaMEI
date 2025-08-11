@@ -27,13 +27,27 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     });
     
-    // Verificar se deve mostrar todos os registros
-    const mostrarTodos = document.getElementById("mostrar-todos-registros")?.checked;
-    
-    if (!mostrarTodos && window.filtroMes && window.filtroAno) {
+    if (window.filtroMes || window.filtroAno) {
       filtrados = filtrados.filter(l => {
         if (!l.data) return false;
         const d = l.data;
+        
+        // Se ambos são "todos", mostrar todos os dados
+        if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+          return true;
+        }
+        
+        // Se apenas o ano é "todos", filtrar apenas por mês
+        if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+          return d.getMonth() + 1 === Number(window.filtroMes);
+        }
+        
+        // Se apenas o mês é "todos", filtrar apenas por ano
+        if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+          return d.getFullYear() === Number(window.filtroAno);
+        }
+        
+        // Filtro normal por mês e ano específicos
         return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
       });
     }
@@ -91,9 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!div) return;
     
     let filtrados = lancamentos;
-    const mostrarTodos = document.getElementById("mostrar-todos-registros")?.checked;
-    
-    if (!mostrarTodos && window.filtroMes && window.filtroAno) {
+    if (window.filtroMes || window.filtroAno) {
       filtrados = lancamentos.filter(l => {
         if (!l.data) return false;
         let d;
@@ -103,6 +115,23 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           d = new Date(l.data);
         }
+        
+        // Se ambos são "todos", mostrar todos os dados
+        if (window.filtroMes === "todos" && window.filtroAno === "todos") {
+          return true;
+        }
+        
+        // Se apenas o ano é "todos", filtrar apenas por mês
+        if (window.filtroAno === "todos" && window.filtroMes !== "todos") {
+          return d.getMonth() + 1 === Number(window.filtroMes);
+        }
+        
+        // Se apenas o mês é "todos", filtrar apenas por ano
+        if (window.filtroMes === "todos" && window.filtroAno !== "todos") {
+          return d.getFullYear() === Number(window.filtroAno);
+        }
+        
+        // Filtro normal por mês e ano específicos
         return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
       });
     }
@@ -111,9 +140,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalDespesas = filtrados.filter(l => l.tipo === "despesa").reduce((acc, l) => acc + l.valor, 0);
     const saldo = totalReceitas - totalDespesas;
     
-    const receitasLabel = mostrarTodos ? "Receitas Totais:" : "Receitas:";
-    const despesasLabel = mostrarTodos ? "Despesas Totais:" : "Despesas:";
-    const saldoLabel = mostrarTodos ? "Saldo Total:" : "Saldo:";
+    const receitasLabel = "Receitas:";
+    const despesasLabel = "Despesas:";
+    const saldoLabel = "Saldo:";
     
     div.innerHTML = `
       <strong>${receitasLabel}</strong> R$ ${totalReceitas.toFixed(2).replace('.', ',')}<br>
@@ -492,14 +521,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.fecharAviso = fecharAviso;
 
   
-  // Event listener para o checkbox
-  const mostrarTodosCheckbox = document.getElementById("mostrar-todos-registros");
-  if (mostrarTodosCheckbox) {
-    mostrarTodosCheckbox.addEventListener("change", function() {
-      renderizarLancamentos();
-      renderizarResumoFinanceiro();
-    });
-  }
+
   
   // Função para verificar status de sincronização
   function verificarStatusSincronizacao() {

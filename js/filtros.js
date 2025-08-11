@@ -11,6 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
     filtroMes.innerHTML = "";
     filtroAno.innerHTML = "";
     
+    // Adicionar opção "Todos" para mês
+    const optTodosMes = document.createElement("option");
+    optTodosMes.value = "todos";
+    optTodosMes.textContent = "Todos";
+    filtroMes.appendChild(optTodosMes);
+    
     // Descobre anos dos lançamentos
     const anos = Array.from(new Set(lancamentos.map(l => {
       if (!l.data) return "";
@@ -24,6 +30,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const anoAtual = new Date().getFullYear();
     if (anos.length === 0) anos.push(anoAtual.toString());
     anos.sort();
+    
+    // Adicionar opção "Todos" para ano
+    const optTodosAno = document.createElement("option");
+    optTodosAno.value = "todos";
+    optTodosAno.textContent = "Todos";
+    filtroAno.appendChild(optTodosAno);
     
     meses.forEach(m => {
       const opt = document.createElement("option");
@@ -68,6 +80,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
       }
+      if (typeof renderizarVendas === 'function') {
+        renderizarVendas();
+      }
       // Atualizar gráficos se estiver na aba de gráficos
       if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
         const tipoGrafico = document.getElementById('tipo-grafico')?.value || 'vendas';
@@ -91,6 +106,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
+      }
+      if (typeof renderizarVendas === 'function') {
+        renderizarVendas();
       }
       // Atualizar gráficos se estiver na aba de gráficos
       if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
@@ -117,6 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (typeof renderizarDashboardResumo === 'function') {
         renderizarDashboardResumo();
+      }
+      if (typeof renderizarVendas === 'function') {
+        renderizarVendas();
       }
       // Atualizar gráficos se estiver na aba de gráficos
       if (typeof renderizarGrafico === 'function' && document.getElementById('graficos').classList.contains('active')) {
