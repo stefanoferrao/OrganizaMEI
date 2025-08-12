@@ -347,6 +347,21 @@ button .fas, button .far, button .fab {
   color: #68d391 !important;
 }
 
+/* Regras globais para inativar botões durante ressincronização */
+.sync-disabled .btn-remover,
+.sync-disabled .btn-saida,
+.sync-disabled #estoque-form button[type="submit"],
+.sync-disabled .modal-confirm {
+  background: #4a5568 !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
+.sync-disabled #estoque-form button[type="submit"]:disabled {
+  opacity: 0.5;
+}
+
 /* Toast notification styles */
 .swal2-toast.swal-dark-popup {
   background: #2d3748 !important;

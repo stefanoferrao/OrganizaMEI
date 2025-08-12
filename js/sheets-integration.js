@@ -860,6 +860,12 @@ async function adicionarMovimentacaoEstoque(dados) {
     if (!url || url.includes('*')) return false;
     
     try {
+        // Bloquear botões durante operação se não estiver já bloqueado
+        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
+        if (!jaEstavaBloqueado) {
+            document.body.classList.add('sync-disabled');
+        }
+        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -870,9 +876,23 @@ async function adicionarMovimentacaoEstoque(dados) {
             })
         });
         const result = await response.json();
+        
+        // Reativar botões apenas se foi esta função que os desativou
+        if (!jaEstavaBloqueado) {
+            setTimeout(() => {
+                document.body.classList.remove('sync-disabled');
+            }, 500);
+        }
+        
         return result.success;
     } catch (error) {
         console.error('Erro ao adicionar movimentação de estoque:', error);
+        // Reativar botões em caso de erro
+        setTimeout(() => {
+            if (document.body.classList.contains('sync-disabled')) {
+                document.body.classList.remove('sync-disabled');
+            }
+        }, 500);
         return false;
     }
 }
@@ -882,6 +902,12 @@ async function excluirProdutoEstoque(nomeProduto) {
     if (!url || url.includes('*')) return false;
     
     try {
+        // Bloquear botões durante operação se não estiver já bloqueado
+        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
+        if (!jaEstavaBloqueado) {
+            document.body.classList.add('sync-disabled');
+        }
+        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -897,9 +923,23 @@ async function excluirProdutoEstoque(nomeProduto) {
         } else {
             console.error('Falha ao excluir:', result.message);
         }
+        
+        // Reativar botões apenas se foi esta função que os desativou
+        if (!jaEstavaBloqueado) {
+            setTimeout(() => {
+                document.body.classList.remove('sync-disabled');
+            }, 500);
+        }
+        
         return result.success;
     } catch (error) {
         console.error('Erro ao excluir produto do estoque:', error);
+        // Reativar botões em caso de erro
+        setTimeout(() => {
+            if (document.body.classList.contains('sync-disabled')) {
+                document.body.classList.remove('sync-disabled');
+            }
+        }, 500);
         return false;
     }
 }
@@ -912,6 +952,12 @@ async function sincronizarEstoque() {
     if (!estoqueAtivo) return;
     
     try {
+        // Bloquear botões do estoque durante sincronização se não estiver já bloqueado
+        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
+        if (!jaEstavaBloqueado) {
+            document.body.classList.add('sync-disabled');
+        }
+        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -953,64 +999,25 @@ async function sincronizarEstoque() {
             window.produtos.push(...produtosSincronizados);
         }
         
+        // Reativar botões apenas se foi esta função que os desativou
+        if (!jaEstavaBloqueado) {
+            setTimeout(() => {
+                document.body.classList.remove('sync-disabled');
+            }, 500);
+        }
+        
     } catch (error) {
         console.error('Erro ao sincronizar estoque:', error);
+        // Reativar botões em caso de erro
+        setTimeout(() => {
+            if (document.body.classList.contains('sync-disabled')) {
+                document.body.classList.remove('sync-disabled');
+            }
+        }, 500);
     }
 }
 
-async function testarConexaoSheets() {
-    const url = getCurrentUrl();
-    if (!url || url.includes('*')) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'URL não configurada',
-            text: 'Configure a URL do Google Sheets primeiro',
-            confirmButtonColor: '#17acaf',
-            background: '#2d3748',
-            color: '#fff'
-        });
-        return;
-    }
-    
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'testarScript' })
-        });
-        const result = await response.json();
-        
-        if (result.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Conexão bem-sucedida!',
-                text: result.message,
-                confirmButtonColor: '#38a169',
-                background: '#2d3748',
-                color: '#fff'
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Falha na conexão',
-                text: result.message,
-                confirmButtonColor: '#e53e3e',
-                background: '#2d3748',
-                color: '#fff'
-            });
-        }
-    } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro de conexão',
-            text: error.message,
-            confirmButtonColor: '#e53e3e',
-            background: '#2d3748',
-            color: '#fff'
-        });
-    }
-}
+
 
 async function atualizarStatusEstoque() {
     const statusElement = document.getElementById('statusEstoque');
