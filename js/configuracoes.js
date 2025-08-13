@@ -1,188 +1,91 @@
 // Configurações - Importação/Exportação e Configurações Gerais
 document.addEventListener("DOMContentLoaded", function () {
   
-  // Função para mostrar README em popup
-  function mostrarReadme() {
-    const readmeContent = `
-# Integração do **OrganizaMEI** com Google Sheets
-
-## ✅ Etapas para configurar a integração
-
-### 1. Criar o script no Google Apps Script
-
-1. Acesse [https://script.google.com](https://script.google.com)
-2. Clique em **"Novo projeto"**
-3. Apague qualquer conteúdo e cole o código do arquivo \`Código.gs\`
-4. Substitua o texto \`'SUA_PLANILHA_ID'\` pelo ID da sua planilha:
-
-   * Para encontrar o ID, abra sua planilha e copie a parte entre \`/d/\` e \`/edit\` da URL:
-     Exemplo: \`https://docs.google.com/spreadsheets/d/**ID_AQUI**/edit\`
-5. Salve o projeto com um nome (ex: **OrganizaMEI-Financeiro**)
-
----
-
-### 2. Publicar como Web App
-
-1. No menu do projeto, clique em **"Implantar" > "Nova implantação"**
-2. Escolha o tipo: **Aplicativo da web**
-3. Preencha as opções:
-
-   * **Executar como:** você mesmo (seu e-mail)
-   * **Quem tem acesso:** **Qualquer pessoa**
-4. Clique em **"Implantar"**
-5. Copie a **URL gerada do Web App**
-
----
-
-### 3. Conectar ao OrganizaMEI
-
-1. Abra o **OrganizaMEI** no navegador
-2. Vá até a guia **Financeiro**
-3. Encontre a seção **Integração com Google Sheets**
-4. Cole a **URL do Web App** no campo indicado
-5. Clique em **"Salvar URL"**
-
----
-
-### 4. Usar a integração automaticamente
-
-* ✅ Ao **adicionar um lançamento** no OrganizaMEI, ele será automaticamente enviado ao Google Sheets
-* ✅ Ao **registrar uma venda (saída de produto)**, será gerado um lançamento de receita e enviado automaticamente à planilha
-* ✅ Ao **excluir um lançamento**, ele será automaticamente removido da planilha
-* ✅ Você também pode clicar em **"Sincronizar com Planilha"** para carregar todos os dados da planilha para o sistema local (substituindo os dados atuais)
-
----
-
-## Como a integração funciona
-
-### ➕ Adicionando um lançamento:
-
-1. Preencha o formulário na guia **Financeiro**
-2. Clique em **"Adicionar"**
-3. O sistema:
-
-   * Salva localmente
-   * Envia automaticamente para o Google Sheets
-   * Atualiza o status de sincronização
-
-### 🛒 Registrando uma venda:
-
-1. Vá até a guia **Estoque**
-2. Clique em **"Saída"** do produto
-3. Informe a quantidade e o valor
-4. O sistema:
-
-   * Reduz o estoque
-   * Gera um lançamento de receita
-   * Envia automaticamente para o Google Sheets
-
-### 🗑 Removendo um lançamento:
-
-1. Clique no ícone de lixeira ao lado do lançamento
-2. O sistema:
-
-   * Remove localmente
-   * Remove automaticamente da planilha
-
----
-
-## Estrutura esperada da planilha
-
-A planilha deve conter as seguintes colunas, nessa ordem:
-
-* \`ID\` – Identificador único (formato DDMMAAAAHHMMSS)
-* \`Tipo\` – receita ou despesa
-* \`Categoria\` – ex: alimentação, vendas
-* \`Subcategoria\` – ex: almoço, iPhone
-* \`Descrição\` – descrição do lançamento
-* \`Quantidade\` – número de itens
-* \`Valor\` – valor total em R$
-* \`Data Lançamento\` – formato: DD/MM/AAAA
-
----
-
-## Funcionalidades disponíveis
-
-* ✅ Envio automático de lançamentos ao Google Sheets
-* ✅ Exclusão automática da planilha quando um lançamento é removido
-* ✅ Sincronização completa dos dados da planilha para o sistema
-* ✅ Registro automático de vendas como receita
-* ✅ Interface simples e integrada ao OrganizaMEI
-* ✅ Armazenamento seguro da URL no navegador
-* ✅ Visualização do status de sincronização
-* ✅ Compatível com dispositivos móveis
-* ✅ Prevenção de duplicidade com IDs únicos
-
----
-
-## Problemas comuns e como resolver
-
-### ❌ Erro de CORS
-
-* Verifique se:
-
-  * A URL do Web App está correta
-  * O acesso está configurado como **"Qualquer pessoa"**
-  * As permissões foram autorizadas ao implantar
-
-### ❌ Planilha não encontrada
-
-* Confirme se:
-
-  * O ID da planilha foi inserido corretamente no código
-  * A planilha está ativa e acessível
-  * Você tem permissão de edição
-
-### ❌ Dados não aparecem no sistema
-
-* Verifique se:
-
-  * A planilha tem os cabeçalhos corretos (como listados acima)
-  * Os dados estão no formato esperado
-  * Está testando com poucos registros primeiro
-
----
-
-## Segurança da integração
-
-* A URL do Web App é salva apenas no seu navegador
-* A comunicação é feita via **HTTPS**
-* Apenas você acessa sua planilha
-* Recomendamos o uso de uma planilha dedicada apenas ao **OrganizaMEI**
-    `;
+  // Sistema de Guias de Configurações
+  function initConfigTabs() {
+    const tabs = document.querySelectorAll('.config-tab');
+    const contents = document.querySelectorAll('.config-tab-content');
     
-    // Converter markdown para HTML
-    const htmlContent = readmeContent
-      .replace(/### (.*?)\n/g, '<h3>$1</h3>')
-      .replace(/## (.*?)\n/g, '<h2>$1</h2>')
-      .replace(/# (.*?)\n/g, '<h1>$1</h1>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\`(.*?)\`/g, '<code>$1</code>')
-      .replace(/\* (.*?)\n/g, '<li>$1</li>')
-      .replace(/---\n/g, '<hr>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>');
+    // Carregar guia salva ou usar 'geral' como padrão
+    const savedTab = localStorage.getItem('activeConfigTab') || 'geral';
+    switchConfigTab(savedTab);
     
-    Swal.fire({
-      title: 'Guia de Integração Google Sheets',
-      html: `<div class="readme-content">${htmlContent}</div>`,
-      width: '80%',
-      showCloseButton: true,
-      showConfirmButton: false,
-      background: '#232b38',
-      color: '#e2e8f0',
-      customClass: {
-        popup: 'readme-popup'
-      }
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        switchConfigTab(tabId);
+        localStorage.setItem('activeConfigTab', tabId);
+      });
     });
+    
+    function switchConfigTab(tabId) {
+      // Remover classe active de todas as guias e conteúdos
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      
+      // Ativar guia e conteúdo selecionados
+      const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+      const activeContent = document.getElementById(`config-${tabId}`);
+      
+      if (activeTab && activeContent) {
+        activeTab.classList.add('active');
+        activeContent.classList.add('active');
+      }
+    }
+  }
+  
+  // Inicializar sistema de guias
+  initConfigTabs();
+  
+  // Função para mostrar README em popup
+  async function mostrarReadme() {
+    try {
+      const response = await fetch('docs/README.md');
+      const readmeContent = await response.text();
+      
+      // Converter markdown para HTML
+      const htmlContent = readmeContent
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+        .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+        .replace(/# (.*?)\n/g, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\`(.*?)\`/g, '<code>$1</code>')
+        .replace(/\* (.*?)\n/g, '<li>$1</li>')
+        .replace(/---\n/g, '<hr>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+      
+      Swal.fire({
+        title: 'OrganizaMEI - Documentação Completa',
+        html: `<div class="readme-content">${htmlContent}</div>`,
+        width: '90%',
+        showCloseButton: true,
+        showConfirmButton: false,
+        background: '#232b38',
+        color: '#e2e8f0',
+        customClass: {
+          popup: 'readme-popup'
+        }
+      });
+    } catch (error) {
+      console.error('Erro ao carregar README:', error);
+      Swal.fire({
+        title: 'Erro',
+        text: 'Não foi possível carregar a documentação.',
+        icon: 'error',
+        background: '#232b38',
+        color: '#e2e8f0'
+      });
+    }
   }
   
   // Adicionar event listener ao botão README
   const btnReadme = document.getElementById('btn-readme');
   if (btnReadme) {
-    btnReadme.onclick = function(e) {
+    btnReadme.onclick = async function(e) {
       e.preventDefault();
-      mostrarReadme();
+      await mostrarReadme();
     };
   }
   
@@ -190,6 +93,31 @@ A planilha deve conter as seguintes colunas, nessa ordem:
   if (typeof atualizarStatusEstoque === 'function') {
     setTimeout(atualizarStatusEstoque, 1500);
   }
+  
+  // Função para adicionar novas guias programaticamente (para futuras implementações)
+  window.addConfigTab = function(id, title, icon, content) {
+    const tabsContainer = document.querySelector('.config-tabs');
+    const contentContainer = document.querySelector('.config-content');
+    
+    if (tabsContainer && contentContainer) {
+      // Criar nova guia
+      const newTab = document.createElement('button');
+      newTab.className = 'config-tab';
+      newTab.setAttribute('data-tab', id);
+      newTab.innerHTML = `<i class="${icon}"></i> ${title}`;
+      tabsContainer.appendChild(newTab);
+      
+      // Criar novo conteúdo
+      const newContent = document.createElement('div');
+      newContent.id = `config-${id}`;
+      newContent.className = 'config-tab-content';
+      newContent.innerHTML = content;
+      contentContainer.appendChild(newContent);
+      
+      // Reinicializar sistema de guias
+      initConfigTabs();
+    }
+  };
   
   const btnImportar = document.getElementById('btn-importar-dados');
   const btnExportarTodos = document.getElementById('btn-exportar-todos');
@@ -296,4 +224,14 @@ A planilha deve conter as seguintes colunas, nessa ordem:
       }
     });
   };
+  
+  // Exemplo de como adicionar uma nova guia (descomente para testar)
+  // setTimeout(() => {
+  //   window.addConfigTab('temas', 'Temas', 'fas fa-palette', `
+  //     <div class="configuracoes-container">
+  //       <h3><i class="fas fa-palette" style="color: #17acaf;"></i> Configurações de Tema</h3>
+  //       <p style="color: #a0aec0; text-align: center;">Funcionalidade em desenvolvimento...</p>
+  //     </div>
+  //   `);
+  // }, 1000);
 });

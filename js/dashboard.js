@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
       <!-- Segunda linha: Produtos, Itens em Estoque, Valor Médio por item, Saúde Financeira -->
       <div class="dashboard-card dashboard-card-produtos" data-card="4">
-        <span class="dashboard-icon"><i class="fas fa-box" style="color: #38a169;"></i></span>
+        <span class="dashboard-icon"><i class="fas fa-box"></i></span>
         <span class="dashboard-label dashboard-label-produtos">Produtos</span>
         <span class="dashboard-value dashboard-value-produtos">${totalProdutos}</span>
       </div>
       <div class="dashboard-card dashboard-card-estoque" data-card="5">
-        <span class="dashboard-icon"><i class="fas fa-warehouse" style="color: #17acaf;"></i></span>
+        <span class="dashboard-icon"><i class="fas fa-warehouse"></i></span>
         <span class="dashboard-label dashboard-label-estoque">Itens em Estoque</span>
         <span class="dashboard-value dashboard-value-estoque">${totalItensEstoque}</span>
       </div>

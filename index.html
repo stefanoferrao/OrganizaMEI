@@ -162,17 +162,20 @@
             background: #17acaf !important;
             color: #fff;
             box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
-            font-size: 16px;
         }
 
         nav button:hover {
-            transform: translateX(4px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         nav button i {
             transform: none !important;
             transition: none !important;
+            display: inline-block !important;
+            vertical-align: baseline !important;
+            font-size: inherit !important;
+            width: auto !important;
+            height: auto !important;
         }
 
         .ripple {
@@ -209,7 +212,8 @@
     <link rel="stylesheet" href="css/shortcuts.css">
     <link rel="stylesheet" href="css/font-awesome-custom.css">
     <link rel="stylesheet" href="css/loading-overlay.css">
-    <link rel="stylesheet" href="css/button-lock.css">
+
+    <link rel="stylesheet" href="css/icon-fixes.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -230,8 +234,8 @@
     <script defer src="js/financeiro-navigation.js"></script>
     <script defer src="js/tutorial.js"></script>
     <script defer src="js/loading-manager.js"></script>
-    <script defer src="js/button-lock-manager.js"></script>
     <script defer src="js/testar-conexao.js"></script>
+    <script defer src="js/themes.js"></script>
     <script defer src="js/main.js"></script>
 </head>
 
@@ -249,19 +253,19 @@
                 <button id="btn-filtrar" type="button">Filtrar</button>
             </div>
             <nav>
-                <button onclick="changeTab('dashboard')"><i class="fas fa-tachometer-alt" style="color: #17acaf; margin-right: 8px !important;"></i>Dashboard</button>
-                <button onclick="changeTab('estoque')"><i class="fas fa-boxes" style="color: #17acaf; margin-right: 8px !important;"></i>Estoque</button>
-                <button onclick="changeTab('financeiro')"><i class="fas fa-dollar-sign" style="color: #17acaf; margin-right: 8px !important;"></i>Financeiro</button>
-                <button onclick="changeTab('vendas')"><i class="fas fa-shopping-cart" style="color: #17acaf; margin-right: 8px !important;"></i>Vendas</button>
-                <button onclick="changeTab('categorias')"><i class="fas fa-tags" style="color: #17acaf; margin-right: 8px !important;"></i>Categorias</button>
-                <button onclick="changeTab('graficos')"><i class="fas fa-chart-bar" style="color: #17acaf; margin-right: 8px !important;"></i>Gráficos</button>
-                <button onclick="changeTab('configuracoes')"><i class="fas fa-cog" style="color: #17acaf; margin-right: 8px !important;"></i>Configurações</button>
+                <button onclick="changeTab('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</button>
+                <button onclick="changeTab('estoque')"><i class="fas fa-boxes"></i>Estoque</button>
+                <button onclick="changeTab('financeiro')"><i class="fas fa-dollar-sign"></i>Financeiro</button>
+                <button onclick="changeTab('vendas')"><i class="fas fa-shopping-cart"></i>Vendas</button>
+                <button onclick="changeTab('categorias')"><i class="fas fa-tags"></i>Categorias</button>
+                <button onclick="changeTab('graficos')"><i class="fas fa-chart-bar"></i>Gráficos</button>
+                <button onclick="changeTab('configuracoes')"><i class="fas fa-cog"></i>Configurações</button>
             </nav>
         </div>
         
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 3.5</div>
+            <div class="version-info">Versão 4.0</div>
         </div>
     </aside>
 
@@ -270,17 +274,17 @@
         <!-- Dashboard -->
         <!-- Categorias -->
         <section id="categorias" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-tags" style="color: #17acaf; margin-right: 8px;"></i>Categorias e Subcategorias</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-tags"></i>Categorias e Subcategorias</h2>
             <div id="lista-categorias"></div>
         </section>
         <section id="dashboard" class="tab-section active">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-tachometer-alt" style="color: #17acaf; margin-right: 8px;"></i>Visão Geral</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-tachometer-alt"></i>Visão Geral</h2>
             <div id="dashboard-resumo" class="dashboard-cards"></div>
         </section>
 
         <!-- Estoque -->
         <section id="estoque" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-boxes" style="color: #17acaf; margin-right: 8px;"></i>Controle de Estoque</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-boxes"></i>Controle de Estoque</h2>
             <form id="estoque-form">
                 <input id="produto" type="text" placeholder="Produto" />
                 <input id="quantidade" type="number" min="0" placeholder="Quantidade" />
@@ -308,7 +312,7 @@
 
         <!-- Financeiro -->
         <section id="financeiro" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-dollar-sign" style="color: #17acaf; margin-right: 8px;"></i>Financeiro</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-dollar-sign"></i>Financeiro</h2>
 
             <div id="filtro-info" class="filtro-info"></div>
 
@@ -319,12 +323,12 @@
                     <div class="tipo-selector">
                         <input type="radio" id="tipo-receita" name="tipo-lancamento" value="receita" checked>
                         <label for="tipo-receita" class="tipo-label receita-label">
-                            <span class="tipo-icon"><i class="fas fa-plus-circle" style="color: #17acaf;"></i></span>
+                            <span class="tipo-icon"><i class="fas fa-plus-circle"></i></span>
                             <span class="tipo-text">Receita</span>
                         </label>
                         <input type="radio" id="tipo-despesa" name="tipo-lancamento" value="despesa">
                         <label for="tipo-despesa" class="tipo-label despesa-label">
-                            <span class="tipo-icon"><i class="fas fa-minus-circle" style="color: #e53e3e;"></i></span>
+                            <span class="tipo-icon"><i class="fas fa-minus-circle"></i></span>
                             <span class="tipo-text">Despesa</span>
                         </label>
                     </div>
@@ -332,14 +336,14 @@
                 
                 <div class="form-row">
                     <div class="form-group-categoria">
-                        <label for="categoria-lancamento"><i class="fas fa-tags" style="color: #17acaf; margin-right: 8px;"></i>Categoria:</label>
+                        <label for="categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
                         <select id="categoria-lancamento">
                             <option value="">Selecione uma categoria...</option>
                         </select>
                     </div>
                     
                     <div class="form-group-subcategoria">
-                        <label for="subcategoria-lancamento"><i class="fas fa-tag" style="color: #17acaf; margin-right: 8px;"></i>Subcategoria:</label>
+                        <label for="subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
                         <select id="subcategoria-lancamento">
                             <option value="">Selecione uma subcategoria...</option>
                         </select>
@@ -360,14 +364,14 @@
 
         <!-- Vendas -->
         <section id="vendas" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-shopping-cart" style="color: #17acaf; margin-right: 8px;"></i>Itens Vendidos</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-shopping-cart"></i>Itens Vendidos</h2>
             <ul id="vendas-lista"></ul>
         </section>
         <!-- Gráficos -->
         <section id="graficos" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-chart-bar" style="color: #17acaf; margin-right: 8px;"></i>Gráficos</h2>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-chart-bar"></i>Gráficos</h2>
             <div class="grafico-container">
-                <label for="tipo-grafico"><i class="fas fa-chart-line" style="color: #17acaf; margin-right: 8px;"></i>Escolha o gráfico:</label>
+                <label for="tipo-grafico"><i class="fas fa-chart-line"></i>Escolha o gráfico:</label>
                 <select id="tipo-grafico">
                     <optgroup label="📊 Gráficos">
                         <option value="vendas">Vendas no período</option>
@@ -409,120 +413,157 @@
             </div>
         </section>
         <section id="configuracoes" class="tab-section">
-            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-cog" style="color: #17acaf; margin-right: 8px;"></i>Configurações</h2>
-            <div class="configuracoes-container">
-                <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
-                <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
-                <hr />
-                <button id="btn-readme" class="config-btn"><i class="fas fa-book" style="color: #fff; margin-right: 8px !important;"></i> Ler README</button>
-                <button onclick="startTutorial()" class="config-btn"><i class="fas fa-graduation-cap" style="color: #fff; margin-right: 8px !important;"></i> Refazer Tutorial</button>
-                <hr />
-
-                <!-- Integração Google Sheets -->
-                <div class="sheets-integration">
-                    <h3><i class="fas fa-link" style="color: #17acaf;"></i> Integração com Google Sheets</h3>
-
-                    <!-- Status Geral -->
-                    <div id="integration-status" class="integration-status">
-                        <div class="status-icon"><i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i></div>
-                        <div class="status-text">
-                            <strong>Status:</strong> <span id="status-message">Não configurado</span>
-                        </div>
-                    </div>
-
-                    <!-- Configuração URL -->
-                    <div class="sheets-config">
-                        <label for="webAppUrl">URL do Web App:</label>
-                        <input id="webAppUrl" type="url" placeholder="Cole aqui a URL do Google Apps Script" />
-                        <div class="buttonscfg">
-                            <button id="btn-save-url" type="button"><i class="fas fa-save" style="color: #fff; margin-right: 8px !important;"></i> Salvar URL</button>
-                            <button id="btn-clear-url" type="button"><i class="fas fa-trash" style="color: #e53e3e; margin-right: 8px !important;"></i> Limpar</button>
-                        </div>
-                    </div>
-
-                    <!-- Status das Abas -->
-                    <div id="sheets-tabs-status" class="sheets-tabs-status" style="display: none;">
-                        <div class="tab-status">
-                            <span class="tab-icon"><i class="fas fa-dollar-sign" style="color: #17acaf;"></i></span>
-                            <span class="tab-name">Financeiro</span>
-                            <span id="financeiro-status" class="tab-status-indicator"><i class="fas fa-check-circle" style="color: #38a169;"></i></span>
-                        </div>
-                        <div class="tab-status">
-                            <span class="tab-icon"><i class="fas fa-boxes" style="color: #17acaf;"></i></span>
-                            <span class="tab-name">Estoque</span>
-                            <span id="estoque-status" class="tab-status-indicator"><i class="fas fa-exclamation-triangle" style="color: #ecc94b;"></i></span>
-                            <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar
-                                Aba</button>
-                        </div>
-                    </div>
-
-                    <!-- Ações de Sincronização -->
-                    <div class="sheets-actions" style="display: none;">
-                        <button id="btn-sync-all" type="button" class="btn-sync-primary"><i class="fas fa-sync-alt" style="color: #fff;"></i> Ressincronizar Tudo</button>
-                        <button id="btn-test-connection" type="button" class="btn-test"><i class="fas fa-search" style="color: #fff;"></i> Testar Conexão</button>
-                    </div>
-
-                    <!-- Progresso -->
-                    <div id="sync-progress" class="sync-progress" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <span class="progress-text">Preparando...</span>
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-cog"></i>Configurações</h2>
+            
+            <!-- Guias de Configurações -->
+            <div class="config-tabs">
+                <button class="config-tab active" data-tab="geral"><i class="fas fa-cog"></i> Geral</button>
+                <button class="config-tab" data-tab="integracao"><i class="fas fa-link"></i> Integração</button>
+                <button class="config-tab" data-tab="atalhos"><i class="fas fa-keyboard"></i> Atalhos</button>
+                <button class="config-tab" data-tab="temas"><i class="fas fa-palette"></i> Temas</button>
+            </div>
+            
+            <!-- Conteúdo das Guias -->
+            <div class="config-content">
+                <!-- Guia Geral -->
+                <div id="config-geral" class="config-tab-content active">
+                    <div class="configuracoes-container">
+                        <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
+                        <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
+                        <hr />
+                        <button id="btn-readme" class="config-btn"><i class="fas fa-book" style="color: #fff; margin-right: 8px !important;"></i> Ler README</button>
+                        <button onclick="startTutorial()" class="config-btn"><i class="fas fa-graduation-cap" style="color: #fff; margin-right: 8px !important;"></i> Refazer Tutorial</button>
                     </div>
                 </div>
+                
+                <!-- Guia Integração -->
+                <div id="config-integracao" class="config-tab-content">
+                    <div class="configuracoes-container">
+                        <!-- Integração Google Sheets -->
+                        <div class="sheets-integration">
+                            <h3><i class="fas fa-link"></i> Integração com Google Sheets</h3>
 
-                <!-- Atalhos Globais -->
-                <div class="shortcuts-config">
-                    <div class="shortcuts-header" id="shortcuts-header">
-                        <h3><i class="fas fa-keyboard" style="color: #17acaf;"></i> Atalhos Globais</h3>
-                        <i class="fas fa-chevron-right shortcuts-arrow" id="shortcuts-arrow"></i>
-                    </div>
-                    
-                    <div class="shortcuts-content" id="shortcuts-content" style="display: none;">
-                        <div class="shortcuts-toggle-container">
-                            <label class="checkbox-atalhos">
-                                <input type="checkbox" id="atalhos-financeiro-enabled">
-                                <span class="checkmark"></span>
-                                Ativar atalhos de teclado globais (funcionam em qualquer tela)
-                            </label>
-                            
-                            <label class="checkbox-atalhos">
-                                <input type="checkbox" id="atalhos-feedback-enabled">
-                                <span class="checkmark"></span>
-                                Mostrar notificações de feedback visual
-                            </label>
+                            <!-- Status Geral -->
+                            <div id="integration-status" class="integration-status">
+                                <div class="status-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                <div class="status-text">
+                                    <strong>Status:</strong> <span id="status-message">Não configurado</span>
+                                </div>
+                            </div>
+
+                            <!-- Configuração URL -->
+                            <div class="sheets-config">
+                                <label for="webAppUrl">URL do Web App:</label>
+                                <input id="webAppUrl" type="url" placeholder="Cole aqui a URL do Google Apps Script" />
+                                <div class="buttonscfg">
+                                    <button id="btn-save-url" type="button"><i class="fas fa-save"></i> Salvar URL</button>
+                                    <button id="btn-clear-url" type="button"><i class="fas fa-trash"></i> Limpar</button>
+                                </div>
+                            </div>
+
+                            <!-- Status das Abas -->
+                            <div id="sheets-tabs-status" class="sheets-tabs-status" style="display: none;">
+                                <div class="tab-status">
+                                    <span class="tab-icon"><i class="fas fa-dollar-sign"></i></span>
+                                    <span class="tab-name">Financeiro</span>
+                                    <span id="financeiro-status" class="tab-status-indicator"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <div class="tab-status">
+                                    <span class="tab-icon"><i class="fas fa-boxes"></i></span>
+                                    <span class="tab-name">Estoque</span>
+                                    <span id="estoque-status" class="tab-status-indicator"><i class="fas fa-exclamation-triangle"></i></span>
+                                    <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar
+                                        Aba</button>
+                                </div>
+                            </div>
+
+                            <!-- Ações de Sincronização -->
+                            <div class="sheets-actions" style="display: none;">
+                                <button id="btn-sync-all" type="button" class="btn-sync-primary"><i class="fas fa-sync-alt"></i> Ressincronizar Tudo</button>
+                                <button id="btn-test-connection" type="button" class="btn-test"><i class="fas fa-search"></i> Testar Conexão</button>
+                            </div>
+
+                            <!-- Progresso -->
+                            <div id="sync-progress" class="sync-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <span class="progress-text">Preparando...</span>
+                            </div>
                         </div>
-                        
-                        <div id="shortcuts-info" class="shortcuts-info" style="display: none;">
-                            <div class="shortcuts-header-config">
-                                <p style="color: #e2e8f0; font-size: 0.9rem; margin-bottom: 12px;"><strong>Atalhos de Navegação (funcionam em qualquer tela):</strong></p>
-                                <div class="shortcuts-list-config">
-                                    <div class="shortcut-item-config"><kbd>F1</kbd> Dashboard</div>
-                                    <div class="shortcut-item-config"><kbd>F2</kbd> Estoque</div>
-                                    <div class="shortcut-item-config"><kbd>F3</kbd> Financeiro</div>
-                                    <div class="shortcut-item-config"><kbd>F4</kbd> Vendas</div>
-                                    <div class="shortcut-item-config"><kbd>F5</kbd> Atualizar página</div>
-                                    <div class="shortcut-item-config"><kbd>F6</kbd> Categorias</div>
-                                    <div class="shortcut-item-config"><kbd>F7</kbd> Gráficos</div>
-                                    <div class="shortcut-item-config"><kbd>F8</kbd> Configurações</div>
+                    </div>
+                </div>
+                
+                <!-- Guia Atalhos -->
+                <div id="config-atalhos" class="config-tab-content">
+                    <div class="configuracoes-container">
+                        <!-- Atalhos Globais -->
+                        <div class="shortcuts-config">
+                            <div class="shortcuts-header" id="shortcuts-header">
+                                <h3><i class="fas fa-keyboard"></i> Atalhos Globais</h3>
+                                <i class="fas fa-chevron-right shortcuts-arrow" id="shortcuts-arrow"></i>
+                            </div>
+                            
+                            <div class="shortcuts-content" id="shortcuts-content" style="display: none;">
+                                <div class="shortcuts-toggle-container">
+                                    <label class="checkbox-atalhos">
+                                        <input type="checkbox" id="atalhos-financeiro-enabled">
+                                        <span class="checkmark"></span>
+                                        Ativar atalhos de teclado globais (funcionam em qualquer tela)
+                                    </label>
+                                    
+                                    <label class="checkbox-atalhos">
+                                        <input type="checkbox" id="atalhos-feedback-enabled">
+                                        <span class="checkmark"></span>
+                                        Mostrar notificações de feedback visual
+                                    </label>
                                 </div>
-                                <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do Financeiro (apenas na aba Financeiro):</strong></p>
-                                <div class="shortcuts-list-config">
-                                    <div class="shortcut-item-config"><kbd>←</kbd> Selecionar Receita</div>
-                                    <div class="shortcut-item-config"><kbd>→</kbd> Selecionar Despesa</div>
-                                    <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento</div>
-                                    <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
-                                </div>
-                                <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos dos Gráficos (apenas na aba Gráficos):</strong></p>
-                                <div class="shortcuts-list-config">
-                                    <div class="shortcut-item-config"><kbd>↑</kbd> Gráfico anterior</div>
-                                    <div class="shortcut-item-config"><kbd>↓</kbd> Próximo gráfico</div>
+                                
+                                <div id="shortcuts-info" class="shortcuts-info" style="display: none;">
+                                    <div class="shortcuts-header-config">
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin-bottom: 12px;"><strong>Atalhos de Navegação (funcionam em qualquer tela):</strong></p>
+                                        <div class="shortcuts-list-config">
+                                            <div class="shortcut-item-config"><kbd>F1</kbd> Dashboard</div>
+                                            <div class="shortcut-item-config"><kbd>F2</kbd> Estoque</div>
+                                            <div class="shortcut-item-config"><kbd>F3</kbd> Financeiro</div>
+                                            <div class="shortcut-item-config"><kbd>F4</kbd> Vendas</div>
+                                            <div class="shortcut-item-config"><kbd>F5</kbd> Atualizar página</div>
+                                            <div class="shortcut-item-config"><kbd>F6</kbd> Categorias</div>
+                                            <div class="shortcut-item-config"><kbd>F7</kbd> Gráficos</div>
+                                            <div class="shortcut-item-config"><kbd>F8</kbd> Configurações</div>
+                                        </div>
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do Financeiro (apenas na aba Financeiro):</strong></p>
+                                        <div class="shortcuts-list-config">
+                                            <div class="shortcut-item-config"><kbd>←</kbd> Selecionar Receita</div>
+                                            <div class="shortcut-item-config"><kbd>→</kbd> Selecionar Despesa</div>
+                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento</div>
+                                            <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
+                                        </div>
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos dos Gráficos (apenas na aba Gráficos):</strong></p>
+                                        <div class="shortcuts-list-config">
+                                            <div class="shortcut-item-config"><kbd>↑</kbd> Gráfico anterior</div>
+                                            <div class="shortcut-item-config"><kbd>↓</kbd> Próximo gráfico</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                
+                <!-- Guia Temas -->
+                <div id="config-temas" class="config-tab-content">
+                    <div class="configuracoes-container">
+                        <div class="config-section">
+                            <div class="config-header">
+                                <i class="fas fa-palette"></i>
+                                <h3>Personalização de Temas</h3>
+                                <p>Escolha o tema visual que mais combina com você</p>
+                            </div>
+                            <div id="theme-selector-container"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>

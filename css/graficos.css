@@ -401,13 +401,13 @@ canvas#graficoDinamico {
 }
 
 /* Estilos para KPI Dashboard */
-.kpi-dashboard {
+.kpi-dashboard,
+.kpis-operacionais {
   background: #232b38;
   border-radius: 12px;
   padding: 24px;
   margin: 20px auto;
   max-width: 100%;
-  border: 2px solid #17acaf;
   box-shadow: 0 4px 16px rgba(49, 130, 206, 0.1);
 }
 
@@ -808,4 +808,48 @@ canvas#graficoDinamico {
 .kpi-card.operacional:hover {
   border-color: #2c5aa0;
   box-shadow: 0 4px 16px rgba(23, 172, 175, 0.2);
+}
+
+/* === ESTILOS ESPECÍFICOS PARA KPIs OPERACIONAIS === */
+
+/* Ícones dos KPIs Operacionais */
+.kpis-operacionais .kpi-card.receitas .kpi-icon i {
+  color: #38a169;
+}
+
+.kpis-operacionais .kpi-card.saldo .kpi-icon .fa-chart-line {
+  color: #3182ce;
+}
+
+.kpis-operacionais .kpi-card.saldo .kpi-icon .fa-chart-area {
+  color: #e53e3e;
+}
+
+.kpis-operacionais .kpi-card.margem .kpi-icon i {
+  color: #805ad5;
+}
+
+.kpis-operacionais .kpi-card.ticket .kpi-icon i {
+  color: #d69e2e;
+}
+
+.kpis-operacionais .kpi-card.vendas .kpi-icon i {
+  color: #17acaf;
+}
+
+.kpis-operacionais .kpi-card.valor-medio .kpi-icon i {
+  color: #ed8936;
+}
+
+/* Estilos dinâmicos aplicados via JavaScript */
+.kpis-operacionais .kpi-semaforo {
+  transition: color 0.3s ease;
+}
+
+.kpis-operacionais .kpi-semaforo-text {
+  transition: color 0.3s ease;
+}
+
+.kpis-operacionais .ranking-bar-fill {
+  transition: width 0.5s ease;
 }

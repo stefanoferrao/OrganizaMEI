@@ -49,35 +49,48 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     
-    vendas.sort((a, b) => {
+    // Mapear vendas com objetos de data para ordenação
+    vendas = vendas.map((v, idx) => {
+      let dataObj = null;
+      if (v.data) {
+        // Se a data está no formato DD/MM/AAAA
+        if (v.data.includes('/')) {
+          const [dia, mes, ano] = v.data.split('/');
+          dataObj = new Date(ano, mes - 1, dia);
+        } else {
+          // Se ainda está no formato ISO
+          dataObj = new Date(v.data);
+        }
+      }
+      return {
+        ...v,
+        _originalIndex: idx,
+        data: dataObj
+      };
+    });
+    
+    // Ordenar por data e depois por ID (igual ao financeiro)
+    vendas = vendas.sort((a, b) => {
       if (!a.data && !b.data) return 0;
       if (!a.data) return 1;
       if (!b.data) return -1;
       
-      let dataA, dataB;
-      if (typeof a.data === 'string' && a.data.includes('/')) {
-        const [dia, mes, ano] = a.data.split('/');
-        dataA = new Date(ano, mes - 1, dia);
-      } else {
-        dataA = new Date(a.data);
-      }
+      // Primeiro critério: ordenar por data (mais recente primeiro)
+      const diffData = b.data - a.data;
+      if (diffData !== 0) return diffData;
       
-      if (typeof b.data === 'string' && b.data.includes('/')) {
-        const [dia, mes, ano] = b.data.split('/');
-        dataB = new Date(ano, mes - 1, dia);
-      } else {
-        dataB = new Date(b.data);
-      }
-      
-      return dataB - dataA;
+      // Segundo critério: se as datas são iguais, ordenar por ID (mais recente primeiro)
+      const idA = String(a.id || '');
+      const idB = String(b.id || '');
+      return idB.localeCompare(idA);
     });
     
     vendas.forEach((v, idx) => {
-      const dataFormatada = v.data ? (typeof v.data === 'string' && v.data.includes('/') ? v.data : new Date(v.data).toLocaleDateString('pt-BR')) : '';
+      const dataFormatada = v.data ? (v.data instanceof Date ? v.data.toLocaleDateString('pt-BR') : v.data) : '';
       const li = document.createElement('li');
       li.className = 'venda-item';
       li.innerHTML = `
-        <span class="venda-icon"><i class="fas fa-shopping-cart" style="color: #17acaf;"></i></span>
+        <span class="venda-icon"><i class="fas fa-shopping-cart"></i></span>
         <div class="venda-main">
           <span class="venda-produto">${v.descricao || v.subcategoria || '-'}</span>
           <span class="venda-quantidade">${v.quantidade ? v.quantidade + ' un.' : ''}</span>
@@ -86,12 +99,12 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="venda-valor">R$ ${v.valor.toFixed(2).replace('.', ',')}</span>
           <div class="venda-data-row">
             <span class="venda-data">${dataFormatada}</span>
-            <span class="icon-editar-data" title="Editar data"><i class="fas fa-calendar-alt" style="color: #17acaf;"></i></span>
+            <span class="icon-editar-data" title="Editar data"><i class="fas fa-calendar-alt"></i></span>
             <div class="date-popup">
-              <input type="date" value="${v.data && typeof v.data === 'string' && v.data.includes('/') && v.data.split('/').length === 3 ? v.data.split('/').reverse().join('-') : ''}" class="venda-data-input" />
+              <input type="date" value="${v.data && v.data instanceof Date ? v.data.toISOString().split('T')[0] : ''}" class="venda-data-input" />
               <div class="date-popup-actions">
-                <button class="btn-salvar-data" title="Salvar"><i class="fas fa-check" style="color: #38a169;"></i></button>
-                <button class="btn-cancelar-data" title="Cancelar"><i class="fas fa-times" style="color: #e53e3e;"></i></button>
+                <button class="btn-salvar-data" title="Salvar"><i class="fas fa-check"></i></button>
+                <button class="btn-cancelar-data" title="Cancelar"><i class="fas fa-times"></i></button>
               </div>
             </div>
           </div>
@@ -121,13 +134,28 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
         
-        const vendaIndex = lancamentos.findIndex(l => 
-          l.tipo === "receita" && 
-          l.categoria === "Vendas" && 
-          l.descricao === v.descricao && 
-          Math.abs(l.valor - v.valor) < 0.01 && 
-          l.data === v.data
-        );
+        const vendaIndex = lancamentos.findIndex(l => {
+          if (l.tipo !== "receita" || l.categoria !== "Vendas" || l.descricao !== v.descricao || Math.abs(l.valor - v.valor) >= 0.01) {
+            return false;
+          }
+          
+          // Comparar datas considerando os diferentes formatos
+          let dataLancamento = l.data;
+          let dataVenda = v.data;
+          
+          if (typeof dataLancamento === 'string' && dataLancamento.includes('/')) {
+            const [dia, mes, ano] = dataLancamento.split('/');
+            dataLancamento = new Date(ano, mes - 1, dia);
+          } else if (typeof dataLancamento === 'string') {
+            dataLancamento = new Date(dataLancamento);
+          }
+          
+          if (dataVenda instanceof Date && dataLancamento instanceof Date) {
+            return dataVenda.getTime() === dataLancamento.getTime();
+          }
+          
+          return false;
+        });
         
         if (vendaIndex !== -1) {
           // Converter de AAAA-MM-DD para DD/MM/AAAA

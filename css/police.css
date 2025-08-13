@@ -1,0 +1,17 @@
+body[data-theme="police"] .kpis-operacionais .kpi-card.receitas .kpi-icon i {
+    color: #38a169 !important;
+}
+
+/* Ícones específicos dos KPIs Operacionais */
+body[data-theme="police"] .fa-chart-line,
+body[data-theme="police"] .fa-chart-bar,
+body[data-theme="police"] .fa-chart-pie,
+body[data-theme="police"] .fa-analytics,
+body[data-theme="police"] .fa-tachometer-alt,
+body[data-theme="police"] .fa-dashboard {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .fas.fa-check-circle.kpi-semaforo {
+    color: var(--secondary-color) !important;
+}

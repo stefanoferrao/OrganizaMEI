@@ -1,0 +1,690 @@
+/* Tema Police - Cores Policiais */
+:root {
+    /* Cores principais */
+    --primary-color: #1e3a8a; /* Azul policial */
+    --secondary-color: #60a5fa; /* Azul claro */
+    --accent-color: #0f172a; /* Preto/cinza escuro */
+    --background-color: #0c1426;
+    --surface-color: #1e293b;
+    --card-background: #334155;
+    
+    /* Cores de texto */
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    
+    /* Cores de status */
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --error-color: #dc2626;
+    --info-color: #1e3a8a;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #365397 50%, #17375f 100%);
+    --gradient-card: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    
+    /* Bordas e sombras */
+    --border-color: #475569;
+    --shadow-color: rgba(12, 20, 38, 0.7);
+    --glow-color: rgba(96, 165, 250, 0.4);
+}
+
+/* Navbar específica do tema Police */
+.navbar {
+    background: var(--gradient-primary) !important;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.navbar .nav-item.active {
+    background: rgba(96, 165, 250, 0.2) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+}
+
+/* Cards com estilo policial */
+.card, .dashboard-card {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px var(--glow-color) !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Botões com estilo policial */
+.btn-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    border: none !important;
+}
+
+/* Inputs com bordas policiais */
+input, select, textarea {
+    background: var(--surface-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* Indicadores especiais */
+.sync-indicator {
+    background: var(--gradient-primary) !important;
+}
+
+.mini-sync-indicator .mini-sync-dot {
+    background: var(--secondary-color) !important;
+}
+
+/* Gráficos com cores policiais */
+.chart-container {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* === ESTILOS ESPECÍFICOS PARA SIDEBAR E NAVEGAÇÃO === */
+
+/* Sidebar principal */
+body[data-theme="police"] aside {
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    border-right: 2px solid var(--secondary-color) !important;
+    box-shadow: 2px 0 15px var(--shadow-color) !important;
+}
+
+/* Logo e título */
+body[data-theme="police"] aside h1 {
+    color: var(--secondary-color) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+    border-bottom: 2px solid var(--secondary-color) !important;
+    padding-bottom: 15px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Botões de navegação */
+body[data-theme="police"] nav button {
+    background: rgba(55, 65, 81, 0.3) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 8px !important;
+    font-weight: normal !important;
+    font-family: Arial, sans-serif !important;
+}
+
+body[data-theme="police"] nav button:hover {
+    background: rgba(96, 165, 250, 0.15) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
+    box-shadow: 0 3px 10px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* Botão ativo na navegação */
+body[data-theme="police"] nav button.nav-active {
+    background: var(--gradient-primary) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    font-weight: normal !important;
+    font-family: Arial, sans-serif !important;
+    box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4) !important;
+}
+
+/* Ícones dos botões - estabilização completa */
+body[data-theme="police"] nav button i {
+    color: inherit !important;
+    text-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 16px !important;
+    vertical-align: middle !important;
+    margin-right: 8px !important;
+    line-height: 1 !important;
+}
+
+body[data-theme="police"] nav button:hover i,
+body[data-theme="police"] nav button:focus i,
+body[data-theme="police"] nav button.nav-active i {
+    color: inherit !important;
+    text-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* Menu toggle para mobile */
+body[data-theme="police"] .menu-toggle {
+    background: var(--gradient-primary) !important;
+    border: 2px solid var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3) !important;
+}
+
+body[data-theme="police"] .menu-toggle:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    transform: scale(1.05) !important;
+}
+
+/* === ESTILOS PARA SEÇÕES PRINCIPAIS === */
+
+/* Títulos das seções */
+body[data-theme="police"] h2.text-xl.font-semibold.mb-4 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 2px solid var(--secondary-color) !important;
+    padding-bottom: 10px !important;
+}
+
+body[data-theme="police"] h2.text-xl.font-semibold.mb-4 i {
+    color: #ffffff !important;
+    filter: drop-shadow(0 2px 4px rgba(30, 58, 138, 0.3)) !important;
+}
+
+/* Formulários */
+body[data-theme="police"] form input,
+body[data-theme="police"] form select,
+body[data-theme="police"] form textarea {
+    background: var(--surface-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] form input:focus,
+body[data-theme="police"] form select:focus,
+body[data-theme="police"] form textarea:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+    background: rgba(31, 41, 55, 0.8) !important;
+}
+
+/* Botões de formulário */
+body[data-theme="police"] form button {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 3px 12px rgba(30, 58, 138, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] form button:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 20px rgba(96, 165, 250, 0.5) !important;
+}
+
+/* Listas e itens */
+body[data-theme="police"] ul li {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] ul li:hover {
+    background: rgba(96, 165, 250, 0.1) !important;
+    border-left-color: var(--primary-color) !important;
+    transform: translateX(5px) !important;
+    box-shadow: 0 3px 10px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* Tabelas */
+body[data-theme="police"] table {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+body[data-theme="police"] table th {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid var(--secondary-color) !important;
+}
+
+body[data-theme="police"] table td {
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="police"] table tr:hover {
+    background: rgba(96, 165, 250, 0.1) !important;
+}
+
+/* Notificações personalizadas */
+body[data-theme="police"] .notyf__toast {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .notyf__toast--success {
+    border-left-color: var(--success-color) !important;
+}
+
+body[data-theme="police"] .notyf__toast--error {
+    border-left-color: var(--error-color) !important;
+}
+
+/* Indicador mini personalizado */
+body[data-theme="police"] .mini-sync-indicator .mini-sync-dot {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+body[data-theme="police"] .mini-sync-indicator.success .mini-sync-dot {
+    background: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+body[data-theme="police"] .mini-sync-indicator.error .mini-sync-dot {
+    background: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+}
+
+/* Logo personalizada */
+body[data-theme="police"] .logo-organizamei {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.3) !important;
+}
+
+/* Estoque nome personalizado */
+body[data-theme="police"] .estoque-nome {
+    color: var(--secondary-color) !important;
+}
+
+/* Venda produto personalizado */
+body[data-theme="police"] .venda-produto {
+    color: #ffffff;
+}
+
+body[data-theme="police"] .venda-produto i {
+    color: var(--secondary-color) !important;
+}
+
+/* Footer da sidebar */
+body[data-theme="police"] .version-info {
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    color: var(--text-muted) !important;
+}
+
+body[data-theme="police"] aside footer,
+body[data-theme="police"] .sidebar-footer {
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+/* === CORREÇÃO ESPECÍFICA PARA ÍCONES ESTÁVEIS === */
+
+/* Sobrescrever qualquer transformação dos ícones */
+body[data-theme="police"] nav button i,
+body[data-theme="police"] nav button:hover i,
+body[data-theme="police"] nav button:focus i,
+body[data-theme="police"] nav button:active i,
+body[data-theme="police"] nav button.nav-active i {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    margin-right: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+
+
+/* Estabilizar ícones mas permitir transform do botão */
+body[data-theme="police"] nav button i,
+body[data-theme="police"] nav button:hover i,
+body[data-theme="police"] nav button:focus i,
+body[data-theme="police"] nav button:active i,
+body[data-theme="police"] nav button.nav-active i {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Ícone de vendas branco no tema Police */
+body[data-theme="police"] #vendas h2 i.fa-shopping-cart,
+body[data-theme="police"] .venda-icon i.fa-shopping-cart {
+    color: #fff !important;
+}
+
+/* Config tabs no tema Police */
+body[data-theme="police"] .config-tab {
+    background: rgba(55, 65, 81, 0.3) !important;
+    color: var(--text-secondary) !important;
+    border-right: 1px solid var(--border-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] .config-tab:hover {
+    background: rgba(96, 165, 250, 0.15) !important;
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .config-tab.active {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Título de categorias no tema Police */
+body[data-theme="police"] .cat-titulo {
+    color: var(--secondary-color) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 2px solid var(--secondary-color) !important;
+    padding-bottom: 8px !important;
+}
+
+/* Título de despesa no tema Police */
+body[data-theme="police"] .cat-titulo:nth-of-type(2) {
+    color: var(--secondary-color) !important;
+    border-bottom-color: var(--secondary-color) !important;
+}
+
+/* Cards de receita no tema Police */
+body[data-theme="police"] .cat-card[id*="receita"] {
+    border: 1px solid var(--secondary-color) !important;
+}
+
+/* Cards de receita no tema Police */
+body[data-theme="police"] .cat-card[id*="despesa"] {
+    border: 1px solid var(--secondary-color) !important;
+}
+
+/* Nome das categorias no tema Police */
+body[data-theme="police"] .cat-nome {
+    color: var(--secondary-color) !important;
+}
+
+/* Botões de adicionar categoria no tema Police */
+body[data-theme="police"] button[id^="btn-add-sub-"],
+body[data-theme="police"] button[onclick^="adicionarCategoria"] {
+    background: var(--gradient-primary) !important;
+}
+
+/* Nome das subcategorias no tema Police */
+body[data-theme="police"] .cat-sub-nome {
+    color: var(--secondary-color) !important;
+}
+
+/* Botão + de adicionar subcategoria de receita no tema Police */
+body[data-theme="police"] .cat-card[id*="receita"] .btn-add-sub-plus {
+    background: var(--secondary-color) !important;
+}
+
+/* Botão + de adicionar subcategoria de despesa no tema Police */
+body[data-theme="police"] .cat-card[id*="despesa"] .btn-add-sub-plus {
+    background: var(--secondary-color) !important;
+}
+
+/* Resumo financeiro strong no tema Police */
+body[data-theme="police"] .resumo-financeiro strong {
+    color: var(--secondary-color) !important;
+}
+
+/* Labels de receita no tema Police */
+body[data-theme="police"] .receita-label.tipo-label:hover,
+body[data-theme="police"] .tipo-selector input[type="radio"]:checked + .receita-label {
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
+    background: rgba(96, 165, 250, 0.1) !important;
+}
+
+/* Labels de despesa no tema Police */
+body[data-theme="police"] .despesa-label.tipo-label:hover,
+body[data-theme="police"] .tipo-selector input[type="radio"]:checked + .despesa-label {
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
+    background: rgba(96, 165, 250, 0.1) !important;
+}
+
+/* Ícones de formulário no tema Police */
+body[data-theme="police"] label i.fa-tags,
+body[data-theme="police"] label i.fa-tag,
+body[data-theme="police"] label i.fa-chart-line {
+    color: var(--secondary-color) !important;
+}
+
+/* Ícones de tipo no tema Police */
+body[data-theme="police"] .tipo-icon i.fa-plus-circle {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .tipo-icon i.fa-minus-circle {
+    color: var(--secondary-color) !important;
+}
+
+/* Formulário financeiro ativo no tema Police */
+body[data-theme="police"] #financeiro-form.navigation-active {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* Botões de editar no tema Police */
+.cat-btn-editar i.fa-edit, .cat-btn-editar-sub i.fa-edit {
+    color: var(--secondary-color) !important;
+}
+
+/* Botões de configuração no tema Police */
+.config-btn {
+    background: var(--gradient-primary) !important;
+}
+
+/* Botões de configuração de planilhas no tema Police */
+.sheets-config button {
+    background: var(--gradient-primary) !important;
+}
+
+/* Títulos da integração de planilhas no tema Police */
+.sheets-integration h3 {
+    color: var(--secondary-color) !important;
+}
+
+/* Ícone de check-circle do status de integração no tema Police */
+.integration-status .status-icon .fa-check-circle {
+    color: var(--secondary-color) !important;
+}
+
+/* Ícone de check-circle do status financeiro no tema Police */
+#financeiro-status .fa-check-circle {
+    color: var(--secondary-color) !important;
+}
+
+/* Ícones de check-circle do status das abas no tema Police */
+.sheets-tabs-status .fa-check-circle {
+    color: var(--secondary-color) !important;
+}
+
+/* Botões de ações de sincronização no tema Police */
+.sheets-actions button {
+    background: var(--gradient-primary) !important;
+}
+
+/* Ícone de teclado no cabeçalho dos atalhos no tema Police */
+.shortcuts-header h3 i.fa-keyboard {
+    color: var(--secondary-color) !important;
+}
+
+/* Checkbox dos atalhos no tema Police */
+.checkbox-atalhos input[type="checkbox"]:checked + .checkmark {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+/* Elementos kbd dos atalhos no tema Police */
+.shortcut-item-config kbd {
+    color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+/* Opção de tema selecionada no tema Police */
+.theme-option.selected {
+    border-color: var(--secondary-color) !important;
+    background: rgba(96, 165, 250, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+}
+
+/* Ícone do cabeçalho de configuração no tema Police */
+.config-header i {
+    color: var(--secondary-color) !important;
+}
+
+/* Título do cabeçalho de configuração no tema Police */
+.config-header h3 {
+    color: var(--secondary-color) !important;
+}
+.fas.fa-box {
+    color: #ffffff;
+}
+.fas.fa-warehouse {
+    color: #ffffff;
+}
+.dashboard-value-produtos {
+    color: #ffffff;
+}
+.dashboard-value-estoque {
+    color: #ffffff;
+}
+body[data-theme="police"] .sheets-integration {
+    border-color: #ffffff !important;
+}
+
+/* === KPIs OPERACIONAIS - TEMA POLICE === */
+
+/* Container principal dos KPIs */
+body[data-theme="police"] .kpis-operacionais {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+/* Cards individuais dos KPIs */
+body[data-theme="police"] .kpi-card {
+    background: var(--gradient-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] .kpi-card:hover {
+    border-left-color: var(--primary-color) !important;
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Títulos dos KPIs */
+body[data-theme="police"] .kpi-title {
+    color: var(--secondary-color) !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Valores dos KPIs */
+body[data-theme="police"] .kpi-value {
+    color: var(--text-primary) !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ícones dos KPIs */
+body[data-theme="police"] .kpi-icon {
+    color: var(--secondary-color) !important;
+    filter: drop-shadow(0 2px 4px rgba(30, 58, 138, 0.3)) !important;
+}
+
+/* Indicadores de tendência */
+body[data-theme="police"] .kpi-trend.positive {
+    color: var(--success-color) !important;
+}
+
+body[data-theme="police"] .kpi-trend.negative {
+    color: var(--error-color) !important;
+}
+
+body[data-theme="police"] .kpi-trend.neutral {
+    color: var(--warning-color) !important;
+}
+
+/* Gráficos dentro dos KPIs */
+body[data-theme="police"] .kpi-chart {
+    background: rgba(30, 58, 138, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+}
+
+/* Métricas secundárias */
+body[data-theme="police"] .kpi-metric {
+    color: var(--text-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    padding-top: 8px !important;
+}
+
+/* Botões de ação nos KPIs */
+body[data-theme="police"] .kpi-action {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] .kpi-action:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4) !important;
+}
+
+/* Ícones específicos dos KPIs Operacionais */
+body[data-theme="police"] .fa-chart-line,
+body[data-theme="police"] .fa-chart-pie,
+body[data-theme="police"] .fa-analytics,
+body[data-theme="police"] .fa-dashboard,
+body[data-theme="police"] .kpis-operacionais .kpi-card.receitas .kpi-icon i,
+body[data-theme="police"] .kpis-operacionais .kpi-card.margem .kpi-icon i,
+body[data-theme="police"] .kpis-operacionais .kpi-card.vendas .kpi-icon i,
+body[data-theme="police"] .kpis-operacionais .kpi-card.valor-medio .kpi-icon i,
+body[data-theme="police"] .kpis-operacionais .kpi-card.ticket .kpi-icon i,
+body[data-theme="police"] .ranking-position {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .ranking-bar-fill {
+    background: var(--gradient-primary) !important;
+}
+
+/* Valor de venda no tema Police */
+body[data-theme="police"] .venda-valor {
+    font-size: 1.15rem !important;
+    font-weight: bold !important;
+    color: var(--secondary-color) !important;
+}
+
+/* Ícone de editar data no tema Police */
+body[data-theme="police"] .icon-editar-data i.fa-calendar-alt {
+    color: var(--secondary-color) !important;
+}

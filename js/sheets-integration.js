@@ -1133,6 +1133,46 @@ function iniciarVerificacaoAutomatica() {
     // }, 1200000); // 20 minutos
 }
 
+// Função para testar conexão com Google Sheets
+async function testarConexaoSheets() {
+    const btn = document.getElementById('btn-test-connection');
+    const originalText = btn.textContent;
+    
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        mostrarNotificacaoSync('Configure a URL do Web App primeiro!', 'error');
+        return;
+    }
+    
+    try {
+        btn.disabled = true;
+        btn.textContent = 'Testando...';
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'testarScript' })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            mostrarNotificacaoSync('Conexão testada com sucesso!', 'success');
+            setTimeout(atualizarStatusIntegracao, 500);
+        } else {
+            mostrarNotificacaoSync('Erro no teste: ' + (result.message || 'Falha desconhecida'), 'error');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao testar conexão:', error);
+        mostrarNotificacaoSync('Erro na conexão: ' + error.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+
 // Expor funções globalmente para uso em outros arquivos
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;

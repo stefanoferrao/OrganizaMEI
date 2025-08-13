@@ -1,8 +1,33 @@
 # 🚀 **OrganizaMEI** - Sistema Completo de Gestão para MEI
 
-> Sistema modular e inteligente para controle financeiro, estoque e vendas com integração opcional ao Google Sheets.
+> Sistema modular e inteligente para controle financeiro, estoque e vendas com integração opcional ao Google Sheets, tutorial interativo e sistema de temas.
 
 ## 📋 **Funcionalidades Principais**
+
+### 🎓 **Tutorial Interativo**
+- Tutorial guiado para novos usuários
+- Navegação passo a passo pelas funcionalidades
+- Sistema de progresso visual
+- Opção de pular ou refazer tutorial
+- Auto-inicialização para primeira visita
+
+### 🎨 **Sistema de Temas**
+- Tema Default (padrão)
+- Tema Police (alternativo)
+- Transições suaves entre temas
+- Configuração salva no navegador
+
+### ⌨️ **Atalhos de Teclado**
+- **Globais:** F1-F8 ou 1-7 para navegação entre abas
+- **Financeiro:** Setas para selecionar receita/despesa, Enter para enviar
+- **Gráficos:** Setas para navegar entre tipos de gráfico
+- **Configurável:** Ativar/desativar atalhos e feedback visual
+
+### 📱 **PWA (Progressive Web App)**
+- Instalável como aplicativo nativo
+- Funciona offline (dados locais)
+- Ícones personalizados
+- Tela cheia no mobile
 
 ### 💰 **Gestão Financeira Completa**
 - Controle de receitas e despesas por categorias
@@ -135,25 +160,116 @@ O sistema detecta automaticamente:
 - ✅ **Sincronização bidirecional** completa
 - ✅ **Prevenção de duplicatas** com IDs únicos
 - ✅ **Status em tempo real** da conexão
+- ✅ **Verificação automática** de dados desatualizados
+- ✅ **Hash de sincronização** para otimização
 
 ### 📱 **Interface Moderna**
 - ✅ **Design responsivo** para mobile
 - ✅ **Tutorial interativo** para novos usuários
+- ✅ **Sistema de temas** (Default e Police)
+- ✅ **PWA** - Instalável como aplicativo
+- ✅ **Atalhos de teclado** globais e contextuais
 - ✅ **Filtros por período** (mês/ano)
 - ✅ **Gráficos interativos** com Chart.js
 - ✅ **Notificações visuais** de status
+- ✅ **Loading manager** com feedback visual
 
 ### 🛡️ **Segurança e Backup**
 - ✅ **Armazenamento local** (localStorage)
 - ✅ **Backup automático** na nuvem
 - ✅ **Exportação/Importação** de dados
 - ✅ **URL criptografada** no navegador
+- ✅ **Verificação de integridade** com hash
+- ✅ **Sincronização otimizada** para evitar duplicatas
 
 ### 📊 **Relatórios e Análises**
 - ✅ **DRE completo** (Demonstrativo do Resultado)
 - ✅ **KPIs de performance** em tempo real
 - ✅ **Gráficos de tendências** e evolução
 - ✅ **Análise por categorias** e subcategorias
+
+---
+
+## 🔄 **Histórico de Versões**
+
+### 🆕 **v4.0 (Atual)**
+- 🎓 Tutorial interativo completo
+- 🎨 Sistema de temas avançado
+- ⌨️ Atalhos de teclado unificados
+- 📱 PWA com instalação nativa
+- 🔄 Sincronização otimizada com hash
+- 🎛️ Loading manager inteligente
+- 📁 Arquitetura modular completa
+
+### **v3.x**
+- Integração com Google Sheets
+- Sistema de categorias e subcategorias
+- Gráficos interativos
+- Controle de estoque avançado
+
+### **v2.x**
+- Interface responsiva
+- Filtros por período
+- Exportação/importação de dados
+- Dashboard com KPIs
+
+### **v1.x**
+- Funcionalidades básicas
+- Controle financeiro
+- Estoque simples
+
+---
+
+## 🆕 **Novidades da Versão 4.0**
+
+### 🎯 **Tutorial Interativo Completo**
+- **Auto-inicialização:** Tutorial inicia automaticamente para novos usuários
+- **Navegação guiada:** 12 passos cobrindo todas as funcionalidades
+- **Progresso visual:** Barra de progresso e contador de etapas
+- **Flexibilidade:** Opção de pular, voltar ou refazer o tutorial
+- **Integração:** Tutorial navega automaticamente pelas abas
+
+### 🎨 **Sistema de Temas Avançado**
+- **Múltiplos temas:** Default e Police disponíveis
+- **Transições suaves:** Overlay de transição entre temas
+- **Persistência:** Tema salvo automaticamente no navegador
+- **Preview visual:** Visualização dos temas antes da seleção
+- **Migração automática:** Conversão de temas antigos
+
+### ⌨️ **Sistema de Atalhos Unificado**
+- **Atalhos globais:** F1-F8 ou números 1-7 para navegação
+- **Atalhos contextuais:** Específicos para cada aba
+- **Feedback visual:** Notificações dos atalhos executados
+- **Configurável:** Ativar/desativar atalhos e feedback
+- **Inteligente:** Atalhos ativos apenas na aba correspondente
+
+### 📱 **PWA (Progressive Web App)**
+- **Instalável:** Funciona como aplicativo nativo
+- **Offline:** Dados salvos localmente
+- **Ícones personalizados:** Ícones específicos para diferentes tamanhos
+- **Tela cheia:** Experiência imersiva no mobile
+- **Categorização:** Listado nas categorias finance, business, productivity
+
+### 🔄 **Sincronização Otimizada**
+- **Verificação automática:** Detecta dados desatualizados
+- **Hash de integridade:** Compara dados locais vs. nuvem
+- **Loading inteligente:** Feedback visual durante sincronização
+- **Prevenção de loops:** Evita sincronizações desnecessárias
+- **Timestamp tracking:** Controle de última verificação
+
+### 🎛️ **Interface Aprimorada**
+- **Loading manager:** Sistema unificado de loading
+- **Notificações melhoradas:** Sistema de notificações visuais
+- **Animações suaves:** Transições e efeitos visuais
+- **Responsividade:** Otimizado para todos os dispositivos
+- **Acessibilidade:** Melhor suporte a navegação por teclado
+
+### 🔧 **Arquitetura Modular**
+- **Separação de responsabilidades:** Cada funcionalidade em arquivo próprio
+- **Carregamento otimizado:** Scripts carregados com defer
+- **Manutenibilidade:** Código organizado e documentado
+- **Extensibilidade:** Fácil adição de novas funcionalidades
+- **Performance:** Carregamento mais rápido e eficiente
 
 ---
 
@@ -213,16 +329,85 @@ O sistema detecta automaticamente:
 
 ## 🚀 **Começando**
 
-1. **Sem integração:** Abra o OrganizaMEI e comece a usar
-2. **Com integração:** Configure o Google Sheets seguindo este guia
-3. **Tutorial:** Use o tutorial interativo na primeira visita
-4. **Suporte:** Consulte a documentação completa nos arquivos do projeto
+1. **Primeira visita:** O tutorial interativo será iniciado automaticamente
+2. **Sem integração:** Abra o OrganizaMEI e comece a usar localmente
+3. **Com integração:** Configure o Google Sheets seguindo este guia
+4. **Personalização:** Escolha seu tema preferido nas configurações
+5. **Atalhos:** Ative os atalhos de teclado para maior produtividade
+6. **PWA:** Instale como aplicativo através do navegador
+7. **Suporte:** Consulte a documentação completa nos arquivos do projeto
+
+### ⌨️ **Atalhos Principais**
+- **F1-F8:** Navegação rápida entre abas
+- **1-7:** Navegação alternativa entre abas
+- **Financeiro:** ← → (receita/despesa), Enter (enviar), Esc (limpar)
+- **Gráficos:** ↑ ↓ (navegar tipos de gráfico)
+
+### 🎨 **Temas Disponíveis**
+- **Default:** Tema padrão com cores azul/verde
+- **Police:** Tema alternativo com visual diferenciado
+
+## 💻 **Requisitos e Compatibilidade**
+
+### 🌐 **Navegadores Suportados**
+- ✅ **Chrome/Chromium** 80+ (recomendado)
+- ✅ **Firefox** 75+
+- ✅ **Safari** 13+
+- ✅ **Edge** 80+
+- ✅ **Opera** 67+
+
+### 📱 **Dispositivos**
+- ✅ **Desktop:** Windows, macOS, Linux
+- ✅ **Mobile:** Android 7+, iOS 13+
+- ✅ **Tablet:** Otimizado para tablets
+- ✅ **PWA:** Instalável em todos os dispositivos
+
+### 🔌 **Conectividade**
+- ✅ **Offline:** Funciona completamente offline
+- ✅ **Online:** Sincronização com Google Sheets
+- ✅ **Baixa conectividade:** Otimizado para conexões lentas
+
+### 💾 **Armazenamento**
+- **Local:** localStorage do navegador
+- **Nuvem:** Google Sheets (opcional)
+- **Backup:** Exportação em JSON
+- **Capacidade:** Ilimitada (limitada pelo navegador)
 
 ### 📚 **Documentação Adicional**
 - 📄 `ESTRUTURA-MODULAR.md` - Arquitetura do sistema
 - 📦 `ESTOQUE-INTEGRATION.md` - Detalhes da integração de estoque
+- ⌨️ `ATALHOS-GLOBAL.md` - Sistema de atalhos de teclado
+- 🎨 `FONT-AWESOME-MIGRATION.md` - Migração de ícones
+- 🔄 `LOADING-SYSTEM.md` - Sistema de loading
+- 🕰️ `IMPLEMENTACAO-TIMESTAMP.md` - Sistema de timestamps
+- 🎓 `TUTORIAL-CONFIGURACOES.md` - Tutorial e configurações
 - ⚙️ Tutorial de configurações integrado no sistema
+
+### 📁 **Estrutura de Arquivos**
+```
+OrganizaMEI/
+├── css/            Estilos modulares
+│   ├── style.css       Estilos principais
+│   ├── dashboard.css   Dashboard
+│   ├── tutorial.css    Tutorial interativo
+│   ├── pwa.css         PWA styles
+│   └── ...
+├── js/             JavaScript modular
+│   ├── main.js         Arquivo principal
+│   ├── tutorial.js     Tutorial interativo
+│   ├── themes.js       Sistema de temas
+│   ├── shortcuts.js    Atalhos de teclado
+│   └── ...
+├── themes/         Temas adicionais
+│   └── police.css      Tema Police
+├── src/            Recursos
+│   ├── favicon/        Ícones PWA
+│   └── OrganizaMEI.png  Logo
+├── docs/           Documentação
+├── index.html      Arquivo principal
+└── Código.gs       Script Google Apps Script
+```
 
 ---
 
-**OrganizaMEI v2.0** - Sistema completo de gestão para MEI com arquitetura modular e integração inteligente.
+**OrganizaMEI v4.0** - Sistema completo de gestão para MEI com arquitetura modular, tutorial interativo, sistema de temas e integração inteligente.

@@ -968,6 +968,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!kpiContainer) {
         kpiContainer = document.createElement('div');
         kpiContainer.id = 'kpi-container';
+        kpiContainer.className = 'kpis-operacionais';
         canvas.parentNode.appendChild(kpiContainer);
       }
       
@@ -1071,11 +1072,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       const html = `
-        <div class="kpi-dashboard">
-          <h3 class="kpi-title">${tituloKPI}</h3>
-          <div class="kpi-grid">
+        <h3 class="kpi-title">${tituloKPI}</h3>
+        <div class="kpi-grid">
             <div class="kpi-card receitas">
-              <div class="kpi-icon"><i class="fas fa-coins" style="color: #38a169;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-coins"></i></div>
               <div class="kpi-content">
                 <h4>Receitas Totais</h4>
                 <div class="kpi-value">${formatarMoedaBR(totalReceitas)}</div>
@@ -1083,7 +1083,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card saldo">
-              <div class="kpi-icon"><i class="fas ${saldo >= 0 ? 'fa-chart-line' : 'fa-chart-area'}" style="color: ${saldo >= 0 ? '#3182ce' : '#e53e3e'};"></i></div>
+              <div class="kpi-icon"><i class="fas ${saldo >= 0 ? 'fa-chart-line' : 'fa-chart-area'}"></i></div>
               <div class="kpi-content">
                 <h4>Saldo</h4>
                 <div class="kpi-value ${saldo >= 0 ? 'positive' : 'negative'}">${formatarMoedaBR(saldo)}</div>
@@ -1092,7 +1092,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card margem">
-              <div class="kpi-icon"><i class="fas fa-percentage" style="color: #805ad5;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-percentage"></i></div>
               <div class="kpi-content">
                 <h4>Margem de Lucro</h4>
                 <div class="kpi-value ${margem >= 0 ? 'positive' : 'negative'}">${margem.toFixed(1)}%</div>
@@ -1101,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card ticket">
-              <div class="kpi-icon"><i class="fas fa-bullseye" style="color: #d69e2e;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-bullseye"></i></div>
               <div class="kpi-content">
                 <h4>Ticket Médio</h4>
                 <div class="kpi-value">${formatarMoedaBR(ticketMedio)}</div>
@@ -1110,7 +1110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card receitas">
-              <div class="kpi-icon"><i class="fas fa-chart-pie" style="color: #38a169;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-chart-pie"></i></div>
               <div class="kpi-content">
                 <h4>Concentração Receitas</h4>
                 <div class="kpi-value">${concentracaoReceitas.toFixed(1)}%</div>
@@ -1119,7 +1119,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card margem">
-              <div class="kpi-icon"><i class="fas fa-shield-alt" style="color: #805ad5;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-shield-alt"></i></div>
               <div class="kpi-content">
                 <h4>Reserva Emergência</h4>
                 <div class="kpi-value ${reservaEmergencia >= 6 ? 'positive' : reservaEmergencia >= 3 ? '' : 'negative'}">${reservaEmergencia.toFixed(1)}</div>
@@ -1128,7 +1128,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card vendas">
-              <div class="kpi-icon"><i class="fas fa-calendar-check" style="color: #17acaf;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-calendar-check"></i></div>
               <div class="kpi-content">
                 <h4>Frequência Vendas</h4>
                 <div class="kpi-value">${diasComVendasSet.size}</div>
@@ -1137,7 +1137,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card ticket">
-              <div class="kpi-icon"><i class="fas fa-chart-bar" style="color: #d69e2e;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-chart-bar"></i></div>
               <div class="kpi-content">
                 <h4>Variação Ticket</h4>
                 <div class="kpi-value">±${formatarMoedaBR(variacao)}</div>
@@ -1146,7 +1146,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card valor-medio">
-              <div class="kpi-icon"><i class="fas fa-tag" style="color: #ed8936;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-tag"></i></div>
               <div class="kpi-content">
                 <h4>Valor Médio por Item</h4>
                 <div class="kpi-value">${formatarMoedaBR(valorMedioPorItem)}</div>
@@ -1155,7 +1155,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card saldo">
-              <div class="kpi-icon"><i class="fas fa-calendar-alt" style="color: #3182ce;"></i></div>
+              <div class="kpi-icon"><i class="fas fa-calendar-alt"></i></div>
               <div class="kpi-content">
                 <h4>Dias de Operação</h4>
                 <div class="kpi-value">${diasOperacao}</div>
@@ -1164,10 +1164,10 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             
             <div class="kpi-card ${semaforoCor === '#38a169' ? 'receitas' : semaforoCor === '#ecc94b' ? 'ticket' : 'despesas'}">
-              <div class="kpi-icon"><i class="fas ${semaforoIcon}" style="color: ${semaforoCor};"></i></div>
+              <div class="kpi-icon"><i class="fas ${semaforoIcon} kpi-semaforo" data-color="${semaforoCor}"></i></div>
               <div class="kpi-content">
                 <h4>Semáforo Financeiro</h4>
-                <div class="kpi-value" style="color: ${semaforoCor};">${semaforoTexto}</div>
+                <div class="kpi-value kpi-semaforo-text" data-color="${semaforoCor}">${semaforoTexto}</div>
                 <div class="kpi-subtitle">Status geral</div>
               </div>
             </div>
@@ -1184,7 +1184,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="ranking-position">${index + 1}º</div>
                         <div class="ranking-produto">${produto}</div>
                         <div class="ranking-bar">
-                          <div class="ranking-bar-fill" style="width: ${largura}%"></div>
+                          <div class="ranking-bar-fill" data-width="${largura}"></div>
                           <div class="ranking-value">${qtd}</div>
                         </div>
                       </div>
@@ -1203,7 +1203,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       <div class="ranking-position">${i + 1}º</div>
                       <div class="ranking-produto">${categoria}</div>
                       <div class="ranking-bar">
-                        <div class="ranking-bar-fill" style="width: ${(valor / topGastos[0][1]) * 100}%"></div>
+                        <div class="ranking-bar-fill" data-width="${(valor / topGastos[0][1]) * 100}"></div>
                         <div class="ranking-value">${formatarMoedaBR(valor)}</div>
                       </div>
                     </div>
@@ -1212,11 +1212,30 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
           </div>
-        </div>
       `;
       
       kpiContainer.style.display = 'block';
       kpiContainer.innerHTML = html;
+      
+      // Aplicar estilos dinâmicos após renderização
+      setTimeout(() => {
+        // Aplicar cores do semáforo
+        const semaforoIcon = kpiContainer.querySelector('.kpi-semaforo');
+        const semaforoText = kpiContainer.querySelector('.kpi-semaforo-text');
+        if (semaforoIcon) {
+          semaforoIcon.style.color = semaforoIcon.dataset.color;
+        }
+        if (semaforoText) {
+          semaforoText.style.color = semaforoText.dataset.color;
+        }
+        
+        // Aplicar larguras das barras de ranking
+        const barFills = kpiContainer.querySelectorAll('.ranking-bar-fill[data-width]');
+        barFills.forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }, 10);
+      
       return;
     }
 

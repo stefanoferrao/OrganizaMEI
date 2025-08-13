@@ -65,6 +65,8 @@ li.estoque-item:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 36px;
+  width: 36px;
 }
 
 .btn-remover:active,
@@ -85,28 +87,38 @@ li.estoque-item:hover {
 .icon-remover {
   background: none;
   border: none;
-  color: #fff;
+  color: inherit;
   font-weight: bold;
   font-size: 1.1rem;
-  cursor: pointer;
+  cursor: inherit;
   text-shadow: 1px 1px 2px rgb(0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 button .fas, button .far, button .fab {
   margin-right: 0px;
 }
 
-.icon-remover .fas {
+.icon-remover .fas,
+.icon-saida .fas {
   font-size: 1.2rem;
-  margin-right: 0px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-saida {
   font-size: 1.2rem;
-}
-
-.icon-saida .fas {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 /* Modal Saída Produto */
