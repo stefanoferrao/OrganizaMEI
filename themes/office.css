@@ -1,0 +1,719 @@
+/* Tema Office - Cores Profissionais de Escritório */
+body[data-theme="office"] {
+    /* Cores principais */
+    --primary-color: #2c3e50; /* Azul acinzentado profissional */
+    --secondary-color: #9d9d9d; /* Cinza azulado */
+    --accent-color: #1a252f; /* Cinza escuro */
+    --background-color: #f8f9fa;
+    --background-secondary: #e9ecef;
+    --surface-color: #2c3e5022;
+    --card-background: #2c3e50;
+    
+    /* Cores de texto */
+    --text-primary: #e9ecef;
+    --text-secondary: #ffffff;
+    --text-muted: #868686;
+    
+    /* Cores de status */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --error-color: #dc3545;
+    --info-color: #17a2b8;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a252f 100%);
+    --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    
+    /* Bordas e sombras */
+    --border-color: #dee2e676;
+    --shadow-color: rgba(44, 62, 80, 0.1);
+    --glow-color: rgba(52, 73, 94, 0.15);
+}
+
+/* === NAVBAR === */
+body[data-theme="office"] .navbar {
+    background: var(--gradient-primary) !important;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+body[data-theme="office"] .navbar .nav-item.active {
+    background: rgba(52, 73, 94, 0.2) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+}
+
+/* === SIDEBAR === */
+body[data-theme="office"] aside {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%) !important;
+    border-right: 2px solid var(--border-color) !important;
+    box-shadow: 2px 0 15px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] aside h1 {
+    color: var(--primary-color) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 15px !important;
+    margin-bottom: 20px !important;
+}
+
+body[data-theme="office"] aside footer,
+body[data-theme="office"] .sidebar-footer,
+body[data-theme="office"] .version-info {
+    background: none !important;
+    color: var(--secondary-color) !important;
+}
+
+/* === NAVEGAÇÃO === */
+body[data-theme="office"] nav button {
+    background: #2c3e50 !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 8px !important;
+    font-weight: normal !important;
+    font-family: Arial, sans-serif !important;
+}
+
+body[data-theme="office"] nav button:hover {
+    background: rgba(52, 73, 94, 0.1) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--primary-color) !important;
+    box-shadow: 0 3px 10px var(--glow-color) !important;
+}
+
+body[data-theme="office"] nav button.nav-active {
+    background: var(--gradient-primary) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    font-weight: normal !important;
+    font-family: Arial, sans-serif !important;
+    box-shadow: 0 4px 15px rgba(52, 73, 94, 0.3) !important;
+}
+
+body[data-theme="office"] nav button i,
+body[data-theme="office"] nav button:hover i,
+body[data-theme="office"] nav button:focus i,
+body[data-theme="office"] nav button:active i,
+body[data-theme="office"] nav button.nav-active i {
+    color: inherit !important;
+    text-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    margin-right: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+/* === MENU TOGGLE === */
+body[data-theme="office"] .menu-toggle {
+    background: var(--gradient-primary) !important;
+    border: 2px solid var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(52, 73, 94, 0.3) !important;
+}
+
+body[data-theme="office"] .menu-toggle:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    transform: scale(1.05) !important;
+}
+
+body[data-theme="office"] .menu-toggle i.fas.fa-bars, 
+body[data-theme="office"] .menu-toggle i.fas.fa-times {
+    color: #ffffff !important;
+}
+
+/* === CARDS === */
+body[data-theme="office"] .card, 
+body[data-theme="office"] .dashboard-card {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .card:hover {
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* === BOTÕES === */
+body[data-theme="office"] .btn-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2) !important;
+}
+
+body[data-theme="office"] .btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    border: none !important;
+}
+
+body[data-theme="office"] form button {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 3px 12px rgba(44, 62, 80, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] form button:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 20px rgba(52, 73, 94, 0.4) !important;
+}
+
+/* === INPUTS === */
+body[data-theme="office"] input, 
+body[data-theme="office"] select, 
+body[data-theme="office"] textarea {
+    background: var(--surface-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] input:focus, 
+body[data-theme="office"] select:focus, 
+body[data-theme="office"] textarea:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+}
+
+body[data-theme="office"] form input,
+body[data-theme="office"] form select,
+body[data-theme="office"] form textarea {
+    background: var(--surface-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] form input:focus,
+body[data-theme="office"] form select:focus,
+body[data-theme="office"] form textarea:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+    background: rgba(248, 249, 250, 0.9) !important;
+}
+
+/* === TÍTULOS === */
+body[data-theme="office"] h2.text-xl.font-semibold.mb-4 {
+    color: var(--background-color) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 10px !important;
+}
+
+body[data-theme="office"] h2.text-xl.font-semibold.mb-4 i {
+    color: var(--background-color) !important;
+    filter: drop-shadow(0 1px 2px rgba(44, 62, 80, 0.2)) !important;
+}
+
+/* === TABELAS === */
+body[data-theme="office"] table {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+body[data-theme="office"] table th {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid var(--secondary-color) !important;
+}
+
+body[data-theme="office"] table td {
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] table tr:hover {
+    background: rgba(52, 73, 94, 0.05) !important;
+}
+
+/* Aplicar estilos apenas em listas que não sejam do README viewer */
+body[data-theme="office"] ul:not(.readme-viewer ul) li:not(.readme-viewer li) {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] ul:not(.readme-viewer ul) li:not(.readme-viewer li):hover {
+    background: rgba(52, 73, 94, 0.05) !important;
+    border-left-color: var(--primary-color) !important;
+    transform: translateX(5px) !important;
+    box-shadow: 0 3px 10px var(--glow-color) !important;
+}
+
+/* === VENDAS === */
+body[data-theme="office"] #vendas h2 i.fa-shopping-cart,
+body[data-theme="office"] .venda-icon i.fa-shopping-cart {
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .venda-item {
+    background: var(--card-background) !important;
+    border-radius: 10px !important;
+    margin-bottom: 5px !important;
+    padding: 16px 20px !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    transition: box-shadow 0.2s !important;
+    border-left: 6px solid var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .venda-item:hover {
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+    transform: translateY(-1px) !important;
+}
+
+body[data-theme="office"] .venda-produto {
+    color: var(--text-primary);
+}
+
+body[data-theme="office"] .venda-produto i {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .venda-valor {
+    font-size: 1.15rem !important;
+    font-weight: bold !important;
+    color: var(--secondary-color) !important;
+}
+
+/* === ESTOQUE === */
+body[data-theme="office"] .estoque-nome {
+    color: var(--background-color) !important;
+}
+
+body[data-theme="office"] .fas.fa-box,
+body[data-theme="office"] .fas.fa-warehouse {
+    color: var(--background-color);
+}
+
+body[data-theme="office"] .dashboard-value-produtos,
+body[data-theme="office"] .dashboard-value-estoque {
+    color: var(--background-color);
+}
+
+/* === CATEGORIAS === */
+body[data-theme="office"] .cat-titulo {
+    color: var(--secondary-color) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* === ÍCONE SAÍDA === */
+body[data-theme="office"] .icon-saida .fas {
+    color: var(--secondary-color);
+    margin-right: 0px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+body[data-theme="office"] .cat-nome,
+body[data-theme="office"] .cat-sub-nome {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .cat-card[id*="receita"],
+body[data-theme="office"] .cat-card[id*="despesa"] {
+    border: 1px solid var(--border-color) !important;
+}
+
+body[data-theme="office"] .cat-card[id*="receita"] .cat-sub-item {
+    border-left: 4px solid var(--success-color) !important;
+    box-shadow: 0 1px 6px rgba(40, 167, 69, 0.15) !important;
+}
+
+body[data-theme="office"] .cat-card[id*="despesa"] .cat-sub-item {
+    border-left: 4px solid var(--error-color) !important;
+    box-shadow: 0 1px 6px rgba(220, 53, 69, 0.15) !important;
+}
+
+body[data-theme="office"] .cat-card[id*="receita"] .btn-add-sub-plus,
+body[data-theme="office"] .cat-card[id*="despesa"] .btn-add-sub-plus {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] button[id^="btn-add-sub-"],
+body[data-theme="office"] button[onclick^="adicionarCategoria"] {
+    background: var(--gradient-primary) !important;
+}
+
+body[data-theme="office"] .cat-btn-editar i.fa-edit, 
+body[data-theme="office"] .cat-btn-editar-sub i.fa-edit {
+    color: var(--primary-color) !important;
+}
+
+body[data-theme="office"] .cat-btn-editar-sub:hover {
+    background: rgba(52, 73, 94, 0.1) !important;
+    color: var(--primary-color) !important;
+    box-shadow: 0 2px 8px rgba(52, 73, 94, 0.2) !important;
+}
+
+/* === FINANCEIRO === */
+body[data-theme="office"] .resumo-financeiro strong {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .receita-label.tipo-label:hover,
+body[data-theme="office"] .tipo-selector input[type="radio"]:checked + .receita-label {
+    border-color: var(--success-color) !important;
+    color: var(--success-color) !important;
+    background: rgba(40, 167, 69, 0.1) !important;
+}
+
+body[data-theme="office"] .despesa-label.tipo-label:hover,
+body[data-theme="office"] .tipo-selector input[type="radio"]:checked + .despesa-label {
+    border-color: var(--error-color) !important;
+    color: var(--error-color) !important;
+    background: rgba(220, 53, 69, 0.1) !important;
+}
+
+body[data-theme="office"] label i.fa-tags,
+body[data-theme="office"] label i.fa-tag,
+body[data-theme="office"] label i.fa-chart-line {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .tipo-icon i.fa-plus-circle {
+    color: var(--success-color) !important;
+}
+
+body[data-theme="office"] .tipo-icon i.fa-minus-circle {
+    color: var(--error-color) !important;
+}
+
+body[data-theme="office"] #financeiro-form.navigation-active {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 2px rgba(52, 73, 94, 0.15) !important;
+}
+
+body[data-theme="office"] .icon-editar-data i.fa-calendar-alt {
+    color: var(--secondary-color) !important;
+}
+
+/* === CONFIGURAÇÕES === */
+body[data-theme="office"] .config-tab {
+    background: none !important;
+    color: var(--text-secondary) !important;
+    border-right: 1px solid var(--border-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] .config-tab:hover {
+    background: rgba(227, 228, 229, 0.442) !important;
+    color: var(--primary-color) !important;
+}
+
+body[data-theme="office"] .config-tab.active {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+}
+
+body[data-theme="office"] .config-btn {
+    background: var(--gradient-primary) !important;
+}
+
+body[data-theme="office"] .config-header i,
+body[data-theme="office"] .config-header h3 {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .theme-option.selected {
+    border-color: var(--secondary-color) !important;
+    background: rgba(52, 73, 94, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+}
+
+/* === PLANILHAS === */
+body[data-theme="office"] .sheets-config button,
+body[data-theme="office"] .sheets-actions button {
+    background: var(--gradient-primary) !important;
+}
+
+body[data-theme="office"] .sheets-integration {
+    border-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .sheets-integration h3 {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .integration-status .status-icon .fa-check-circle,
+body[data-theme="office"] #financeiro-status .fa-check-circle,
+body[data-theme="office"] .sheets-tabs-status .fa-check-circle {
+    color: var(--success-color) !important;
+}
+
+/* === ATALHOS === */
+body[data-theme="office"] .shortcuts-header h3 i.fa-keyboard {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .checkbox-atalhos input[type="checkbox"]:checked + .checkmark {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .shortcut-item-config kbd {
+    color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .shortcuts-arrow {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .shortcuts-arrow:hover,
+body[data-theme="office"] .shortcuts-arrow.rotated {
+    color: var(--primary-color) !important;
+}
+
+/* === KPIs OPERACIONAIS === */
+body[data-theme="office"] .kpis-operacionais {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .kpi-card {
+    background: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] .kpi-card:hover {
+    border-left-color: var(-secondary-color) !important;
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+    transform: translateY(-2px) !important;
+}
+
+body[data-theme="office"] .kpi-title {
+    color: var(--secondary-color) !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+body[data-theme="office"] .kpi-value {
+    color: var(--text-primary) !important;
+    font-weight: bold !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+body[data-theme="office"] .kpi-icon,
+body[data-theme="office"] .fa-chart-line,
+body[data-theme="office"] .fa-chart-pie,
+body[data-theme="office"] .fa-analytics,
+body[data-theme="office"] .fa-dashboard,
+body[data-theme="office"] .kpis-operacionais .kpi-card.receitas .kpi-icon i,
+body[data-theme="office"] .kpis-operacionais .kpi-card.margem .kpi-icon i,
+body[data-theme="office"] .kpis-operacionais .kpi-card.vendas .kpi-icon i,
+body[data-theme="office"] .kpis-operacionais .kpi-card.valor-medio .kpi-icon i,
+body[data-theme="office"] .kpis-operacionais .kpi-card.ticket .kpi-icon i,
+body[data-theme="office"] .ranking-position,
+body[data-theme="office"] .fas.fa-check-circle.kpi-semaforo {
+    color: var(--text-color) !important;
+    filter: drop-shadow(0 1px 2px rgba(44, 62, 80, 0.2)) !important;
+}
+
+body[data-theme="office"] .kpi-trend.positive {
+    color: var(--success-color) !important;
+}
+
+body[data-theme="office"] .kpi-trend.negative {
+    color: var(--error-color) !important;
+}
+
+body[data-theme="office"] .kpi-trend.neutral {
+    color: var(--warning-color) !important;
+}
+
+body[data-theme="office"] .kpi-chart {
+    background: rgba(52, 73, 94, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+}
+
+body[data-theme="office"] .kpi-metric {
+    color: var(--text-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    padding-top: 8px !important;
+}
+
+body[data-theme="office"] .kpi-action {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] .kpi-action:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(52, 73, 94, 0.3) !important;
+}
+
+body[data-theme="office"] .ranking-bar-fill {
+    background: var(--secondary-color) !important;
+}
+
+/* === GRÁFICOS === */
+body[data-theme="office"] .chart-container {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* === INDICADORES === */
+body[data-theme="office"] .sync-indicator {
+    background: var(--gradient-primary) !important;
+}
+
+body[data-theme="office"] .mini-sync-indicator .mini-sync-dot {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(52, 73, 94, 0.3) !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+body[data-theme="office"] .mini-sync-indicator.success .mini-sync-dot {
+    background: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+body[data-theme="office"] .mini-sync-indicator.error .mini-sync-dot {
+    background: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+}
+
+/* === LOGO === */
+body[data-theme="office"] .logo-organizamei {
+    border-color: var(--border-color) !important;
+    box-shadow: 0 0 15px rgba(52, 73, 94, 0.2) !important;
+}
+
+/* === NOTIFICAÇÕES === */
+body[data-theme="office"] .notyf__toast {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .notyf__toast--success {
+    border-left-color: var(--success-color) !important;
+}
+
+body[data-theme="office"] .notyf__toast--error {
+    border-left-color: var(--error-color) !important;
+}
+
+/* === README VIEWER === */
+body[data-theme="office"] .readme-viewer {
+    background: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .readme-viewer h1,
+body[data-theme="office"] .readme-viewer h2,
+body[data-theme="office"] .readme-viewer h3,
+body[data-theme="office"] .readme-viewer h4 {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer h1,
+body[data-theme="office"] .readme-viewer h2 {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer p,
+body[data-theme="office"] .readme-viewer li {
+    color: var(--text-primary) !important;
+    margin: 0 0 10px 0 !important;
+    line-height: 1.5 !important;
+}
+
+body[data-theme="office"] .readme-viewer ul,
+body[data-theme="office"] .readme-viewer ol {
+    padding-left: 1.5em !important;
+    margin: 8px 0 12px 0 !important;
+    list-style-type: disc !important;
+}
+
+body[data-theme="office"] .readme-viewer li {
+    display: list-item !important;
+    list-style-position: outside !important;
+    margin: 2px 0 !important;
+    line-height: 1.4 !important;
+}
+
+body[data-theme="office"] .readme-viewer li::marker {
+    color: var(--text-secondary) !important;
+}
+
+body[data-theme="office"] .readme-viewer code {
+    background: rgba(52, 73, 94, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .readme-viewer pre {
+    background: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer table th {
+    background: var(--background-secondary) !important;
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer table th,
+body[data-theme="office"] .readme-viewer table td {
+    border-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer hr {
+    background: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer a {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer strong {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer blockquote {
+    border-left-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer blockquote p {
+    color: var(--text-secondary) !important;
+}
+
+body[data-theme="office"] .readme-viewer::-webkit-scrollbar-track {
+    background: var(--background-secondary) !important;
+}
+
+body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb {
+    background: var(--border-color) !important;
+}
+
+body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color) !important;
+}

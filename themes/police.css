@@ -58,7 +58,7 @@ body[data-theme="police"] aside h1 {
 body[data-theme="police"] aside footer,
 body[data-theme="police"] .sidebar-footer,
 body[data-theme="police"] .version-info {
-    background: linear-gradient(180deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    background: none !important;
     color: var(--text-muted) !important;
 }
 

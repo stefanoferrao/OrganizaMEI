@@ -7,8 +7,12 @@ class ThemeManager {
                 file: 'themes/desert.css'
             },
             'police': {
-                name: 'Police',
+                name: 'Police - 𝐵𝑒𝑡𝑎',
                 file: 'themes/police.css'
+            },
+            'office': {
+                name: 'Office - 𝐵𝑒𝑡𝑎',
+                file: 'themes/office.css'
             }
         };
         // Migração: converter 'desert' antigo para 'default'
