@@ -273,6 +273,24 @@ ul {
   
   main {
     padding: 60px 8px 16px 8px;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  
+  /* Garantir que todas as seções respeitem os limites */
+  .tab-section {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Prevenir vazamento de elementos */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -874,6 +892,12 @@ nav button .fas {
 h2.text-xl.font-semibold.mb-4 i {
   color: #17acaf;
   margin-right: 8px;
+}
+
+/* Estilos para ícones do menu hambúrguer */
+.menu-toggle i.fas.fa-bars,
+.menu-toggle i.fas.fa-times {
+  color: #17acaf;
 }
 
 /* Estilo para ícone fas fa-box no dashboard */

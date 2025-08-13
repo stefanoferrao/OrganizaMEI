@@ -37,57 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Inicializar sistema de guias
   initConfigTabs();
   
-  // Função para mostrar README em popup
-  async function mostrarReadme() {
-    try {
-      const response = await fetch('docs/README.md');
-      const readmeContent = await response.text();
-      
-      // Converter markdown para HTML
-      const htmlContent = readmeContent
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        .replace(/### (.*?)\n/g, '<h3>$1</h3>')
-        .replace(/## (.*?)\n/g, '<h2>$1</h2>')
-        .replace(/# (.*?)\n/g, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\`(.*?)\`/g, '<code>$1</code>')
-        .replace(/\* (.*?)\n/g, '<li>$1</li>')
-        .replace(/---\n/g, '<hr>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/\n/g, '<br>');
-      
-      Swal.fire({
-        title: 'OrganizaMEI - Documentação Completa',
-        html: `<div class="readme-content">${htmlContent}</div>`,
-        width: '90%',
-        showCloseButton: true,
-        showConfirmButton: false,
-        background: '#232b38',
-        color: '#e2e8f0',
-        customClass: {
-          popup: 'readme-popup'
-        }
-      });
-    } catch (error) {
-      console.error('Erro ao carregar README:', error);
-      Swal.fire({
-        title: 'Erro',
-        text: 'Não foi possível carregar a documentação.',
-        icon: 'error',
-        background: '#232b38',
-        color: '#e2e8f0'
-      });
-    }
-  }
-  
-  // Adicionar event listener ao botão README
-  const btnReadme = document.getElementById('btn-readme');
-  if (btnReadme) {
-    btnReadme.onclick = async function(e) {
-      e.preventDefault();
-      await mostrarReadme();
-    };
-  }
+  // O README viewer agora é gerenciado pelo readme-viewer.js
   
   // Verificar status do estoque quando a página carregar
   if (typeof atualizarStatusEstoque === 'function') {

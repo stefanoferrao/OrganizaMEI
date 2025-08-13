@@ -1,4 +1,4 @@
-# 🚀 **OrganizaMEI** - Sistema Completo de Gestão para MEI
+# 🚀 **OrganizaMEI** - Sistema de Gestão para MEI
 
 > Sistema modular e inteligente para controle financeiro, estoque e vendas com integração opcional ao Google Sheets, tutorial interativo e sistema de temas.
 
@@ -410,4 +410,4 @@ OrganizaMEI/
 
 ---
 
-**OrganizaMEI v4.0** - Sistema completo de gestão para MEI com arquitetura modular, tutorial interativo, sistema de temas e integração inteligente.
+**OrganizaMEI v4.0** - Sistema de gestão para MEI com arquitetura modular, tutorial interativo, sistema de temas e integração inteligente.
