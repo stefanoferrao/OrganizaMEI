@@ -32,14 +32,30 @@
 
 /* Estados visuais para feedback */
 .lancamento-item.processando {
-  opacity: 0.7;
-  transform: scale(0.98);
+  opacity: 0.6;
+  transform: scale(0.95);
   pointer-events: none;
+  background: #4a5568 !important;
+  filter: grayscale(60%);
+  transition: all 0.3s ease;
 }
 
 .lancamento-item.sucesso {
   transform: scale(1.02);
   box-shadow: 0 4px 16px rgba(56, 161, 105, 0.3);
+}
+
+.lancamento-item.erro {
+  background: #e53e3e !important;
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.4);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) scale(1.02); }
+  25% { transform: translateX(-5px) scale(1.02); }
+  75% { transform: translateX(5px) scale(1.02); }
 }
 
 .lancamento-item.removendo {
@@ -49,6 +65,75 @@
   background: #4a5568 !important;
   transition: all 0.2s ease;
   filter: grayscale(100%);
+}
+
+/* Feedback visual para exclusão/edição - aspecto cinza e reduzido */
+.lancamento-item.editando,
+.lancamento-item.excluindo {
+  background: #4a5568 !important;
+  opacity: 0.6;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  filter: grayscale(50%);
+  position: relative;
+}
+
+.lancamento-item.editando::after {
+  content: '✏️ Editando...';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: #17acaf;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 10;
+  animation: pulse 1.5s infinite;
+}
+
+.lancamento-item.excluindo::after {
+  content: '🗑️ Excluindo...';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: #e53e3e;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 10;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.lancamento-item.editando .lancamento-icon,
+.lancamento-item.excluindo .lancamento-icon {
+  opacity: 0.5;
+}
+
+.lancamento-item.editando .lancamento-descricao,
+.lancamento-item.editando .lancamento-valor,
+.lancamento-item.editando .lancamento-data,
+.lancamento-item.excluindo .lancamento-descricao,
+.lancamento-item.excluindo .lancamento-valor,
+.lancamento-item.excluindo .lancamento-data {
+  color: #a0aec0 !important;
+}
+
+.lancamento-item.editando .lancamento-btn-gerenciar,
+.lancamento-item.excluindo .lancamento-btn-gerenciar {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
 }
 
 /* Cores de fundo por tipo de lançamento */
@@ -192,6 +277,23 @@
   gap: 12px;
   flex: 1 1 0%;
   min-width: 0;
+  transition: all 0.3s ease;
+}
+
+/* Feedback visual para lancamento-info durante processamento */
+.lancamento-info.processando {
+  opacity: 0.5;
+  transform: scale(0.95);
+  filter: grayscale(70%);
+  color: #a0aec0 !important;
+}
+
+.lancamento-info.processando * {
+  color: #a0aec0 !important;
+}
+
+.lancamento-info.processando .lancamento-icon {
+  opacity: 0.4;
 }
 
 .lancamento-icon {
@@ -575,7 +677,9 @@
 /* Regras globais para inativar botões durante ressincronização */
 .sync-disabled button:not(.btn-sync-primary):not(.btn-test),
 .sync-disabled input[type="submit"],
-.sync-disabled .lancamento-btn-remover {
+.sync-disabled .lancamento-btn-gerenciar,
+.sync-disabled .modal-edit,
+.sync-disabled .modal-delete {
   background: #4a5568 !important;
   cursor: not-allowed !important;
   opacity: 0.5 !important;
@@ -584,6 +688,78 @@
 
 .sync-disabled #financeiro-form button[type="submit"]:disabled {
   opacity: 0.5;
+}
+
+/* Overlay de sincronização */
+.sync-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sync-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sync-overlay-content {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #e2e8f0;
+  min-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.sync-overlay-icon {
+  font-size: 2.5rem;
+  color: #17acaf;
+  margin-bottom: 16px;
+  animation: spin 1s linear infinite;
+}
+
+.sync-overlay-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #17acaf;
+}
+
+.sync-overlay-message {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.sync-overlay-progress {
+  width: 100%;
+  height: 4px;
+  background: #4a5568;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sync-overlay-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #17acaf, #38a169);
+  border-radius: 2px;
+  animation: progress-indeterminate 2s ease-in-out infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @media (max-width: 600px) {
@@ -633,5 +809,216 @@
   
   #financeiro-form button[type="submit"] {
     padding: 12px 20px;
+  }
+}
+
+/* Estilos para modais de gerenciamento financeiro */
+.modal-edit {
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-edit:hover {
+  background: #2c5282;
+}
+
+.modal-delete {
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-delete:hover {
+  background: #c53030;
+}
+
+/* Botão de gerenciar nos lançamentos */
+.lancamento-btn-gerenciar {
+  background: none;
+  border: none;
+  color: #c3c3c3;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 8px;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
+  transition: all 0.2s ease;
+}
+
+.lancamento-btn-gerenciar:hover {
+  color: #2c5282;
+  transform: scale(1.1);
+}
+
+.lancamento-btn-gerenciar:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Modal styles para financeiro */
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding-top: 10vh;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: #232b38;
+  border-radius: 12px;
+  padding: 32px 28px 24px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  min-width: 320px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-bottom: 10vh;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  color: #17acaf;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.modal-produto {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.modal-confirm {
+  background: #17acaf;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-confirm:hover {
+  background: #17acaf22;
+}
+
+.modal-confirm:disabled {
+  background: #4a5568;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.modal-cancel {
+  background: #4a5568;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-cancel:hover {
+  background: #e53e3e;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+/* Estilos para formulário de edição */
+#editar-lancamento-form input:not([type="radio"]),
+#editar-lancamento-form select {
+  background: #232b38;
+  color: #e2e8f0;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#editar-lancamento-form input:not([type="radio"]):hover,
+#editar-lancamento-form select:hover {
+  border-color: #17acaf;
+  background-color: #17acaf22;
+}
+
+#editar-lancamento-form input:not([type="radio"]):focus,
+#editar-lancamento-form select:focus {
+  outline: none;
+  border-color: #17acaf22;
+  box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
+}
+
+@media (max-width: 480px) {
+  .modal-bg {
+    padding-top: 5vh;
+  }
+  
+  .modal-content {
+    padding: 20px 16px;
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+    min-width: auto;
+    max-height: 85vh;
+    margin-bottom: 5vh;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .modal-confirm,
+  .modal-cancel,
+  .modal-edit,
+  .modal-delete {
+    width: 100%;
+    padding: 12px;
+  }
+  
+  .lancamento-item.editando::after,
+  .lancamento-item.excluindo::after {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    right: 5px;
   }
 }

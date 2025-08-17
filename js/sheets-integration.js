@@ -323,8 +323,10 @@ async function sincronizarFinanceiro() {
         // Salvar dados sincronizados
         localStorage.setItem('lancamentos', JSON.stringify(lancamentosSincronizados));
         
-        // Atualizar variável global lancamentos
-        if (typeof window.lancamentos !== 'undefined') {
+        // Forçar atualização das variáveis globais
+        if (typeof carregarDadosAtualizados === 'function') {
+            carregarDadosAtualizados();
+        } else if (typeof window.lancamentos !== 'undefined') {
             window.lancamentos.length = 0;
             window.lancamentos.push(...lancamentosSincronizados);
         }
@@ -341,10 +343,14 @@ async function sincronizarFinanceiro() {
         
         // Forçar atualização completa da interface
         // Recarregar dados do localStorage
-        const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
-        if (typeof window.lancamentos !== 'undefined') {
-            window.lancamentos.length = 0;
-            window.lancamentos.push(...novosLancamentos);
+        if (typeof carregarDadosAtualizados === 'function') {
+            carregarDadosAtualizados();
+        } else {
+            const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+            if (typeof window.lancamentos !== 'undefined') {
+                window.lancamentos.length = 0;
+                window.lancamentos.push(...novosLancamentos);
+            }
         }
         
         // Atualizar todas as interfaces
@@ -362,6 +368,11 @@ async function sincronizarFinanceiro() {
         updateMiniIndicator('connected-working');
         mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
         hideProgress();
+        
+        // Remover feedback visual após sincronização
+        if (typeof removerFeedbackVisual === 'function') {
+            removerFeedbackVisual();
+        }
         
         // Aguardar 1500ms para compatibilidade com atualização dos dados
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -415,6 +426,10 @@ async function adicionarLancamentoSheets(lancamento) {
         const result = await response.json();
         if (result.success) {
             atualizarTimestampModificacao();
+            // Remover feedback visual após adição bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
         }
         return result.success;
     } catch (error) {
@@ -454,10 +469,254 @@ async function excluirLancamentoSheets(id) {
         console.log('Resultado da exclusão:', result);
         if (result.success === true) {
             atualizarTimestampModificacao();
+            // Remover feedback visual após exclusão bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
         }
         return result.success === true;
     } catch (error) {
         console.error('Erro ao excluir do Google Sheets:', error);
+        return false;
+    }
+}
+
+// Editar lançamento no Google Sheets - VERSÃO ROBUSTA
+async function editarLancamentoSheets(lancamento) {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        console.error('URL não configurada para edição');
+        return false;
+    }
+
+    if (!lancamento.id) {
+        console.error('ID do lançamento é obrigatório para edição');
+        return false;
+    }
+
+    try {
+        console.log('Editando lançamento - ID:', lancamento.id);
+        console.log('Dados para edição:', lancamento);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'updateById',
+                data: {
+                    id: String(lancamento.id),
+                    tipo: lancamento.tipo,
+                    categoria: lancamento.categoria,
+                    subcategoria: lancamento.subcategoria,
+                    descricao: lancamento.descricao,
+                    quantidade: lancamento.quantidade || 1,
+                    valor: lancamento.valor,
+                    data: lancamento.data
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Resposta HTTP não OK:', response.status);
+            return false;
+        }
+        
+        const result = await response.json();
+        console.log('Resultado da edição:', result);
+        
+        if (result.success) {
+            atualizarTimestampModificacao();
+            console.log('Lançamento editado com sucesso');
+            // Remover feedback visual após edição bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
+        } else {
+            console.error('Falha na edição:', result.message);
+        }
+        
+        return result.success;
+    } catch (error) {
+        console.error('Erro ao editar no Google Sheets:', error);
+        return false;
+    }
+}
+
+// Editar movimentação de estoque no Google Sheets - VERSÃO ROBUSTA
+async function editarMovimentacaoEstoque(movimentacao) {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        console.error('URL não configurada para edição de estoque');
+        return false;
+    }
+
+    if (!movimentacao.id) {
+        console.error('ID da movimentação é obrigatório para edição');
+        return false;
+    }
+
+    try {
+        console.log('Editando movimentação de estoque - ID:', movimentacao.id);
+        console.log('Dados para edição:', movimentacao);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'updateEstoqueById',
+                data: {
+                    id: String(movimentacao.id),
+                    produto: movimentacao.produto,
+                    categoria: movimentacao.categoria || '',
+                    quantidade: movimentacao.quantidade,
+                    valorUnitario: movimentacao.valorUnitario || 0,
+                    valorTotal: movimentacao.valorTotal || 0,
+                    data: movimentacao.data,
+                    tipoMovimento: movimentacao.tipoMovimento,
+                    observacoes: movimentacao.observacoes || ''
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Resposta HTTP não OK:', response.status);
+            return false;
+        }
+        
+        const result = await response.json();
+        console.log('Resultado da edição de estoque:', result);
+        
+        if (result.success) {
+            atualizarTimestampModificacao();
+            console.log('Movimentação de estoque editada com sucesso');
+            // Remover feedback visual após edição bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
+        } else {
+            console.error('Falha na edição de estoque:', result.message);
+        }
+        
+        return result.success;
+    } catch (error) {
+        console.error('Erro ao editar movimentação de estoque:', error);
+        return false;
+    }
+}
+
+// Excluir movimentação de estoque no Google Sheets - VERSÃO ROBUSTA
+async function excluirMovimentacaoEstoque(id) {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        console.log('URL não configurada para exclusão de estoque');
+        return false;
+    }
+
+    if (!id) {
+        console.error('ID é obrigatório para exclusão de estoque');
+        return false;
+    }
+
+    try {
+        console.log('Excluindo movimentação de estoque - ID:', id);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'removerMovimentacaoEstoque',
+                id: String(id)
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Resposta HTTP não OK:', response.status);
+            return false;
+        }
+        
+        const result = await response.json();
+        console.log('Resultado da exclusão de estoque:', result);
+        
+        if (result.success) {
+            atualizarTimestampModificacao();
+            console.log('Movimentação de estoque excluída com sucesso');
+            // Remover feedback visual após exclusão bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
+        } else {
+            console.error('Falha na exclusão de estoque:', result.message);
+        }
+        
+        return result.success;
+    } catch (error) {
+        console.error('Erro ao excluir movimentação de estoque:', error);
+        return false;
+    }
+}
+
+// Editar movimentação de estoque no Google Sheets - NOVA FUNÇÃO CRUD
+async function editarMovimentacaoEstoqueSheets(movimentacao) {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        console.error('URL não configurada para edição de estoque');
+        return false;
+    }
+
+    if (!movimentacao.id) {
+        console.error('ID da movimentação é obrigatório para edição');
+        return false;
+    }
+
+    try {
+        console.log('Editando movimentação de estoque - ID:', movimentacao.id);
+        console.log('Dados para edição:', movimentacao);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'editarMovimentacaoEstoque',
+                data: {
+                    id: String(movimentacao.id),
+                    produto: movimentacao.produto,
+                    categoria: movimentacao.categoria || '',
+                    quantidade: movimentacao.quantidade,
+                    valorUnitario: movimentacao.valorUnitario || 0,
+                    valorTotal: movimentacao.valorTotal || 0,
+                    data: movimentacao.data,
+                    tipoMovimento: movimentacao.tipoMovimento,
+                    observacoes: movimentacao.observacoes || ''
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Resposta HTTP não OK:', response.status);
+            return false;
+        }
+        
+        const result = await response.json();
+        console.log('Resultado da edição de estoque:', result);
+        
+        if (result.success) {
+            atualizarTimestampModificacao();
+            console.log('Movimentação de estoque editada com sucesso');
+            // Remover feedback visual após edição bem-sucedida
+            if (typeof removerFeedbackVisual === 'function') {
+                setTimeout(removerFeedbackVisual, 500);
+            }
+        } else {
+            console.error('Falha na edição de estoque:', result.message);
+        }
+        
+        return result.success;
+    } catch (error) {
+        console.error('Erro ao editar movimentação de estoque:', error);
         return false;
     }
 }
@@ -952,6 +1211,8 @@ async function sincronizarEstoque() {
     if (!estoqueAtivo) return;
     
     try {
+        console.log('=== INICIANDO SINCRONIZAÇÃO DE ESTOQUE ===');
+        
         // Bloquear botões do estoque durante sincronização se não estiver já bloqueado
         const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
         if (!jaEstavaBloqueado) {
@@ -966,9 +1227,19 @@ async function sincronizarEstoque() {
         });
         
         const result = await response.json();
-        if (!result.success) return;
+        console.log('Resultado da leitura do estoque:', result);
+        
+        if (!result.success) {
+            console.log('Falha na leitura do estoque');
+            return;
+        }
         
         const movimentacoes = result.data || [];
+        console.log('Movimentações encontradas:', movimentacoes.length);
+        
+        // Salvar movimentações no localStorage
+        localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoes));
+        
         const estoqueCalculado = {};
         
         // Calcular estoque por produto
@@ -992,12 +1263,30 @@ async function sincronizarEstoque() {
                 quantidade: estoqueCalculado[nome]
             }));
         
+        console.log('Produtos sincronizados:', produtosSincronizados);
+        
         // Atualizar localStorage e variável global
         localStorage.setItem('produtos', JSON.stringify(produtosSincronizados));
-        if (typeof window.produtos !== 'undefined') {
+        
+        // Forçar atualização das variáveis globais
+        if (typeof carregarDadosAtualizados === 'function') {
+            carregarDadosAtualizados();
+        } else if (typeof window.produtos !== 'undefined') {
             window.produtos.length = 0;
             window.produtos.push(...produtosSincronizados);
         }
+        
+        // Atualizar interface se a função estiver disponível
+        if (typeof renderizarProdutos === 'function') {
+            setTimeout(() => {
+                renderizarProdutos();
+            }, 100);
+        }
+        
+        // Salvar timestamp da sincronização
+        localStorage.setItem('ultimaSincronizacaoEstoque', Date.now().toString());
+        
+        console.log('=== SINCRONIZAÇÃO DE ESTOQUE CONCLUÍDA ===');
         
         // Reativar botões apenas se foi esta função que os desativou
         if (!jaEstavaBloqueado) {
@@ -1117,20 +1406,10 @@ async function verificarSincronizacaoAutomatica() {
     }
 }
 
-// Verificação periódica desabilitada para evitar sincronização automática
-let intervalVerificacao = null;
-
+// Verificação automática REMOVIDA - apenas sincronização manual
 function iniciarVerificacaoAutomatica() {
-    // Função desabilitada - sincronização apenas manual
-    console.log('Verificação automática desabilitada');
-    // if (intervalVerificacao) clearInterval(intervalVerificacao);
-    // intervalVerificacao = setInterval(async () => {
-    //     const estaSincronizado = await verificarSincronizacaoAutomatica();
-    //     if (!estaSincronizado) {
-    //         mostrarNotificacaoSync('Sincronizando', 'info');
-    //         await sincronizarTudo();
-    //     }
-    // }, 1200000); // 20 minutos
+    // Função desabilitada permanentemente - sincronização apenas manual
+    console.log('Verificação automática desabilitada - use o botão Sincronizar quando necessário');
 }
 
 // Função para testar conexão com Google Sheets
@@ -1176,6 +1455,11 @@ async function testarConexaoSheets() {
 // Expor funções globalmente para uso em outros arquivos
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;
+window.editarLancamentoSheets = editarLancamentoSheets;
+window.editarMovimentacaoEstoque = editarMovimentacaoEstoque;
+window.editarMovimentacaoEstoqueSheets = editarMovimentacaoEstoqueSheets;
+window.excluirMovimentacaoEstoque = excluirMovimentacaoEstoque;
+window.gerarIdentificadorUnico = gerarIdentificadorUnico;
 window.mostrarNotificacaoSync = mostrarNotificacaoSync;
 window.inicializarNotificacoes = inicializarNotificacoes;
 window.updateMiniIndicator = updateMiniIndicator;

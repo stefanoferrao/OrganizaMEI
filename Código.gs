@@ -50,7 +50,19 @@ function doPost(e) {
     }
     
     if (data.action === 'delete') {
-      return deleteFinanceiroData(data.id);
+      return deleteByIdBothSheets(data.id);
+    }
+    
+    if (data.action === 'deleteById') {
+      return deleteByIdBothSheets(data.id);
+    }
+    
+    if (data.action === 'update') {
+      return updateFinanceiroData(data.data);
+    }
+    
+    if (data.action === 'updateById') {
+      return updateByIdBothSheets(data.data);
     }
     
     if (data.action === 'verificarSincronizacao') {
@@ -74,7 +86,31 @@ function doPost(e) {
     }
     
     if (data.action === 'deleteEstoque') {
-      return deleteEstoqueData(data.produto);
+      if (data.id) {
+        return deleteEstoqueById(data.id);
+      } else {
+        return deleteEstoqueData(data.produto);
+      }
+    }
+    
+    if (data.action === 'updateEstoque') {
+      return updateEstoqueData(data.data);
+    }
+    
+    if (data.action === 'updateEstoqueById') {
+      return updateEstoqueById(data.data);
+    }
+    
+    if (data.action === 'deleteEstoqueById') {
+      return deleteEstoqueById(data.id);
+    }
+    
+    if (data.action === 'removerMovimentacaoEstoque') {
+      return removerMovimentacaoEstoque(data.id);
+    }
+    
+    if (data.action === 'editarMovimentacaoEstoque') {
+      return editarMovimentacaoEstoque(data.data);
     }
     
     if (data.action === 'testarScript') {
@@ -89,6 +125,546 @@ function doPost(e) {
     
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: 'Ação não reconhecida'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// FUNÇÃO ROBUSTA: Excluir por ID - Financeiro ou Estoque
+function deleteByIdBothSheets(id) {
+  try {
+    if (!id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    let deletedCount = 0;
+    let messages = [];
+    const targetId = String(id).replace(/^'/, '');
+    
+    console.log('Procurando item com ID:', targetId);
+    
+    // Excluir do Financeiro
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      const range = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1);
+      const values = range.getValues();
+      
+      for (let i = values.length - 1; i >= 0; i--) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          abaFinanceiro.deleteRow(i + 2);
+          deletedCount++;
+          messages.push('Financeiro');
+          console.log('Item excluído do Financeiro, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    // Excluir do Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const range = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 1);
+      const values = range.getValues();
+      
+      for (let i = values.length - 1; i >= 0; i--) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          abaEstoque.deleteRow(i + 2);
+          deletedCount++;
+          messages.push('Estoque');
+          console.log('Item excluído do Estoque, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    if (deletedCount > 0) {
+      console.log('Exclusão bem-sucedida. Total excluído:', deletedCount);
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true, 
+          message: `Item excluído de: ${messages.join(', ')}`,
+          deletedCount: deletedCount
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      console.log('Item não encontrado com ID:', targetId);
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Item não encontrado'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+  } catch (error) {
+    console.error('Erro na exclusão:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// FUNÇÃO ROBUSTA: Excluir movimentação de estoque por ID
+function removerMovimentacaoEstoque(id) {
+  try {
+    if (!id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    let deletedCount = 0;
+    let messages = [];
+    const targetId = String(id).replace(/^'/, '');
+    
+    console.log('Procurando movimentação com ID:', targetId);
+    
+    // Excluir do Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const range = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 1);
+      const values = range.getValues();
+      
+      for (let i = values.length - 1; i >= 0; i--) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          abaEstoque.deleteRow(i + 2);
+          deletedCount++;
+          messages.push('Estoque');
+          console.log('Movimentação excluída do Estoque, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    // Excluir do Financeiro usando o mesmo ID
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      const range = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1);
+      const values = range.getValues();
+      
+      for (let i = values.length - 1; i >= 0; i--) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          abaFinanceiro.deleteRow(i + 2);
+          deletedCount++;
+          messages.push('Financeiro');
+          console.log('Lançamento excluído do Financeiro, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    if (deletedCount > 0) {
+      console.log('Exclusão bem-sucedida. Total excluído:', deletedCount);
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true, 
+          message: `Movimentação excluída de: ${messages.join(', ')}`,
+          deletedCount: deletedCount
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Movimentação não encontrada'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+      
+  } catch (error) {
+    console.error('Erro na exclusão de movimentação:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// FUNÇÃO ROBUSTA: Editar movimentação de estoque por ID
+function editarMovimentacaoEstoque(dados) {
+  try {
+    if (!dados || !dados.id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório para edição'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    
+    if (!abaEstoque || abaEstoque.getLastRow() <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Nenhuma movimentação para editar'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const targetId = String(dados.id).replace(/^'/, '');
+    const range = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 9);
+    const values = range.getValues();
+    
+    console.log('Procurando movimentação para editar com ID:', targetId);
+    console.log('Dados para atualização:', dados);
+    
+    for (let i = 0; i < values.length; i++) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, '');
+      if (idPlanilha === targetId) {
+        abaEstoque.getRange(i + 2, 1, 1, 9).setValues([[
+          "'" + dados.id,
+          dados.produto,
+          dados.categoria || '',
+          dados.quantidade,
+          dados.valorUnitario || 0,
+          dados.valorTotal || 0,
+          dados.data,
+          dados.tipoMovimento,
+          dados.observacoes || ''
+        ]]);
+        
+        console.log('Movimentação de estoque atualizada, linha:', i + 2);
+        return ContentService
+          .createTextOutput(JSON.stringify({success: true, message: 'Movimentação atualizada com sucesso'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: 'Movimentação não encontrada para edição'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    console.error('Erro na edição de movimentação:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// FUNÇÃO ROBUSTA: Editar por ID em ambas as abas
+function updateByIdBothSheets(data) {
+  try {
+    if (!data || !data.id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório para edição'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    let updatedCount = 0;
+    let messages = [];
+    const targetId = String(data.id).replace(/^'/, '');
+    
+    console.log('Procurando item para editar com ID:', targetId);
+    console.log('Dados para atualização:', data);
+    
+    // Atualizar no Financeiro
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      const range = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 8);
+      const values = range.getValues();
+      
+      for (let i = 0; i < values.length; i++) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          // Formatar data
+          let dataFormatada = data.data;
+          if (data.data && data.data.includes('/')) {
+            dataFormatada = data.data;
+          } else if (data.data) {
+            const date = new Date(data.data);
+            if (!isNaN(date.getTime())) {
+              const dia = String(date.getDate()).padStart(2, '0');
+              const mes = String(date.getMonth() + 1).padStart(2, '0');
+              const ano = date.getFullYear();
+              dataFormatada = `${dia}/${mes}/${ano}`;
+            }
+          }
+          
+          abaFinanceiro.getRange(i + 2, 1, 1, 8).setValues([[
+            "'" + data.id,
+            data.tipo,
+            data.categoria,
+            data.subcategoria,
+            data.descricao,
+            data.quantidade || 1,
+            data.valor,
+            dataFormatada
+          ]]);
+          
+          updatedCount++;
+          messages.push('Financeiro');
+          console.log('Item atualizado no Financeiro, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    // Atualizar no Estoque (se for uma venda)
+    if (data.categoria === 'Vendas' && data.subcategoria === 'Produtos') {
+      const abaEstoque = planilha.getSheetByName('Estoque');
+      if (abaEstoque && abaEstoque.getLastRow() > 1) {
+        const range = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 9);
+        const values = range.getValues();
+        
+        for (let i = 0; i < values.length; i++) {
+          const idPlanilha = String(values[i][0]).replace(/^'/, '');
+          if (idPlanilha === targetId) {
+            abaEstoque.getRange(i + 2, 1, 1, 9).setValues([[
+              data.id,
+              data.descricao,
+              'Saída',
+              data.quantidade || 1,
+              data.valor / (data.quantidade || 1),
+              data.valor,
+              data.data,
+              'Venda',
+              'Venda de produto'
+            ]]);
+            
+            updatedCount++;
+            messages.push('Estoque');
+            console.log('Item atualizado no Estoque, linha:', i + 2);
+            break;
+          }
+        }
+      }
+    }
+    
+    if (updatedCount > 0) {
+      console.log('Atualização bem-sucedida. Total atualizado:', updatedCount);
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true, 
+          message: `Item atualizado em: ${messages.join(', ')}`,
+          updatedCount: updatedCount
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      console.log('Item não encontrado para atualização com ID:', targetId);
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Item não encontrado para edição'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+  } catch (error) {
+    console.error('Erro na atualização:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function updateFinanceiroData(data) {
+  try {
+    if (!data || !data.id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getActiveSheet();
+    const lastRow = sheet.getLastRow();
+    
+    if (lastRow <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Nenhum dado para editar'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const targetId = String(data.id).replace(/^'/, '');
+    const range = sheet.getRange(2, 1, lastRow - 1, 8);
+    const values = range.getValues();
+    
+    for (let i = 0; i < values.length; i++) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, '');
+      if (idPlanilha === targetId) {
+        let dataFormatada = data.data;
+        if (data.data && data.data.includes('/')) {
+          dataFormatada = data.data;
+        } else if (data.data) {
+          const date = new Date(data.data);
+          if (!isNaN(date.getTime())) {
+            const dia = String(date.getDate()).padStart(2, '0');
+            const mes = String(date.getMonth() + 1).padStart(2, '0');
+            const ano = date.getFullYear();
+            dataFormatada = `${dia}/${mes}/${ano}`;
+          }
+        }
+        
+        sheet.getRange(i + 2, 1, 1, 8).setValues([[
+          "'" + data.id,
+          data.tipo,
+          data.categoria,
+          data.subcategoria,
+          data.descricao,
+          data.quantidade || 1,
+          data.valor,
+          dataFormatada
+        ]]);
+        
+        return ContentService
+          .createTextOutput(JSON.stringify({success: true, message: 'Lançamento atualizado'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: 'Item não encontrado'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// NOVA FUNÇÃO: Editar movimentação de estoque
+function updateEstoqueData(data) {
+  try {
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    const aba = planilha.getSheetByName('Estoque');
+    
+    if (!aba) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Aba Estoque não encontrada'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const lastRow = aba.getLastRow();
+    if (lastRow <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Nenhum dado para editar'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // Encontrar linha com o ID
+    const range = aba.getRange(2, 1, lastRow - 1, 9);
+    const values = range.getValues();
+    
+    for (let i = 0; i < values.length; i++) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, '');
+      if (idPlanilha === String(data.id)) {
+        // Atualizar linha
+        aba.getRange(i + 2, 1, 1, 9).setValues([[
+          data.id,
+          data.produto,
+          data.categoria || '',
+          data.quantidade,
+          data.valorUnitario || 0,
+          data.valorTotal || 0,
+          data.data,
+          data.tipoMovimento,
+          data.observacoes || ''
+        ]]);
+        
+        return ContentService
+          .createTextOutput(JSON.stringify({success: true, message: 'Movimentação de estoque atualizada'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: 'Movimentação não encontrada'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function deleteEstoqueById(id) {
+  try {
+    if (!id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    const aba = planilha.getSheetByName('Estoque');
+    
+    if (!aba || aba.getLastRow() <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Nenhum dado para excluir'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const targetId = String(id).replace(/^'/, '');
+    const range = aba.getRange(2, 1, aba.getLastRow() - 1, 1);
+    const values = range.getValues();
+    
+    for (let i = values.length - 1; i >= 0; i--) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, '');
+      if (idPlanilha === targetId) {
+        aba.deleteRow(i + 2);
+        return ContentService
+          .createTextOutput(JSON.stringify({success: true, message: 'Item excluído'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: 'Item não encontrado'}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function updateEstoqueById(data) {
+  try {
+    if (!data || !data.id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    const aba = planilha.getSheetByName('Estoque');
+    
+    if (!aba || aba.getLastRow() <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Nenhum dado para editar'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const targetId = String(data.id).replace(/^'/, '');
+    const range = aba.getRange(2, 1, aba.getLastRow() - 1, 9);
+    const values = range.getValues();
+    
+    for (let i = 0; i < values.length; i++) {
+      const idPlanilha = String(values[i][0]).replace(/^'/, '');
+      if (idPlanilha === targetId) {
+        aba.getRange(i + 2, 1, 1, 9).setValues([[
+          data.id,
+          data.produto,
+          data.categoria || '',
+          data.quantidade,
+          data.valorUnitario || 0,
+          data.valorTotal || 0,
+          data.data,
+          data.tipoMovimento,
+          data.observacoes || ''
+        ]]);
+        
+        return ContentService
+          .createTextOutput(JSON.stringify({success: true, message: 'Estoque atualizado'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: 'Item não encontrado'}))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
@@ -397,7 +973,7 @@ function testarScript() {
     const nome = planilha.getName();
     
     return ContentService
-      .createTextOutput(JSON.stringify({success: true, message: 'nPlanilha: ' + nome}))
+      .createTextOutput(JSON.stringify({success: true, message: 'Planilha: ' + nome}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService
@@ -511,17 +1087,37 @@ function readEstoqueData() {
     const range = aba.getRange(2, 1, lastRow - 1, 9);
     const values = range.getValues();
     
-    const data = values.map(row => ({
-      id: row[0],
-      produto: row[1],
-      categoria: row[2],
-      quantidade: row[3],
-      valorUnitario: row[4],
-      valorTotal: row[5],
-      data: row[6],
-      tipoMovimento: row[7],
-      observacoes: row[8]
-    }));
+    const data = values.map(row => {
+      // Formatar data para DD/MM/AAAA
+      let dataFormatada = row[6];
+      if (row[6] instanceof Date) {
+        const dia = String(row[6].getDate()).padStart(2, '0');
+        const mes = String(row[6].getMonth() + 1).padStart(2, '0');
+        const ano = row[6].getFullYear();
+        dataFormatada = `${dia}/${mes}/${ano}`;
+      } else if (row[6] && !String(row[6]).includes('/')) {
+        // Se não é Date mas também não tem /, tentar converter
+        const date = new Date(row[6]);
+        if (!isNaN(date.getTime())) {
+          const dia = String(date.getDate()).padStart(2, '0');
+          const mes = String(date.getMonth() + 1).padStart(2, '0');
+          const ano = date.getFullYear();
+          dataFormatada = `${dia}/${mes}/${ano}`;
+        }
+      }
+      
+      return {
+        id: row[0],
+        produto: row[1],
+        categoria: row[2],
+        quantidade: row[3],
+        valorUnitario: row[4],
+        valorTotal: row[5],
+        data: dataFormatada,
+        tipoMovimento: row[7],
+        observacoes: row[8]
+      };
+    });
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, data: data}))

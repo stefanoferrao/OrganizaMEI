@@ -198,7 +198,7 @@ body[data-theme="office"] form select:focus,
 body[data-theme="office"] form textarea:focus {
     border-color: var(--secondary-color) !important;
     box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
-    background: rgba(248, 249, 250, 0.9) !important;
+    background: var(--card-background) !important;
 }
 
 /* === TÍTULOS === */
@@ -311,7 +311,7 @@ body[data-theme="office"] .dashboard-value-estoque {
 
 /* === CATEGORIAS === */
 body[data-theme="office"] .cat-titulo {
-    color: var(--secondary-color) !important;
+    color: var(--text-primary) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -322,9 +322,272 @@ body[data-theme="office"] .icon-saida .fas {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* === BOTÃO MOVIMENTAÇÕES === */
+body[data-theme="office"] .btn-movimentacoes {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .btn-movimentacoes:hover {
+    background: rgba(157, 157, 157, 0.2) !important;
+    color: #fff;
+}
+
+body[data-theme="office"] .icon-movimentacoes .fas {
+    color: var(--secondary-color) !important;
+}
+
+/* === MODAL MOVIMENTAÇÕES === */
+body[data-theme="office"] .movimentacao-item {
+    background: var(--card-background) !important;
+    border-left-color: var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .movimentacao-item:hover {
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+    border-left-color: var(--primary-color) !important;
+}
+
+body[data-theme="office"] .btn-gerenciar-movimentacao {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.3) !important;
+}
+
+body[data-theme="office"] .btn-gerenciar-movimentacao:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+/* === MODAL GERENCIAR === */
+body[data-theme="office"] .modal-header-gerenciar {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .modal-icon-gerenciar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .modal-info-card {
+    background: var(--card-background) !important;
+    border-left-color: var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .modal-edit.modal-btn-modern {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3) !important;
+}
+
+body[data-theme="office"] .modal-edit.modal-btn-modern:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .modal-cancel.modal-btn-modern {
+    background: linear-gradient(135deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .modal-cancel.modal-btn-modern:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
+/* === MODAL EDITAR === */
+body[data-theme="office"] .modal-header-editar {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="office"] .modal-icon-editar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .form-group-editar label {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .input-editar {
+    background: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .input-editar:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px var(--glow-color), inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    background: var(--surface-color) !important;
+}
+
+body[data-theme="office"] .modal-confirm.modal-btn-editar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3) !important;
+}
+
+body[data-theme="office"] .modal-confirm.modal-btn-editar:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .modal-cancel.modal-btn-editar {
+    background: linear-gradient(135deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
+/* === OTIMIZAÇÕES MÓVEIS PARA MODAIS === */
+
+/* Modais responsivos para tema office */
+@media screen and (max-width: 768px) {
+  body[data-theme="office"] .modal-bg {
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  body[data-theme="office"] .modal-content {
+    background: var(--card-background) !important;
+    border: 2px solid var(--border-color) !important;
+    box-shadow: 0 8px 32px var(--shadow-color) !important;
+  }
+  
+  body[data-theme="office"] .modal-title {
+    color: var(--secondary-color) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 8px !important;
+  }
+  
+  body[data-theme="office"] .modal-content input,
+  body[data-theme="office"] .modal-content select,
+  body[data-theme="office"] .modal-content textarea,
+  body[data-theme="office"] .input-editar {
+    background: var(--surface-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  body[data-theme="office"] .modal-content input:focus,
+  body[data-theme="office"] .modal-content select:focus,
+  body[data-theme="office"] .modal-content textarea:focus,
+  body[data-theme="office"] .input-editar:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+    background: var(--card-background) !important;
+  }
+  
+  body[data-theme="office"] .modal-confirm,
+  body[data-theme="office"] .modal-edit,
+  body[data-theme="office"] .modal-btn-modern,
+  body[data-theme="office"] .modal-confirm.modal-btn-editar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+  }
+  
+  body[data-theme="office"] .modal-confirm:hover,
+  body[data-theme="office"] .modal-edit:hover,
+  body[data-theme="office"] .modal-btn-modern:hover,
+  body[data-theme="office"] .modal-confirm.modal-btn-editar:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+  }
+  
+  body[data-theme="office"] .modal-cancel,
+  body[data-theme="office"] .modal-cancel.modal-btn-modern,
+  body[data-theme="office"] .modal-cancel.modal-btn-editar {
+    background: linear-gradient(135deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+  }
+  
+  body[data-theme="office"] .modal-cancel:hover,
+  body[data-theme="office"] .modal-cancel.modal-btn-modern:hover,
+  body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+  }
+  
+  body[data-theme="office"] .modal-delete,
+  body[data-theme="office"] .modal-delete.modal-btn-modern {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3) !important;
+  }
+  
+  body[data-theme="office"] .modal-delete:hover,
+  body[data-theme="office"] .modal-delete.modal-btn-modern:hover {
+    background: linear-gradient(135deg, #c53030 0%, #9c2626 100%) !important;
+    box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4) !important;
+  }
+  
+  body[data-theme="office"] .modal-info-card {
+    background: var(--card-background) !important;
+    border-left: 4px solid var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  body[data-theme="office"] .movimentacao-item {
+    background: var(--card-background) !important;
+    border-left: 4px solid var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+  }
+  
+  body[data-theme="office"] .movimentacao-item:hover {
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+    border-left-color: var(--primary-color) !important;
+  }
+  
+  body[data-theme="office"] .btn-gerenciar-movimentacao {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.3) !important;
+  }
+  
+  body[data-theme="office"] .btn-gerenciar-movimentacao:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+  }
+  
+  /* Ajustes para teclado virtual */
+  @media (max-height: 500px) {
+    body[data-theme="office"] .modal-content {
+      padding: 12px !important;
+    }
+    
+    body[data-theme="office"] .modal-title {
+      font-size: 1rem !important;
+      margin-bottom: 8px !important;
+    }
+  }
+  
+  /* Scrollbar customizada para tema office */
+  body[data-theme="office"] .modal-content::-webkit-scrollbar,
+  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar {
+    width: 6px !important;
+  }
+  
+  body[data-theme="office"] .modal-content::-webkit-scrollbar-track,
+  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-track {
+    background: var(--surface-color) !important;
+    border-radius: 3px !important;
+  }
+  
+  body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb,
+  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb {
+    background: var(--secondary-color) !important;
+    border-radius: 3px !important;
+  }
+  
+  body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb:hover,
+  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color) !important;
+  }
+}
+
 body[data-theme="office"] .cat-nome,
 body[data-theme="office"] .cat-sub-nome {
-    color: var(--secondary-color) !important;
+    color: var(--text-primary) !important;
 }
 
 body[data-theme="office"] .cat-card[id*="receita"],

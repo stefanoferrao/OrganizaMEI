@@ -245,6 +245,18 @@ ul {
   padding: 0;
 }
 
+/* Garantir que listas de estoque não tenham overflow cortado */
+#estoque-lista {
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+#estoque-lista li {
+  overflow: visible;
+  position: relative;
+}
+
 /* Overlay para fechar menu */
 .menu-overlay {
   display: none;
@@ -992,4 +1004,51 @@ label i.fa-chart-line {
   white-space: nowrap;
   box-sizing: border-box;
   min-width: 0;
+}
+
+/* Estilos para efeitos de navegação */
+.tab-section {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+nav button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+nav button.nav-active {
+  background: #17acaf !important;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
+}
+
+nav button:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+nav button i {
+  transform: none !important;
+  transition: none !important;
+  display: inline-block !important;
+  vertical-align: baseline !important;
+  font-size: inherit !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }

@@ -1,0 +1,588 @@
+/* Mobile Modal Optimizations - Otimizações para Popups em Dispositivos Móveis */
+
+/* ===== CONFIGURAÇÕES GLOBAIS PARA MODAIS ===== */
+
+/* Prevenir zoom em inputs em iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="password"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important; /* Previne zoom automático no iOS */
+  }
+}
+
+/* ===== MODAL BACKGROUND E POSICIONAMENTO ===== */
+
+/* Ajustes para teclado virtual */
+@media screen and (max-width: 768px) {
+  .modal-bg {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10000 !important;
+    
+    /* Garantir que modais ocultos não sejam visíveis */
+    visibility: visible !important;
+  }
+  
+  .modal-bg.modal-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    
+    /* Configurações para lidar com teclado virtual */
+    height: 100vh !important;
+    height: 100dvh !important; /* Dynamic viewport height para navegadores modernos */
+    
+    /* Centralização responsiva */
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    
+    /* Scroll suave */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    
+    /* Padding para evitar colisão com bordas */
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Quando teclado está ativo, ajustar posicionamento */
+  .modal-bg.keyboard-active {
+    align-items: flex-start !important;
+    padding-top: 20px !important;
+  }
+}
+
+/* ===== MODAL CONTENT RESPONSIVO ===== */
+
+@media screen and (max-width: 768px) {
+  .modal-content {
+    /* Dimensões responsivas */
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+    min-width: auto !important;
+    
+    /* Altura adaptável */
+    max-height: calc(100vh - 40px) !important;
+    max-height: calc(100dvh - 40px) !important;
+    
+    /* Posicionamento */
+    margin: 0 auto !important;
+    position: relative !important;
+    
+    /* Scroll interno */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    
+    /* Espaçamento interno otimizado */
+    padding: 16px !important;
+    
+    /* Visual */
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Modal grande (movimentações) */
+  .modal-large {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 40px) !important;
+    max-height: calc(100dvh - 40px) !important;
+  }
+  
+  /* Modal de gerenciamento */
+  .modal-gerenciar {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+    min-width: auto !important;
+  }
+  
+  /* Modal de edição */
+  .modal-editar {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+    min-width: auto !important;
+  }
+}
+
+/* ===== TÍTULOS E CABEÇALHOS ===== */
+
+@media screen and (max-width: 768px) {
+  .modal-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 12px !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+  }
+  
+  .modal-header-gerenciar,
+  .modal-header-editar {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+    padding-bottom: 12px !important;
+  }
+  
+  .modal-icon-gerenciar,
+  .modal-icon-editar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 16px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ===== FORMULÁRIOS RESPONSIVOS ===== */
+
+@media screen and (max-width: 768px) {
+  /* Inputs e selects */
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea,
+  .input-editar {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 16px !important; /* Previne zoom no iOS */
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+    box-sizing: border-box !important;
+    
+    /* Melhor experiência tátil */
+    min-height: 44px !important;
+    
+    /* Transições suaves */
+    transition: all 0.2s ease !important;
+  }
+  
+  /* Textarea específico */
+  .textarea-editar {
+    min-height: 80px !important;
+    resize: vertical !important;
+  }
+  
+  /* Form rows em coluna única */
+  .form-row,
+  .form-row-editar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  /* Labels otimizados */
+  .form-group-editar label {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+}
+
+/* ===== BOTÕES DE AÇÃO RESPONSIVOS ===== */
+
+@media screen and (max-width: 768px) {
+  .modal-actions,
+  .modal-actions-gerenciar,
+  .modal-actions-editar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+    width: 100% !important;
+  }
+  
+  /* Todos os botões de modal */
+  .modal-confirm,
+  .modal-cancel,
+  .modal-edit,
+  .modal-delete,
+  .modal-btn-modern,
+  .modal-btn-editar {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+    
+    /* Touch target otimizado */
+    min-height: 48px !important;
+    
+    /* Transições */
+    transition: all 0.2s ease !important;
+    
+    /* Flexbox para centralizar conteúdo */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  
+  /* Ordem dos botões - confirmar sempre primeiro */
+  .modal-confirm,
+  .modal-edit {
+    order: 1 !important;
+  }
+  
+  .modal-delete {
+    order: 2 !important;
+  }
+  
+  .modal-cancel {
+    order: 3 !important;
+  }
+}
+
+/* ===== CONTAINERS DE CONTEÚDO ===== */
+
+@media screen and (max-width: 768px) {
+  /* Container de movimentações */
+  .movimentacoes-container {
+    max-height: 40vh !important;
+    max-height: 40dvh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: 12px 0 !important;
+    padding-right: 4px !important; /* Espaço para scrollbar */
+  }
+  
+  /* Itens de movimentação */
+  .movimentacao-item {
+    padding: 12px !important;
+    margin-bottom: 8px !important;
+    border-radius: 8px !important;
+    
+    /* Layout responsivo */
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  .movimentacao-acoes {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+  
+  .btn-gerenciar-movimentacao {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    min-height: 36px !important;
+  }
+}
+
+/* ===== CARDS DE INFORMAÇÃO ===== */
+
+@media screen and (max-width: 768px) {
+  .modal-info-card {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+  }
+  
+  .modal-produto {
+    font-size: 16px !important;
+    text-align: center !important;
+    margin-bottom: 16px !important;
+    padding: 8px !important;
+    background: rgba(23, 172, 175, 0.1) !important;
+    border-radius: 6px !important;
+  }
+}
+
+/* ===== SELETORES DE TIPO (RECEITA/DESPESA) ===== */
+
+@media screen and (max-width: 768px) {
+  .tipo-selector {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .tipo-label {
+    padding: 12px !important;
+    border-radius: 8px !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+}
+
+/* ===== SCROLLBAR CUSTOMIZADA ===== */
+
+@media screen and (max-width: 768px) {
+  /* Webkit scrollbar */
+  .modal-content::-webkit-scrollbar,
+  .movimentacoes-container::-webkit-scrollbar {
+    width: 4px !important;
+  }
+  
+  .modal-content::-webkit-scrollbar-track,
+  .movimentacoes-container::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb,
+  .movimentacoes-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-radius: 2px !important;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb:hover,
+  .movimentacoes-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+/* ===== ANIMAÇÕES OTIMIZADAS ===== */
+
+@media screen and (max-width: 768px) {
+  /* Animação de entrada do modal */
+  .modal-bg:not(.modal-hidden) {
+    animation: modalFadeIn 0.3s ease-out !important;
+  }
+  
+  .modal-bg:not(.modal-hidden) .modal-content {
+    animation: modalSlideUp 0.3s ease-out !important;
+  }
+  
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+/* ===== AJUSTES PARA TECLADO VIRTUAL ===== */
+
+/* Detectar quando teclado virtual está ativo */
+@media screen and (max-width: 768px) {
+  /* Quando viewport height diminui significativamente */
+  @media (max-height: 500px) {
+    .modal-bg {
+      align-items: flex-start !important;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+    
+    .modal-content {
+      max-height: calc(100vh - 20px) !important;
+      margin-top: 0 !important;
+    }
+    
+    /* Reduzir espaçamentos quando espaço é limitado */
+    .modal-title {
+      margin-bottom: 8px !important;
+      font-size: 1rem !important;
+    }
+    
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea {
+      padding: 10px !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .modal-actions {
+      margin-top: 12px !important;
+      gap: 8px !important;
+    }
+    
+    .modal-confirm,
+    .modal-cancel,
+    .modal-edit,
+    .modal-delete {
+      padding: 12px 16px !important;
+      min-height: 44px !important;
+    }
+  }
+}
+
+/* ===== AJUSTES PARA DISPOSITIVOS MUITO PEQUENOS ===== */
+
+@media screen and (max-width: 480px) {
+  .modal-bg {
+    padding: 8px !important;
+  }
+  
+  .modal-content {
+    max-width: calc(100vw - 16px) !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+  }
+  
+  .modal-title {
+    font-size: 1rem !important;
+  }
+  
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea {
+    padding: 10px !important;
+    font-size: 16px !important;
+  }
+  
+  .movimentacoes-container {
+    max-height: 35vh !important;
+    max-height: 35dvh !important;
+  }
+}
+
+/* ===== AJUSTES PARA LANDSCAPE EM MOBILE ===== */
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .modal-bg {
+    align-items: flex-start !important;
+    padding: 8px !important;
+  }
+  
+  .modal-content {
+    max-height: calc(100vh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+  }
+  
+  .movimentacoes-container {
+    max-height: 30vh !important;
+    max-height: 30dvh !important;
+  }
+  
+  /* Botões em linha quando há espaço horizontal */
+  .modal-actions {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .modal-confirm,
+  .modal-cancel,
+  .modal-edit,
+  .modal-delete {
+    flex: 1 !important;
+    min-width: 120px !important;
+  }
+}
+
+/* ===== MELHORIAS DE ACESSIBILIDADE ===== */
+
+@media screen and (max-width: 768px) {
+  /* Melhor contraste para touch */
+  .modal-content input:focus,
+  .modal-content select:focus,
+  .modal-content textarea:focus {
+    outline: 2px solid #17acaf !important;
+    outline-offset: 2px !important;
+  }
+  
+  /* Feedback visual para botões */
+  .modal-confirm:active,
+  .modal-cancel:active,
+  .modal-edit:active,
+  .modal-delete:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease !important;
+  }
+  
+  /* Estados de hover adaptados para touch */
+  @media (hover: none) {
+    .modal-confirm:hover,
+    .modal-cancel:hover,
+    .modal-edit:hover,
+    .modal-delete:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* ===== PREVENÇÃO DE PROBLEMAS COMUNS ===== */
+
+@media screen and (max-width: 768px) {
+  /* Prevenir seleção de texto acidental */
+  .modal-bg {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  /* Permitir seleção apenas em inputs */
+  .modal-content input,
+  .modal-content textarea {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+  }
+  
+  /* Prevenir bounce scroll */
+  .modal-bg {
+    overscroll-behavior: contain !important;
+  }
+  
+  /* Melhor performance de scroll */
+  .modal-content,
+  .movimentacoes-container {
+    will-change: scroll-position !important;
+  }
+}
+
+/* ===== ESTADOS DE LOADING RESPONSIVOS ===== */
+
+@media screen and (max-width: 768px) {
+  .modal-confirm:disabled,
+  .modal-edit:disabled,
+  .modal-delete:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    position: relative !important;
+  }
+  
+  .modal-confirm:disabled::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin: -8px 0 0 -8px !important;
+    border: 2px solid transparent !important;
+    border-top: 2px solid currentColor !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}

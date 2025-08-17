@@ -97,112 +97,16 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="venda-meta">
           <span class="venda-valor">R$ ${v.valor.toFixed(2).replace('.', ',')}</span>
-          <div class="venda-data-row">
-            <span class="venda-data">${dataFormatada}</span>
-            <span class="icon-editar-data" title="Editar data"><i class="fas fa-calendar-alt"></i></span>
-            <div class="date-popup">
-              <input type="date" value="${v.data && v.data instanceof Date ? v.data.toISOString().split('T')[0] : ''}" class="venda-data-input" />
-              <div class="date-popup-actions">
-                <button class="btn-salvar-data" title="Salvar"><i class="fas fa-check"></i></button>
-                <button class="btn-cancelar-data" title="Cancelar"><i class="fas fa-times"></i></button>
-              </div>
-            </div>
-          </div>
+          <span class="venda-data">${dataFormatada}</span>
         </div>
       `;
-      
-      const editarIcon = li.querySelector('.icon-editar-data');
-      const popup = li.querySelector('.date-popup');
-      const inputData = li.querySelector('.venda-data-input');
-      const salvarBtn = li.querySelector('.btn-salvar-data');
-      const cancelarBtn = li.querySelector('.btn-cancelar-data');
-      
-      // Abrir popup
-      editarIcon.onclick = function (e) {
-        e.stopPropagation();
-        // Fechar outros popups abertos
-        document.querySelectorAll('.date-popup.show').forEach(p => p.classList.remove('show'));
-        popup.classList.add('show');
-        inputData.focus();
-      };
-      
-      // Salvar data
-      const salvarData = function () {
-        const novaData = inputData.value;
-        if (!novaData) {
-          alert('Por favor, selecione uma data válida.');
-          return;
-        }
-        
-        const vendaIndex = lancamentos.findIndex(l => {
-          if (l.tipo !== "receita" || l.categoria !== "Vendas" || l.descricao !== v.descricao || Math.abs(l.valor - v.valor) >= 0.01) {
-            return false;
-          }
-          
-          // Comparar datas considerando os diferentes formatos
-          let dataLancamento = l.data;
-          let dataVenda = v.data;
-          
-          if (typeof dataLancamento === 'string' && dataLancamento.includes('/')) {
-            const [dia, mes, ano] = dataLancamento.split('/');
-            dataLancamento = new Date(ano, mes - 1, dia);
-          } else if (typeof dataLancamento === 'string') {
-            dataLancamento = new Date(dataLancamento);
-          }
-          
-          if (dataVenda instanceof Date && dataLancamento instanceof Date) {
-            return dataVenda.getTime() === dataLancamento.getTime();
-          }
-          
-          return false;
-        });
-        
-        if (vendaIndex !== -1) {
-          // Converter de AAAA-MM-DD para DD/MM/AAAA
-          const [ano, mes, dia] = novaData.split('-');
-          lancamentos[vendaIndex].data = `${dia}/${mes}/${ano}`;
-          salvarLancamentos();
-          popup.classList.remove('show');
-          renderizarVendas();
-          if (typeof renderizarLancamentos === 'function') {
-            renderizarLancamentos();
-          }
-          if (typeof renderizarDashboardResumo === 'function') {
-            renderizarDashboardResumo();
-          }
-        } else {
-          alert('Erro: não foi possível encontrar a venda para atualizar.');
-        }
-      };
-      
-      salvarBtn.onclick = salvarData;
-      
-      // Cancelar edição
-      cancelarBtn.onclick = function () {
-        popup.classList.remove('show');
-      };
-      
-      // Salvar com Enter
-      inputData.onkeydown = function (e) {
-        if (e.key === 'Enter') {
-          salvarData();
-        } else if (e.key === 'Escape') {
-          popup.classList.remove('show');
-        }
-      };
+
       
       lista.appendChild(li);
     });
   }
 
-  // Fechar popups ao clicar fora
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.date-popup') && !e.target.closest('.icon-editar-data')) {
-      document.querySelectorAll('.date-popup.show').forEach(popup => {
-        popup.classList.remove('show');
-      });
-    }
-  });
+
   
   // Expor função globalmente
   window.renderizarVendas = renderizarVendas;

@@ -32,112 +32,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <!-- PWA Fullscreen Styles -->
-    <style>
-        @media all and (display-mode: fullscreen) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-            }
 
-            .menu-toggle {
-                top: calc(16px + env(safe-area-inset-top));
-            }
-
-            aside {
-                padding-top: calc(16px + env(safe-area-inset-top));
-            }
-
-            main {
-                padding-top: calc(24px + env(safe-area-inset-top));
-            }
-
-            @media (max-width: 800px) {
-                main {
-                    padding-top: calc(60px + env(safe-area-inset-top));
-                }
-
-                aside {
-                    padding-top: calc(60px + env(safe-area-inset-top));
-                }
-            }
-        }
-
-        @media all and (display-mode: standalone) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-        }
-
-        /* Layout com sidebar fixa e main scrollável */
-        body {
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        aside {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
-        .sidebar-footer {
-            background: #2d3748;
-            border-top: 1px solid #4a5568;
-            padding: 8px 16px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-footer .version-info {
-            text-align: right;
-            color: #666;
-            font-style: italic;
-            font-size: 11px;
-            margin: 0;
-        }
-
-        main {
-            margin-left: 260px;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 24px;
-        }
-
-        @media (max-width: 800px) {
-            aside {
-                left: -100%;
-                width: 100vw;
-                transition: left 0.3s ease;
-                z-index: 1000;
-            }
-
-            aside.open {
-                left: 0;
-            }
-
-            main {
-                margin-left: 0;
-                padding: 60px 12px 16px 12px;
-            }
-
-            .sidebar-footer .version-info {
-                text-align: center;
-                font-size: 10px;
-            }
-        }
-    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
@@ -146,54 +41,7 @@
 
     <script src="js/menu.js"></script>
 
-    <!-- Estilos para efeitos de navegação -->
-    <style>
-        .tab-section {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
 
-        nav button {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        nav button.nav-active {
-            background: #17acaf !important;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
-        }
-
-        nav button:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        nav button i {
-            transform: none !important;
-            transition: none !important;
-            display: inline-block !important;
-            vertical-align: baseline !important;
-            font-size: inherit !important;
-            width: auto !important;
-            height: auto !important;
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    </style>
 
     <!-- CSS Modular -->
     <link rel="stylesheet" href="css/style.css">
@@ -201,6 +49,7 @@
     <link rel="stylesheet" href="css/tutorial.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/estoque.css">
+
     <link rel="stylesheet" href="css/financeiro.css">
     <link rel="stylesheet" href="css/vendas.css">
     <link rel="stylesheet" href="css/categorias.css">
@@ -214,6 +63,7 @@
     <link rel="stylesheet" href="css/loading-overlay.css">
     <link rel="stylesheet" href="css/readme-viewer.css">
     <link rel="stylesheet" href="css/police.css">
+    <link rel="stylesheet" href="css/mobile-modals.css">
 
     <link rel="stylesheet" href="css/icon-fixes.css">
 
@@ -239,6 +89,8 @@
     <script defer src="js/testar-conexao.js"></script>
     <script defer src="js/themes.js"></script>
     <script defer src="js/readme-viewer.js"></script>
+    <script defer src="js/data-integrity.js"></script>
+    <script defer src="js/mobile-keyboard-handler.js"></script>
     <script defer src="js/main.js"></script>
 </head>
 
@@ -286,7 +138,7 @@
         </section>
 
         <!-- Estoque -->
-        <section id="estoque" class="tab-section">
+        <section id="estoque" class="tab-section" style="overflow: visible;">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-boxes"></i>Controle de Estoque</h2>
             <form id="estoque-form">
                 <input id="produto" type="text" placeholder="Produto" />
@@ -294,8 +146,12 @@
                 <button type="submit">Entrada de Produto</button>
             </form>
             <ul id="estoque-lista"></ul>
-            <!-- Modal Saída Produto -->
-            <div id="saida-modal" class="modal-bg modal-hidden">
+            
+
+        </section>
+
+        <!-- Modal Saída Produto (movido para fora da seção) -->
+        <div id="saida-modal" class="modal-bg modal-hidden">
                 <div class="modal-content">
                     <h3 class="modal-title">Saída de Produto</h3>
                     <div id="saida-modal-produto" class="modal-produto"></div>
@@ -311,7 +167,36 @@
                     </form>
                 </div>
             </div>
+            
         </section>
+
+        <!-- Modal Gerenciar Produto -->
+        <div id="gerenciar-modal" class="modal-bg modal-hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Gerenciar Produto</h3>
+                <div id="gerenciar-modal-produto" class="modal-produto"></div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-edit" onclick="abrirEdicaoProduto()">Editar</button>
+                    <button type="button" class="modal-delete" onclick="confirmarExclusaoProduto()">Excluir</button>
+                    <button type="button" class="modal-cancel" onclick="fecharGerenciarModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Editar Produto -->
+        <div id="editar-produto-modal" class="modal-bg modal-hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Editar Produto</h3>
+                <form id="editar-produto-form">
+                    <input id="editar-produto-nome" type="text" placeholder="Nome do produto" class="input-margin-bottom" />
+                    <input id="editar-produto-quantidade" type="number" min="0" placeholder="Quantidade" class="input-margin-bottom" />
+                    <div class="modal-actions">
+                        <button type="submit" class="modal-confirm">Salvar</button>
+                        <button type="button" class="modal-cancel" onclick="fecharEdicaoProduto()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Financeiro -->
         <section id="financeiro" class="tab-section">
@@ -363,6 +248,72 @@
                 <button type="submit">Adicionar</button>
             </form>
             <ul id="financeiro-lista"></ul>
+            
+            <!-- Modal Gerenciar Lançamento -->
+            <div id="gerenciar-lancamento-modal" class="modal-bg modal-hidden">
+                <div class="modal-content">
+                    <h3 class="modal-title">Gerenciar Lançamento</h3>
+                    <div id="gerenciar-lancamento-info" class="modal-produto"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="modal-edit" onclick="abrirEdicaoLancamento()">Editar</button>
+                        <button type="button" class="modal-delete" onclick="confirmarExclusaoLancamento()">Excluir</button>
+                        <button type="button" class="modal-cancel" onclick="fecharGerenciarLancamentoModal()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Editar Lançamento -->
+            <div id="editar-lancamento-modal" class="modal-bg modal-hidden">
+                <div class="modal-content">
+                    <h3 class="modal-title">Editar Lançamento</h3>
+                    <form id="editar-lancamento-form">
+                        <div class="form-group-tipo">
+                            <label for="editar-tipo-lancamento">Tipo de Lançamento:</label>
+                            <div class="tipo-selector">
+                                <input type="radio" id="editar-tipo-receita" name="editar-tipo-lancamento" value="receita">
+                                <label for="editar-tipo-receita" class="tipo-label receita-label">
+                                    <span class="tipo-icon"><i class="fas fa-plus-circle"></i></span>
+                                    <span class="tipo-text">Receita</span>
+                                </label>
+                                <input type="radio" id="editar-tipo-despesa" name="editar-tipo-lancamento" value="despesa">
+                                <label for="editar-tipo-despesa" class="tipo-label despesa-label">
+                                    <span class="tipo-icon"><i class="fas fa-minus-circle"></i></span>
+                                    <span class="tipo-text">Despesa</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group-categoria">
+                                <label for="editar-categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
+                                <select id="editar-categoria-lancamento">
+                                    <option value="">Selecione uma categoria...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-subcategoria">
+                                <label for="editar-subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
+                                <select id="editar-subcategoria-lancamento">
+                                    <option value="">Selecione uma subcategoria...</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <input id="editar-descricao-lancamento" type="text" placeholder="Descrição" class="input-margin-bottom" />
+                        
+                        <div class="form-row">
+                            <input id="editar-quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
+                            <input id="editar-valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
+                            <input id="editar-data-lancamento" type="date" />
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button type="submit" class="modal-confirm">Salvar</button>
+                            <button type="button" class="modal-cancel" onclick="fecharEdicaoLancamento()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </section>
 
         <!-- Vendas -->
@@ -578,6 +529,122 @@
 
     <!-- Container para Notificações -->
     <div id="notification-container" style="position: fixed; top: 50px; right: 20px; z-index: 9998;"></div>
+    
+    <!-- Overlay de Sincronização -->
+    <div id="sync-overlay" class="sync-overlay">
+        <div class="sync-overlay-content">
+            <div class="sync-overlay-icon">
+                <i class="fas fa-sync-alt"></i>
+            </div>
+            <div class="sync-overlay-title">Sincronizando...</div>
+            <div class="sync-overlay-message">Aguarde enquanto salvamos suas alterações</div>
+            <div class="sync-overlay-progress">
+                <div class="sync-overlay-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais de Movimentações (fora das seções para sobreposição correta) -->
+    <!-- Modal Movimentações do Produto -->
+    <div id="movimentacoes-modal" class="modal-bg modal-hidden">
+        <div class="modal-content modal-large">
+            <h3 class="modal-title">Movimentações do Produto</h3>
+            <div id="movimentacoes-produto-nome" class="modal-produto"></div>
+            <div id="movimentacoes-lista" class="movimentacoes-container"></div>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="fecharMovimentacoesModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Gerenciar Movimentação -->
+    <div id="gerenciar-movimentacao-modal" class="modal-bg modal-hidden">
+        <div class="modal-content modal-gerenciar">
+            <div class="modal-header-gerenciar">
+                <i class="fas fa-cogs modal-icon-gerenciar"></i>
+                <h3 class="modal-title">Gerenciar Movimentação</h3>
+            </div>
+            <div id="gerenciar-movimentacao-info" class="modal-info-card"></div>
+            <div class="modal-actions modal-actions-gerenciar">
+                <button type="button" class="modal-edit modal-btn-modern" onclick="abrirEdicaoMovimentacao()">
+                    <i class="fas fa-edit"></i>
+                    <span>Editar</span>
+                </button>
+                <button type="button" class="modal-delete modal-btn-modern" onclick="confirmarExclusaoMovimentacao()">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Excluir</span>
+                </button>
+                <button type="button" class="modal-cancel modal-btn-modern" onclick="fecharGerenciarMovimentacaoModal()">
+                    <i class="fas fa-times"></i>
+                    <span>Cancelar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Editar Movimentação -->
+    <div id="editar-movimentacao-modal" class="modal-bg modal-hidden">
+        <div class="modal-content modal-editar">
+            <div class="modal-header-editar">
+                <i class="fas fa-edit modal-icon-editar"></i>
+                <h3 class="modal-title">Editar Movimentação</h3>
+            </div>
+            <form id="editar-movimentacao-form" class="form-editar">
+                <div class="form-group-editar">
+                    <label for="editar-movimentacao-produto">
+                        <i class="fas fa-box"></i>
+                        Produto
+                    </label>
+                    <input id="editar-movimentacao-produto" type="text" placeholder="Nome do produto" class="input-editar" />
+                </div>
+                
+                <div class="form-row-editar">
+                    <div class="form-group-editar">
+                        <label for="editar-movimentacao-quantidade">
+                            <i class="fas fa-sort-numeric-up"></i>
+                            Quantidade
+                        </label>
+                        <input id="editar-movimentacao-quantidade" type="number" min="1" placeholder="Qtd" class="input-editar" />
+                    </div>
+                    
+                    <div class="form-group-editar">
+                        <label for="editar-movimentacao-valor-unitario">
+                            <i class="fas fa-dollar-sign"></i>
+                            Valor Unitário
+                        </label>
+                        <input id="editar-movimentacao-valor-unitario" type="number" step="0.01" placeholder="R$ 0,00" class="input-editar" />
+                    </div>
+                </div>
+                
+                <div class="form-group-editar">
+                    <label for="editar-movimentacao-data">
+                        <i class="fas fa-calendar-alt"></i>
+                        Data
+                    </label>
+                    <input id="editar-movimentacao-data" type="date" class="input-editar" />
+                </div>
+                
+                <div class="form-group-editar">
+                    <label for="editar-movimentacao-observacoes">
+                        <i class="fas fa-sticky-note"></i>
+                        Observações
+                    </label>
+                    <textarea id="editar-movimentacao-observacoes" placeholder="Observações adicionais..." class="input-editar textarea-editar" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions modal-actions-editar">
+                    <button type="submit" class="modal-confirm modal-btn-editar">
+                        <i class="fas fa-save"></i>
+                        <span>Salvar Alterações</span>
+                    </button>
+                    <button type="button" class="modal-cancel modal-btn-editar" onclick="fecharEdicaoMovimentacao()">
+                        <i class="fas fa-times"></i>
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         // Detectar modo PWA e ajustar interface

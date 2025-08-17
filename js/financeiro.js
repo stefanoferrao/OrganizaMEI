@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="lancamento-valor" title="Valor unitário: R$ ${(l.valor / (l.quantidade || 1)).toFixed(2).replace('.', ',')}">R$ ${l.valor.toFixed(2).replace('.', ',')}</span><br>
            <span class="lancamento-data">${l.data ? (typeof l.data === 'string' && l.data.includes('/') ? l.data : l.data.toLocaleDateString('pt-BR')) : ""}</span>
         </span>
-        <button onclick="removerLancamento(${l._originalIndex})" class="lancamento-btn-remover"><i class="fas fa-trash"></i></button>
+        <button onclick="abrirGerenciarLancamento(${l._originalIndex})" class="lancamento-btn-gerenciar"><i class="fas fa-cog"></i></button>
       `;
       lista.appendChild(item);
     });
@@ -156,91 +156,102 @@ document.addEventListener("DOMContentLoaded", function () {
     
     if (!lancamento) {
       console.error('Lançamento não encontrado no índice:', index);
+      mostrarNotificacaoSync('Erro: Lançamento não encontrado', 'error');
       return;
     }
+    
+    console.log('=== INICIANDO EXCLUSÃO DE LANÇAMENTO ===');
+    console.log('ID do lançamento:', lancamento.id);
+    console.log('Categoria:', lancamento.categoria, 'Subcategoria:', lancamento.subcategoria);
+    
+    // Desabilitar todos os botões CRUD imediatamente
+    document.body.classList.add('sync-disabled');
     
     // Feedback visual IMEDIATO - encontrar e marcar o item correto
     const lista = document.getElementById("financeiro-lista");
     const items = lista ? lista.querySelectorAll('.lancamento-item') : [];
     let itemParaRemover = null;
     
-    // Encontrar o item correto baseado no índice original
     items.forEach((item, i) => {
-      const btnRemover = item.querySelector('.lancamento-btn-remover');
-      if (btnRemover && btnRemover.getAttribute('onclick') === `removerLancamento(${index})`) {
+      const btnGerenciar = item.querySelector('.lancamento-btn-gerenciar');
+      if (btnGerenciar && btnGerenciar.getAttribute('onclick') === `abrirGerenciarLancamento(${index})`) {
         itemParaRemover = item;
       }
     });
     
-    // Aplicar feedback visual imediato
+    // Aplicar efeito visual imediato
     if (itemParaRemover) {
-      itemParaRemover.classList.add('removendo');
-      // Desabilitar o botão para evitar cliques duplos
-      const btnRemover = itemParaRemover.querySelector('.lancamento-btn-remover');
-      if (btnRemover) {
-        btnRemover.style.pointerEvents = 'none';
-        btnRemover.style.opacity = '0.5';
+      itemParaRemover.classList.add('excluindo', 'processando');
+      const lancamentoInfo = itemParaRemover.querySelector('.lancamento-info');
+      if (lancamentoInfo) {
+        lancamentoInfo.classList.add('processando');
       }
     }
     
-    // Primeiro tentar excluir do Google Sheets (se configurado)
-    let sucessoSheets = true;
-    const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
-    
-    if (webAppUrl && lancamento.id && typeof excluirLancamentoSheets === 'function') {
-      try {
-        // Mostrar notificação de sincronização
-        if (typeof mostrarNotificacaoSync === 'function') {
-          // mostrarNotificacaoSync('Sincronizando exclusão...', 'info');
+    // Verificar se é uma venda de produto para atualizar estoque
+    const eVenda = lancamento.categoria === 'Vendas' && lancamento.subcategoria === 'Produtos';
+    if (eVenda && lancamento.id) {
+      console.log('=== REMOVENDO MOVIMENTAÇÃO DE ESTOQUE RELACIONADA ===');
+      console.log('Produto:', lancamento.descricao);
+      
+      // Carregar movimentações de estoque
+      const movimentacoesEstoque = JSON.parse(localStorage.getItem('movimentacoesEstoque') || '[]');
+      
+      // Encontrar e remover a movimentação correspondente
+      const indexMovimentacao = movimentacoesEstoque.findIndex(m => m.id === lancamento.id);
+      if (indexMovimentacao >= 0) {
+        console.log('Movimentação encontrada no índice:', indexMovimentacao);
+        
+        // Remover movimentação do Google Sheets se disponível
+        const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
+        if (estoqueAtivo && typeof excluirMovimentacaoEstoque === 'function') {
+          try {
+            await excluirMovimentacaoEstoque(lancamento.id);
+            console.log('Movimentação removida do Google Sheets');
+          } catch (error) {
+            console.error('Erro ao remover movimentação do Google Sheets:', error);
+          }
         }
         
-        console.log('Tentando excluir do Google Sheets - ID:', lancamento.id);
-        sucessoSheets = await excluirLancamentoSheets(lancamento.id);
-        console.log('Resultado da exclusão no Google Sheets:', sucessoSheets);
+        // Remover movimentação localmente
+        movimentacoesEstoque.splice(indexMovimentacao, 1);
+        localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoesEstoque));
         
-        if (sucessoSheets) {
-          if (typeof mostrarNotificacaoSync === 'function') {
-            mostrarNotificacaoSync('Item removido', 'success');
-          }
-        } else {
-          console.warn('Falha ao excluir do Google Sheets, mas continuando com exclusão local');
-          if (typeof mostrarNotificacaoSync === 'function') {
-            mostrarNotificacaoSync('Erro ao sincronizar exclusão', 'warning');
-          }
+        // Recalcular estoque baseado nas movimentações restantes
+        if (typeof recalcularEstoque === 'function') {
+          recalcularEstoque();
+        } else if (typeof recalcularEstoqueGlobal === 'function') {
+          recalcularEstoqueGlobal();
         }
-      } catch (error) {
-        console.error('Erro ao excluir do Google Sheets:', error);
-        sucessoSheets = false;
-        if (typeof mostrarNotificacaoSync === 'function') {
-          mostrarNotificacaoSync('Erro de conexão na exclusão', 'warning');
+        
+        // Atualizar interface do estoque se estiver visível
+        if (typeof renderizarProdutos === 'function') {
+          renderizarProdutos();
         }
+        
+        console.log('=== ESTOQUE ATUALIZADO APÓS EXCLUSÃO ===');
+      } else {
+        console.log('Movimentação não encontrada para o ID:', lancamento.id);
       }
     }
     
-    // Sempre remover localmente (independente do resultado do Google Sheets)
+    // Remover lançamento localmente IMEDIATAMENTE
     lancamentos.splice(index, 1);
     salvarLancamentos();
     
-    // Animação de saída antes de re-renderizar
+    // Animação de saída e re-renderização imediata
     if (itemParaRemover) {
-      itemParaRemover.classList.remove('removendo');
       itemParaRemover.classList.add('saindo');
-      
-      // Re-renderizar após a animação
       setTimeout(() => {
         renderizarLancamentos();
         renderizarResumoFinanceiro();
       }, 300);
     } else {
-      // Fallback se não encontrou o item
       renderizarLancamentos();
       renderizarResumoFinanceiro();
     }
     
-    // Mostrar notificação de sucesso local
-    // mostrarNotificacao('Lançamento removido com sucesso!');
-    
-    // Atualizar outras interfaces se disponíveis
+    // Atualizar outras interfaces
     if (typeof renderizarDashboardResumo === 'function') {
       renderizarDashboardResumo();
     }
@@ -248,12 +259,26 @@ document.addEventListener("DOMContentLoaded", function () {
       atualizarFiltroMesAno();
     }
     
-    // Se houve erro no Google Sheets, mostrar aviso (mas não bloquear a exclusão local)
-    if (webAppUrl && !sucessoSheets && lancamento.id) {
-      setTimeout(() => {
-        mostrarAvisoImportacao();
-      }, 1000);
+    // Sincronização em background
+    const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
+    if (webAppUrl && lancamento.id && typeof excluirLancamentoSheets === 'function') {
+      try {
+        await excluirLancamentoSheets(lancamento.id);
+        mostrarNotificacaoSync('Item excluído e sincronizado!', 'success');
+      } catch (error) {
+        console.error('Erro na sincronização:', error);
+        mostrarNotificacaoSync('Item excluído (erro na sincronização)', 'warning');
+      }
+    } else {
+      mostrarNotificacaoSync('Item excluído!', 'success');
     }
+    
+    // Reabilitar botões CRUD e remover feedback visual
+    document.body.classList.remove('sync-disabled');
+    const todosItems = document.querySelectorAll('.processando');
+    todosItems.forEach(item => item.classList.remove('processando'));
+    
+    console.log('=== EXCLUSÃO DE LANÇAMENTO CONCLUÍDA ===');
   }
 
   // Função para mostrar aviso de importação
@@ -406,10 +431,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = dataInput.value;
       
       if (tipo && categoria && subcategoria && descricao && valor > 0 && data) {
-        // Feedback visual imediato - desabilitar botão e mostrar carregamento
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Adicionando...';
+        // Desabilitar todos os botões CRUD imediatamente
+        document.body.classList.add('sync-disabled');
         
         // Converter data de AAAA-MM-DD para DD/MM/AAAA
         const [ano, mes, dia] = data.split('-');
@@ -426,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function () {
           data: dataFormatada 
         };
         
-        // Feedback visual imediato - limpar campos
+        // Limpar campos imediatamente
         document.getElementById('tipo-receita').checked = true;
         categoriaInput.value = "";
         subcategoriaInput.value = "";
@@ -436,64 +459,19 @@ document.addEventListener("DOMContentLoaded", function () {
         dataInput.value = "";
         atualizarCategorias();
         
+        // Adicionar localmente IMEDIATAMENTE
         lancamentos.push(novoLancamento);
         salvarLancamentos();
         
-        // Renderizar com animação para novo item
-        const lista = document.getElementById("financeiro-lista");
-        if (lista) {
-          // Adicionar item temporário com animação
-          const item = document.createElement("li");
-          let tipoIcon = tipo === "receita" ? (categoria === "Vendas" ? '<i class="fas fa-shopping-cart"></i>' : '<i class="fas fa-dollar-sign"></i>') : '<i class="fas fa-credit-card"></i>';
-          item.classList.add('lancamento-item', 'novo', 'sucesso');
-          if (tipo === "receita") {
-            if (categoria === "Vendas") {
-              item.classList.add('receita-vendas');
-            } else {
-              item.classList.add('receita');
-            }
-          } else {
-            item.classList.add('despesa');
-          }
-          item.innerHTML = `
-            <span class="lancamento-info">
-              <span class="lancamento-icon">${tipoIcon}</span>
-              <span>
-                <strong>${categoria}</strong> / <em>${subcategoria}</em><br>
-                <span class="lancamento-descricao">${descricao}</span>
-                ${quantidade && quantidade > 1 ? `<br><small>Qtd: ${quantidade} - R$ ${(valor / quantidade).toFixed(2).replace('.', ',')} cada</small>` : ''}
-              </span>
-            </span>
-            <span class="lancamento-valor-container">
-              <span class="lancamento-valor" title="Valor unitário: R$ ${(valor / quantidade).toFixed(2).replace('.', ',')}">R$ ${valor.toFixed(2).replace('.', ',')}</span><br>
-               <span class="lancamento-data">${dataFormatada}</span>
-            </span>
-            <button onclick="removerLancamento(${lancamentos.length - 1})" class="lancamento-btn-remover"><i class="fas fa-trash"></i></button>
-          `;
-          lista.insertBefore(item, lista.firstChild);
-          
-          // Remover classe de sucesso após animação
-          setTimeout(() => {
-            item.classList.remove('sucesso');
-          }, 1000);
-        }
-        
+        // Renderizar imediatamente com animação
+        renderizarLancamentos();
         renderizarResumoFinanceiro();
         
-        // Mostrar notificação de sucesso
+        // Mostrar notificação imediata
         const tipoTexto = tipo === 'receita' ? 'Receita' : 'Despesa';
         mostrarNotificacaoSync(`${tipoTexto} adicionada: ${descricao}`, 'success');
         
-        // Adicionar automaticamente ao Google Sheets
-        if (typeof adicionarLancamentoSheets === 'function') {
-          const sucesso = await adicionarLancamentoSheets(novoLancamento);
-          if (sucesso && typeof mostrarNotificacaoSync === 'function') {
-            // mostrarNotificacaoSync('Lançamento sincronizado', 'success');
-          } else if (typeof mostrarNotificacaoSync === 'function') {
-            // mostrarNotificacaoSync('Erro ao sincronizar com planilha', 'error');
-          }
-        }
-        
+        // Atualizar outras interfaces
         if (typeof renderizarDashboardResumo === 'function') {
           renderizarDashboardResumo();
         }
@@ -501,11 +479,20 @@ document.addEventListener("DOMContentLoaded", function () {
           atualizarFiltroMesAno();
         }
         
-        // Reabilitar botão
-        setTimeout(() => {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
-        }, 1000);
+        // Sincronização em background
+        if (typeof adicionarLancamentoSheets === 'function') {
+          try {
+            await adicionarLancamentoSheets(novoLancamento);
+          } catch (error) {
+            console.error('Erro na sincronização:', error);
+            mostrarNotificacaoSync('Erro na sincronização (item salvo localmente)', 'warning');
+          }
+        }
+        
+        // Reabilitar botões CRUD e remover feedback visual
+        document.body.classList.remove('sync-disabled');
+        const todosItems = document.querySelectorAll('.processando');
+        todosItems.forEach(item => item.classList.remove('processando'));
       } else {
         mostrarNotificacaoSync('Preencha todos os campos obrigatórios!', 'error');
       }
@@ -525,21 +512,320 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Função para verificar status de sincronização
   function verificarStatusSincronizacao() {
-    // Verificar se há URL configurada
     const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
-    if (!webAppUrl) {
-      console.log('Google Sheets não configurado');
+    if (webAppUrl && !webAppUrl.includes('*')) {
+      // Verificar status de sincronização se necessário
+      if (typeof verificarSincronizacaoAutomatica === 'function') {
+        setTimeout(verificarSincronizacaoAutomatica, 1000);
+      }
+    }
+  }
+  
+  // Funções para gerenciar lançamentos
+  let lancamentoSendoGerenciado = null;
+  
+  window.abrirGerenciarLancamento = function(index) {
+    if (document.body.classList.contains('sync-disabled')) {
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync('Aguarde a sincronização terminar', 'warning');
+      }
       return;
     }
     
-    console.log('Google Sheets configurado');
+    lancamentoSendoGerenciado = index;
+    const lancamento = lancamentos[index];
+    const modal = document.getElementById("gerenciar-lancamento-modal");
+    const lancamentoInfo = document.getElementById("gerenciar-lancamento-info");
+    
+    const tipoTexto = lancamento.tipo === 'receita' ? 'Receita' : 'Despesa';
+    const dataFormatada = typeof lancamento.data === 'string' && lancamento.data.includes('/') ? 
+      lancamento.data : 
+      new Date(lancamento.data).toLocaleDateString('pt-BR');
+    
+    lancamentoInfo.innerHTML = `
+      <strong>${tipoTexto}: ${lancamento.descricao}</strong><br>
+      ${lancamento.categoria} / ${lancamento.subcategoria}<br>
+      R$ ${lancamento.valor.toFixed(2).replace('.', ',')} - ${dataFormatada}
+    `;
+    modal.classList.remove('modal-hidden');
+  };
+  
+  window.fecharGerenciarLancamentoModal = function() {
+    document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
+    lancamentoSendoGerenciado = null;
+  };
+  
+  window.abrirEdicaoLancamento = function() {
+    if (lancamentoSendoGerenciado === null) return;
+    
+    const lancamento = lancamentos[lancamentoSendoGerenciado];
+    const modal = document.getElementById("editar-lancamento-modal");
+    
+    // Preencher formulário
+    document.getElementById('editar-tipo-receita').checked = lancamento.tipo === 'receita';
+    document.getElementById('editar-tipo-despesa').checked = lancamento.tipo === 'despesa';
+    
+    // Atualizar categorias para o tipo selecionado
+    atualizarCategoriasEdicao();
+    
+    setTimeout(() => {
+      document.getElementById('editar-categoria-lancamento').value = lancamento.categoria || '';
+      atualizarSubcategoriasEdicao();
+      
+      setTimeout(() => {
+        document.getElementById('editar-subcategoria-lancamento').value = lancamento.subcategoria || '';
+      }, 100);
+    }, 100);
+    
+    document.getElementById('editar-descricao-lancamento').value = lancamento.descricao || '';
+    document.getElementById('editar-quantidade-lancamento').value = lancamento.quantidade || 1;
+    document.getElementById('editar-valor-lancamento').value = lancamento.valor || '';
+    
+    // Converter data para formato YYYY-MM-DD
+    if (lancamento.data) {
+      let dataFormatada;
+      if (typeof lancamento.data === 'string' && lancamento.data.includes('/')) {
+        const [dia, mes, ano] = lancamento.data.split('/');
+        dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+      } else {
+        const d = new Date(lancamento.data);
+        dataFormatada = d.toISOString().split('T')[0];
+      }
+      document.getElementById('editar-data-lancamento').value = dataFormatada;
+    }
+    
+    document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
+    modal.classList.remove('modal-hidden');
+  };
+  
+  window.fecharEdicaoLancamento = function() {
+    document.getElementById("editar-lancamento-modal").classList.add('modal-hidden');
+    lancamentoSendoGerenciado = null;
+  };
+  
+  window.confirmarExclusaoLancamento = async function() {
+    if (lancamentoSendoGerenciado !== null) {
+      const lancamento = lancamentos[lancamentoSendoGerenciado];
+      document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
+      
+      console.log('=== INICIANDO EXCLUSÃO ROBUSTA ===');
+      console.log('ID do lançamento a ser excluído:', lancamento.id);
+      console.log('Dados do lançamento:', lancamento);
+      
+      // A função removerLancamento já cuida da exclusão robusta
+      // incluindo estoque se necessário
+      removerLancamento(lancamentoSendoGerenciado);
+      lancamentoSendoGerenciado = null;
+    }
+  };
+  
+  // Funções para atualizar categorias na edição
+  function atualizarCategoriasEdicao() {
+    const tipoInputs = document.querySelectorAll('input[name="editar-tipo-lancamento"]');
+    const categoriaInput = document.getElementById("editar-categoria-lancamento");
+    const subcategoriaInput = document.getElementById("editar-subcategoria-lancamento");
+    
+    if (!tipoInputs.length || !categoriaInput || !subcategoriaInput) return;
+    
+    const tipoSelecionado = document.querySelector('input[name="editar-tipo-lancamento"]:checked')?.value;
+    if (!tipoSelecionado) return;
+    
+    categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
+    subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+    
+    const cats = categorias[tipoSelecionado] || {};
+    Object.keys(cats).forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      categoriaInput.appendChild(opt);
+    });
   }
   
-  // Expor função globalmente
-  window.verificarStatusSincronizacao = verificarStatusSincronizacao;
+  function atualizarSubcategoriasEdicao() {
+    const tipoSelecionado = document.querySelector('input[name="editar-tipo-lancamento"]:checked')?.value;
+    const categoriaInput = document.getElementById("editar-categoria-lancamento");
+    const subcategoriaInput = document.getElementById("editar-subcategoria-lancamento");
+    
+    if (!tipoSelecionado || !categoriaInput || !subcategoriaInput) return;
+    
+    subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+    
+    const categoria = categoriaInput.value;
+    if (!categoria) return;
+    
+    const subs = (categorias[tipoSelecionado] && categorias[tipoSelecionado][categoria]) ? categorias[tipoSelecionado][categoria] : [];
+    subs.forEach(sub => {
+      const opt = document.createElement("option");
+      opt.value = sub;
+      opt.textContent = sub;
+      subcategoriaInput.appendChild(opt);
+    });
+  }
   
+  // Event listeners para edição
+  const editarTipoInputs = document.querySelectorAll('input[name="editar-tipo-lancamento"]');
+  const editarCategoriaLancamento = document.getElementById("editar-categoria-lancamento");
+  
+  editarTipoInputs.forEach(input => {
+    input.addEventListener("change", atualizarCategoriasEdicao);
+  });
+  
+  if (editarCategoriaLancamento) {
+    editarCategoriaLancamento.addEventListener("change", atualizarSubcategoriasEdicao);
+  }
+  
+  // Formulário de edição de lançamento
+  const editarLancamentoForm = document.getElementById("editar-lancamento-form");
+  if (editarLancamentoForm) {
+    editarLancamentoForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      
+      if (lancamentoSendoGerenciado === null) return;
+      
+      const tipoSelecionado = document.querySelector('input[name="editar-tipo-lancamento"]:checked');
+      const categoriaInput = document.getElementById("editar-categoria-lancamento");
+      const subcategoriaInput = document.getElementById("editar-subcategoria-lancamento");
+      const descInput = document.getElementById("editar-descricao-lancamento");
+      const quantidadeInput = document.getElementById("editar-quantidade-lancamento");
+      const valorInput = document.getElementById("editar-valor-lancamento");
+      const dataInput = document.getElementById("editar-data-lancamento");
+      
+      const tipo = tipoSelecionado?.value;
+      const categoria = categoriaInput.value;
+      const subcategoria = subcategoriaInput.value;
+      const descricao = descInput.value.trim();
+      const quantidade = parseInt(quantidadeInput.value) || 1;
+      const valor = parseFloat(valorInput.value);
+      const data = dataInput.value;
+      
+      if (!tipo || !categoria || !subcategoria || !descricao || !valor || valor <= 0 || !data) {
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync('Preencha todos os campos corretamente!', 'error');
+        }
+        return;
+      }
+      
+      // Desabilitar todos os botões CRUD imediatamente
+      document.body.classList.add('sync-disabled');
+      
+      // Aplicar feedback visual ao item sendo editado
+      const lista = document.getElementById("financeiro-lista");
+      const items = lista ? lista.querySelectorAll('.lancamento-item') : [];
+      items.forEach((item, i) => {
+        const btnGerenciar = item.querySelector('.lancamento-btn-gerenciar');
+        if (btnGerenciar && btnGerenciar.getAttribute('onclick') === `abrirGerenciarLancamento(${lancamentoSendoGerenciado})`) {
+          item.classList.add('processando');
+          const lancamentoInfo = item.querySelector('.lancamento-info');
+          if (lancamentoInfo) {
+            lancamentoInfo.classList.add('processando');
+          }
+        }
+      });
+      
+      // Aplicar feedback visual ao último item adicionado
+      setTimeout(() => {
+        const lista = document.getElementById("financeiro-lista");
+        const primeiroItem = lista?.querySelector('.lancamento-item');
+        if (primeiroItem) {
+          primeiroItem.classList.add('processando');
+          const lancamentoInfo = primeiroItem.querySelector('.lancamento-info');
+          if (lancamentoInfo) {
+            lancamentoInfo.classList.add('processando');
+          }
+        }
+      }, 100);
+      
+      // Converter data de AAAA-MM-DD para DD/MM/AAAA
+      const [ano, mes, dia] = data.split('-');
+      const dataFormatada = `${dia}/${mes}/${ano}`;
+      
+      // Atualizar lançamento IMEDIATAMENTE
+      const lancamentoAtualizado = {
+        ...lancamentos[lancamentoSendoGerenciado],
+        tipo,
+        categoria,
+        subcategoria,
+        descricao,
+        quantidade,
+        valor,
+        data: dataFormatada
+      };
+      
+      lancamentos[lancamentoSendoGerenciado] = lancamentoAtualizado;
+      salvarLancamentos();
+      
+      // Re-renderizar imediatamente
+      renderizarLancamentos();
+      
+      // Fechar modal imediatamente
+      fecharEdicaoLancamento();
+      
+      // Mostrar notificação imediata
+      mostrarNotificacaoSync('Lançamento atualizado!', 'success');
+      
+      // Atualizar outras interfaces
+      if (typeof renderizarDashboardResumo === 'function') {
+        renderizarDashboardResumo();
+      }
+      
+      // Editar também no estoque se for venda (em background)
+      const eVenda = lancamentoAtualizado.categoria === 'Vendas' && lancamentoAtualizado.subcategoria === 'Produtos';
+      if (eVenda && typeof editarMovimentacaoEstoque === 'function') {
+        editarMovimentacaoEstoque({
+          id: lancamentoAtualizado.id,
+          produto: lancamentoAtualizado.descricao,
+          categoria: 'Saída',
+          quantidade: lancamentoAtualizado.quantidade,
+          valorUnitario: lancamentoAtualizado.valor / lancamentoAtualizado.quantidade,
+          valorTotal: lancamentoAtualizado.valor,
+          data: lancamentoAtualizado.data,
+          tipoMovimento: 'Venda',
+          observacoes: 'Venda de produto'
+        }).catch(console.error);
+      }
+      
+      // Sincronização em background
+      if (typeof editarLancamentoSheets === 'function') {
+        try {
+          await editarLancamentoSheets(lancamentoAtualizado);
+        } catch (error) {
+          console.error('Erro na sincronização:', error);
+          mostrarNotificacaoSync('Erro na sincronização (alteração salva localmente)', 'warning');
+        }
+      }
+      
+      // Reabilitar botões CRUD e remover feedback visual
+      document.body.classList.remove('sync-disabled');
+      const todosItems = document.querySelectorAll('.processando');
+      todosItems.forEach(item => item.classList.remove('processando'));
+    });
+  }
+
+
+
+  // Funções para controlar overlay de sincronização
+  window.mostrarOverlaySync = function(titulo, mensagem) {
+    const overlay = document.getElementById('sync-overlay');
+    if (overlay) {
+      const titleElement = overlay.querySelector('.sync-overlay-title');
+      const messageElement = overlay.querySelector('.sync-overlay-message');
+      
+      if (titleElement) titleElement.textContent = titulo || 'Sincronizando...';
+      if (messageElement) messageElement.textContent = mensagem || 'Aguarde enquanto processamos sua solicitação';
+      
+      overlay.classList.add('active');
+    }
+  };
+  
+  window.ocultarOverlaySync = function() {
+    const overlay = document.getElementById('sync-overlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+    }
+  };
+
   // Inicializar
   atualizarCategorias();
   renderizarLancamentos();
-  verificarStatusSincronizacao();
 });

@@ -315,6 +315,125 @@ body[data-theme="police"] .cat-titulo {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
+/* === BOTÃO MOVIMENTAÇÕES === */
+body[data-theme="police"] .btn-movimentacoes {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .btn-movimentacoes:hover {
+    background: rgba(96, 165, 250, 0.2) !important;
+    color: #fff;
+}
+
+body[data-theme="police"] .icon-movimentacoes .fas {
+    color: var(--secondary-color) !important;
+}
+
+/* === MODAL MOVIMENTAÇÕES === */
+body[data-theme="police"] .movimentacao-item {
+    background: var(--gradient-card) !important;
+    border-left-color: var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="police"] .movimentacao-item:hover {
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+    border-left-color: var(--primary-color) !important;
+}
+
+body[data-theme="police"] .btn-gerenciar-movimentacao {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.3) !important;
+}
+
+body[data-theme="police"] .btn-gerenciar-movimentacao:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+/* === MODAL GERENCIAR === */
+body[data-theme="police"] .modal-header-gerenciar {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="police"] .modal-icon-gerenciar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+body[data-theme="police"] .modal-info-card {
+    background: var(--gradient-card) !important;
+    border-left-color: var(--secondary-color) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="police"] .modal-edit.modal-btn-modern {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3) !important;
+}
+
+body[data-theme="police"] .modal-edit.modal-btn-modern:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+}
+
+body[data-theme="police"] .modal-cancel.modal-btn-modern {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="police"] .modal-cancel.modal-btn-modern:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0c1426 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
+/* === MODAL EDITAR === */
+body[data-theme="police"] .modal-header-editar {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body[data-theme="police"] .modal-icon-editar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px var(--glow-color) !important;
+}
+
+body[data-theme="police"] .form-group-editar label {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .input-editar {
+    background: var(--gradient-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="police"] .input-editar:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px var(--glow-color), inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    background: var(--surface-color) !important;
+}
+
+body[data-theme="police"] .modal-confirm.modal-btn-editar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3) !important;
+}
+
+body[data-theme="police"] .modal-confirm.modal-btn-editar:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    box-shadow: 0 6px 20px var(--glow-color) !important;
+}
+
+body[data-theme="police"] .modal-cancel.modal-btn-editar {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 4px 12px var(--shadow-color) !important;
+}
+
+body[data-theme="police"] .modal-cancel.modal-btn-editar:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0c1426 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
 body[data-theme="police"] .cat-nome,
 body[data-theme="police"] .cat-sub-nome {
     color: var(--secondary-color) !important;

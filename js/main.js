@@ -45,14 +45,13 @@ async function verificarDadosAtualizados() {
   }
 }
 
-// Função para acionar sincronização automática
+// Função para verificar e sincronizar se necessário
 async function acionarSincronizacaoSeNecessario() {
-  // Verificar se já foi sincronizado recentemente (evitar loop)
   const ultimaVerificacao = localStorage.getItem('ultimaVerificacaoSync');
   const agora = Date.now();
   
   if (ultimaVerificacao && (agora - parseInt(ultimaVerificacao)) < 30000) {
-    return; // Não verificar se foi há menos de 30 segundos
+    return;
   }
   
   localStorage.setItem('ultimaVerificacaoSync', agora.toString());
@@ -60,34 +59,17 @@ async function acionarSincronizacaoSeNecessario() {
   const dadosAtualizados = await verificarDadosAtualizados();
   
   if (!dadosAtualizados) {
-    // Ativar loading manager se disponível
-    if (typeof window.loadingManager !== 'undefined') {
-      window.loadingManager.startSyncLoading();
-    }
-    
     if (typeof mostrarNotificacaoSync === 'function') {
       mostrarNotificacaoSync('Dados desatualizados - sincronizando...', 'info');
     }
     
     setTimeout(async () => {
-      const btnSyncAll = document.getElementById('btn-sync-all');
-      if (btnSyncAll && typeof sincronizarTudo === 'function') {
+      if (typeof sincronizarTudo === 'function') {
         try {
           await sincronizarTudo();
           localStorage.setItem('ultimaVerificacaoSync', Date.now().toString());
-          
-          // Desativar loading após sucesso
-          setTimeout(() => {
-            if (typeof window.loadingManager !== 'undefined') {
-              window.loadingManager.stopSyncLoading();
-            }
-          }, 1500);
         } catch (error) {
           console.error('Erro na sincronização automática:', error);
-          // Desativar loading em caso de erro
-          if (typeof window.loadingManager !== 'undefined') {
-            window.loadingManager.stopSyncLoading();
-          }
         }
       }
     }, 2000);
@@ -100,10 +82,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
     document.getElementById('dashboard').classList.add('active');
     
-    // Verificar se os dados estão atualizados após carregar a página
-    setTimeout(() => {
-      acionarSincronizacaoSeNecessario();
-    }, 500);
+    // Carregar dados atualizados
+    if (typeof carregarDadosAtualizados === 'function') {
+      carregarDadosAtualizados();
+    }
+    
+    // Verificar se os dados estão vazios (possível reset de cookies)
+    const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+    const produtos = JSON.parse(localStorage.getItem('produtos') || '[]');
+    const url = localStorage.getItem('googleSheetsWebAppUrl');
+    
+    if ((lancamentos.length === 0 || produtos.length === 0) && url && !url.includes('*')) {
+      console.log('Dados vazios detectados, forçando sincronização...');
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync('Dados não encontrados, sincronizando...', 'info');
+      }
+      
+      setTimeout(async () => {
+        if (typeof sincronizarTudo === 'function') {
+          await sincronizarTudo();
+        }
+      }, 2000);
+    } else {
+      // Verificar se os dados estão atualizados após carregar a página
+      setTimeout(() => {
+        acionarSincronizacaoSeNecessario();
+      }, 500);
+    }
     
     // Exemplo de JS para trocar o conteúdo da análise
     const tipoAnalise = document.getElementById('tipo-analise');
