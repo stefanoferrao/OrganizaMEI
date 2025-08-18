@@ -610,7 +610,7 @@ body {
 
 .mini-sync-indicator.syncing .mini-sync-dot {
   background: #17acaf;
-  animation: spin 1s linear infinite;
+  animation: pulse 1s ease-in-out infinite;
 }
 
 /* Novas classes para sincronização visual */
@@ -965,7 +965,7 @@ h2.text-xl.font-semibold.mb-4 i {
 
 .sync-legend-dot.syncing {
   background: #17acaf;
-  animation: spin 1s linear infinite;
+  animation: pulse 1s ease-in-out infinite;
 }
 
 .sync-legend-text {

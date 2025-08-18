@@ -35,7 +35,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -105,7 +105,7 @@
                 <button onclick="changeTab('configuracoes')"><i class="fas fa-cog"></i>Configurações</button>
             </nav>
         </div>
-        
+
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
             <div class="version-info">Versão 5.0</div>
@@ -131,7 +131,8 @@
             <form id="estoque-form">
                 <div class="produto-input-group">
                     <input id="produto" type="text" placeholder="Produto" list="produtos-lista" autocomplete="off" />
-                    <button type="button" id="btn-selecionar-produto" class="btn-selecionar-produto" title="Selecionar produto existente">
+                    <button type="button" id="btn-selecionar-produto" class="btn-selecionar-produto"
+                        title="Selecionar produto existente">
                         <i class="fas fa-list"></i>
                     </button>
                     <datalist id="produtos-lista"></datalist>
@@ -140,28 +141,28 @@
                 <button type="submit">Entrada de Produto</button>
             </form>
             <ul id="estoque-lista"></ul>
-            
+
 
         </section>
 
         <!-- Modal Saída Produto (movido para fora da seção) -->
         <div id="saida-modal" class="modal-bg modal-hidden">
-                <div class="modal-content">
-                    <h3 class="modal-title">Saída de Produto</h3>
-                    <div id="saida-modal-produto" class="modal-produto"></div>
-                    <form id="saida-modal-form">
-                        <input id="saida-modal-quantidade" type="number" min="1" placeholder="Quantidade saída"
-                            class="input-margin-bottom" />
-                        <input id="saida-modal-valor" type="number" min="0" step="0.01"
-                            placeholder="Valor total da saída (R$)" class="input-margin-bottom" />
-                        <div class="modal-actions">
-                            <button type="submit" class="modal-confirm">Confirmar Saída</button>
-                            <button type="button" class="modal-cancel">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="modal-content">
+                <h3 class="modal-title">Saída de Produto</h3>
+                <div id="saida-modal-produto" class="modal-produto"></div>
+                <form id="saida-modal-form">
+                    <input id="saida-modal-quantidade" type="number" min="1" placeholder="Quantidade saída"
+                        class="input-margin-bottom" />
+                    <input id="saida-modal-valor" type="number" min="0" step="0.01"
+                        placeholder="Valor total da saída (R$)" class="input-margin-bottom" />
+                    <div class="modal-actions">
+                        <button type="submit" class="modal-confirm">Confirmar Saída</button>
+                        <button type="button" class="modal-cancel">Cancelar</button>
+                    </div>
+                </form>
             </div>
-            
+        </div>
+
         </section>
 
         <!-- Modal Gerenciar Produto -->
@@ -176,14 +177,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Modal Editar Produto -->
         <div id="editar-produto-modal" class="modal-bg modal-hidden">
             <div class="modal-content">
                 <h3 class="modal-title">Editar Produto</h3>
                 <form id="editar-produto-form">
-                    <input id="editar-produto-nome" type="text" placeholder="Nome do produto" class="input-margin-bottom" />
-                    <input id="editar-produto-quantidade" type="number" min="0" placeholder="Quantidade" class="input-margin-bottom" />
+                    <input id="editar-produto-nome" type="text" placeholder="Nome do produto"
+                        class="input-margin-bottom" />
+                    <input id="editar-produto-quantidade" type="number" min="0" placeholder="Quantidade"
+                        class="input-margin-bottom" />
                     <div class="modal-actions">
                         <button type="submit" class="modal-confirm">Salvar</button>
                         <button type="button" class="modal-cancel" onclick="fecharEdicaoProduto()">Cancelar</button>
@@ -191,7 +194,7 @@
                 </form>
             </div>
         </div>
-        
+
         <!-- Modal Selecionar Produto -->
         <div id="selecionar-produto-modal" class="modal-bg modal-hidden">
             <div class="modal-content modal-selecionar-produto">
@@ -203,7 +206,8 @@
                     <div id="produtos-modal-lista"></div>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="modal-cancel" onclick="fecharSelecionarProdutoModal()">Cancelar</button>
+                    <button type="button" class="modal-cancel"
+                        onclick="fecharSelecionarProdutoModal()">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -220,7 +224,7 @@
                     <h3><i class="fas fa-plus"></i> Adicionar Lançamento</h3>
                     <i class="fas fa-chevron-right financeiro-form-arrow" id="financeiro-form-arrow"></i>
                 </div>
-                
+
                 <div class="financeiro-form-content" id="financeiro-form-content">
                     <form id="financeiro-form-inner" tabindex="0">
                         <div class="form-group-tipo">
@@ -238,7 +242,7 @@
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group-categoria">
                                 <label for="categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
@@ -246,7 +250,7 @@
                                     <option value="">Selecione uma categoria...</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group-subcategoria">
                                 <label for="subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
                                 <select id="subcategoria-lancamento">
@@ -254,11 +258,12 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <input id="descricao-lancamento" type="text" placeholder="Descrição" />
-                        
+
                         <div class="form-row">
-                            <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
+                            <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade"
+                                value="1" />
                             <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
                             <input id="data-lancamento" type="date" />
                         </div>
@@ -267,7 +272,7 @@
                 </div>
             </div>
             <ul id="financeiro-lista"></ul>
-            
+
             <!-- Modal Gerenciar Lançamento -->
             <div id="gerenciar-lancamento-modal" class="modal-bg modal-hidden">
                 <div class="modal-content">
@@ -275,12 +280,14 @@
                     <div id="gerenciar-lancamento-info" class="modal-produto"></div>
                     <div class="modal-actions">
                         <button type="button" class="modal-edit" onclick="abrirEdicaoLancamento()">Editar</button>
-                        <button type="button" class="modal-delete" onclick="confirmarExclusaoLancamento()">Excluir</button>
-                        <button type="button" class="modal-cancel" onclick="fecharGerenciarLancamentoModal()">Cancelar</button>
+                        <button type="button" class="modal-delete"
+                            onclick="confirmarExclusaoLancamento()">Excluir</button>
+                        <button type="button" class="modal-cancel"
+                            onclick="fecharGerenciarLancamentoModal()">Cancelar</button>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Modal Editar Lançamento -->
             <div id="editar-lancamento-modal" class="modal-bg modal-hidden">
                 <div class="modal-content">
@@ -289,19 +296,21 @@
                         <div class="form-group-tipo">
                             <label for="editar-tipo-lancamento">Tipo de Lançamento:</label>
                             <div class="tipo-selector">
-                                <input type="radio" id="editar-tipo-receita" name="editar-tipo-lancamento" value="receita">
+                                <input type="radio" id="editar-tipo-receita" name="editar-tipo-lancamento"
+                                    value="receita">
                                 <label for="editar-tipo-receita" class="tipo-label receita-label">
                                     <span class="tipo-icon"><i class="fas fa-plus-circle"></i></span>
                                     <span class="tipo-text">Receita</span>
                                 </label>
-                                <input type="radio" id="editar-tipo-despesa" name="editar-tipo-lancamento" value="despesa">
+                                <input type="radio" id="editar-tipo-despesa" name="editar-tipo-lancamento"
+                                    value="despesa">
                                 <label for="editar-tipo-despesa" class="tipo-label despesa-label">
                                     <span class="tipo-icon"><i class="fas fa-minus-circle"></i></span>
                                     <span class="tipo-text">Despesa</span>
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group-categoria">
                                 <label for="editar-categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
@@ -309,26 +318,31 @@
                                     <option value="">Selecione uma categoria...</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group-subcategoria">
-                                <label for="editar-subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
+                                <label for="editar-subcategoria-lancamento"><i
+                                        class="fas fa-tag"></i>Subcategoria:</label>
                                 <select id="editar-subcategoria-lancamento">
                                     <option value="">Selecione uma subcategoria...</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <input id="editar-descricao-lancamento" type="text" placeholder="Descrição" class="input-margin-bottom" />
-                        
+
+                        <input id="editar-descricao-lancamento" type="text" placeholder="Descrição"
+                            class="input-margin-bottom" />
+
                         <div class="form-row">
-                            <input id="editar-quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
-                            <input id="editar-valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
+                            <input id="editar-quantidade-lancamento" type="number" min="1" placeholder="Quantidade"
+                                value="1" />
+                            <input id="editar-valor-lancamento" type="number" step="0.01"
+                                placeholder="Valor Total (R$)" />
                             <input id="editar-data-lancamento" type="date" />
                         </div>
-                        
+
                         <div class="modal-actions">
                             <button type="submit" class="modal-confirm">Salvar</button>
-                            <button type="button" class="modal-cancel" onclick="fecharEdicaoLancamento()">Cancelar</button>
+                            <button type="button" class="modal-cancel"
+                                onclick="fecharEdicaoLancamento()">Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -387,7 +401,7 @@
         </section>
         <section id="configuracoes" class="tab-section">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-cog"></i>Configurações</h2>
-            
+
             <!-- Guias de Configurações -->
             <div class="config-tabs">
                 <button class="config-tab active" data-tab="geral"><i class="fas fa-cog"></i> Geral</button>
@@ -395,7 +409,7 @@
                 <button class="config-tab" data-tab="atalhos"><i class="fas fa-keyboard"></i> Atalhos</button>
                 <button class="config-tab" data-tab="temas"><i class="fas fa-palette"></i> Temas</button>
             </div>
-            
+
             <!-- Conteúdo das Guias -->
             <div class="config-content">
                 <!-- Guia Geral -->
@@ -408,7 +422,7 @@
                                 <h3>Indicador de Sincronização</h3>
                                 <p>O ponto colorido no canto superior direito indica o status da integração</p>
                             </div>
-                            
+
                             <div class="sync-legend-items">
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot connected-working"></div>
@@ -423,25 +437,29 @@
                                     <span class="sync-legend-text">Azul: Verificando conexão</span>
                                 </div>
                                 <div class="sync-legend-item">
+                                    <div class="sync-legend-dot syncing"></div>
+                                    <span class="sync-legend-text">Azul pulsando: Sincronizando dados</span>
+                                </div>
+                                <div class="sync-legend-item">
                                     <div class="sync-legend-dot error"></div>
                                     <span class="sync-legend-text">Vermelho: Erro ou não configurado</span>
                                 </div>
-                                <div class="sync-legend-item">
-                                    <div class="sync-legend-dot syncing"></div>
-                                    <span class="sync-legend-text">Azul girando: Sincronizando dados</span>
-                                </div>
                             </div>
                         </div>
-                        
+
                         <hr />
-                        
-                        <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
-                        <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
-                        <button id="btn-readme" class="config-btn"><i class="fas fa-book" style="color: #fff; margin-right: 8px !important;"></i> Ler README</button>
-                        <button onclick="startTutorial()" class="config-btn"><i class="fas fa-graduation-cap" style="color: #fff; margin-right: 8px !important;"></i> Refazer Tutorial</button>
+
+                        <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar
+                            Dados</button>
+                        <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos
+                            dados</button>
+                        <button id="btn-readme" class="config-btn"><i class="fas fa-book"
+                                style="color: #fff; margin-right: 8px !important;"></i> Ler README</button>
+                        <button onclick="startTutorial()" class="config-btn"><i class="fas fa-graduation-cap"
+                                style="color: #fff; margin-right: 8px !important;"></i> Refazer Tutorial</button>
                     </div>
                 </div>
-                
+
                 <!-- Guia Integração -->
                 <div id="config-integracao" class="config-tab-content">
                     <div class="configuracoes-container">
@@ -462,8 +480,10 @@
                                 <label for="webAppUrl">URL do Web App:</label>
                                 <input id="webAppUrl" type="url" placeholder="Cole aqui a URL do Google Apps Script" />
                                 <div class="buttonscfg">
-                                    <button id="btn-save-url" type="button"><i class="fas fa-save"></i> Salvar URL</button>
-                                    <button id="btn-clear-url" type="button"><i class="fas fa-trash"></i> Limpar</button>
+                                    <button id="btn-save-url" type="button"><i class="fas fa-save"></i> Salvar
+                                        URL</button>
+                                    <button id="btn-clear-url" type="button"><i class="fas fa-trash"></i>
+                                        Limpar</button>
                                 </div>
                             </div>
 
@@ -472,12 +492,14 @@
                                 <div class="tab-status">
                                     <span class="tab-icon"><i class="fas fa-dollar-sign"></i></span>
                                     <span class="tab-name">Financeiro</span>
-                                    <span id="financeiro-status" class="tab-status-indicator"><i class="fas fa-check-circle"></i></span>
+                                    <span id="financeiro-status" class="tab-status-indicator"><i
+                                            class="fas fa-check-circle"></i></span>
                                 </div>
                                 <div class="tab-status">
                                     <span class="tab-icon"><i class="fas fa-boxes"></i></span>
                                     <span class="tab-name">Estoque</span>
-                                    <span id="estoque-status" class="tab-status-indicator"><i class="fas fa-exclamation-triangle"></i></span>
+                                    <span id="estoque-status" class="tab-status-indicator"><i
+                                            class="fas fa-exclamation-triangle"></i></span>
                                     <button id="btnCriarAbaEstoque" class="btn-create-tab" style="display:none;">Criar
                                         Aba</button>
                                 </div>
@@ -485,8 +507,10 @@
 
                             <!-- Ações de Sincronização -->
                             <div class="sheets-actions" style="display: none;">
-                                <button id="btn-sync-all" type="button" class="btn-sync-primary"><i class="fas fa-sync-alt"></i> Ressincronizar Tudo</button>
-                                <button id="btn-test-connection" type="button" class="btn-test"><i class="fas fa-search"></i> Testar Conexão</button>
+                                <button id="btn-sync-all" type="button" class="btn-sync-primary"><i
+                                        class="fas fa-sync-alt"></i> Ressincronizar Tudo</button>
+                                <button id="btn-test-connection" type="button" class="btn-test"><i
+                                        class="fas fa-search"></i> Testar Conexão</button>
                             </div>
 
                             <!-- Progresso -->
@@ -499,7 +523,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Guia Atalhos -->
                 <div id="config-atalhos" class="config-tab-content">
                     <div class="configuracoes-container">
@@ -509,7 +533,7 @@
                                 <h3><i class="fas fa-keyboard"></i> Atalhos Globais</h3>
                                 <i class="fas fa-chevron-right shortcuts-arrow" id="shortcuts-arrow"></i>
                             </div>
-                            
+
                             <div class="shortcuts-content" id="shortcuts-content" style="display: none;">
                                 <div class="shortcuts-toggle-container">
                                     <label class="checkbox-atalhos">
@@ -517,17 +541,18 @@
                                         <span class="checkmark"></span>
                                         Ativar atalhos de teclado globais (funcionam em qualquer tela)
                                     </label>
-                                    
+
                                     <label class="checkbox-atalhos">
                                         <input type="checkbox" id="atalhos-feedback-enabled">
                                         <span class="checkmark"></span>
                                         Mostrar notificações de feedback visual
                                     </label>
                                 </div>
-                                
+
                                 <div id="shortcuts-info" class="shortcuts-info" style="display: none;">
                                     <div class="shortcuts-header-config">
-                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin-bottom: 12px;"><strong>Atalhos de Navegação (funcionam em qualquer tela):</strong></p>
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin-bottom: 12px;">
+                                            <strong>Atalhos de Navegação (funcionam em qualquer tela):</strong></p>
                                         <div class="shortcuts-list-config">
                                             <div class="shortcut-item-config"><kbd>F1</kbd> Dashboard</div>
                                             <div class="shortcut-item-config"><kbd>F2</kbd> Estoque</div>
@@ -538,15 +563,21 @@
                                             <div class="shortcut-item-config"><kbd>F7</kbd> Gráficos</div>
                                             <div class="shortcut-item-config"><kbd>F8</kbd> Configurações</div>
                                         </div>
-                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do Financeiro (apenas na aba Financeiro):</strong></p>
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do
+                                                Financeiro (apenas na aba Financeiro):</strong></p>
                                         <div class="shortcuts-list-config">
-                                            <div class="shortcut-item-config"><kbd>←</kbd> Expandir formulário e selecionar Receita</div>
-                                            <div class="shortcut-item-config"><kbd>→</kbd> Expandir formulário e selecionar Despesa</div>
-                                            <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos (mantém formulário ativo)</div>
-                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento (mantém formulário ativo)</div>
+                                            <div class="shortcut-item-config"><kbd>←</kbd> Expandir formulário e
+                                                selecionar Receita</div>
+                                            <div class="shortcut-item-config"><kbd>→</kbd> Expandir formulário e
+                                                selecionar Despesa</div>
+                                            <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos
+                                                (mantém formulário ativo)</div>
+                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento
+                                                (mantém formulário ativo)</div>
                                             <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
                                         </div>
-                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos dos Gráficos (apenas na aba Gráficos):</strong></p>
+                                        <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos
+                                                dos Gráficos (apenas na aba Gráficos):</strong></p>
                                         <div class="shortcuts-list-config">
                                             <div class="shortcut-item-config"><kbd>↑</kbd> Gráfico anterior</div>
                                             <div class="shortcut-item-config"><kbd>↓</kbd> Próximo gráfico</div>
@@ -557,7 +588,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Guia Temas -->
                 <div id="config-temas" class="config-tab-content">
                     <div class="configuracoes-container">
@@ -582,7 +613,7 @@
 
     <!-- Container para Notificações -->
     <div id="notification-container" style="position: fixed; top: 50px; right: 20px; z-index: 9998;"></div>
-    
+
     <!-- Overlay de Sincronização -->
     <div id="sync-overlay" class="sync-overlay">
         <div class="sync-overlay-content">
@@ -609,7 +640,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Gerenciar Movimentação -->
     <div id="gerenciar-movimentacao-modal" class="modal-bg modal-hidden">
         <div class="modal-content modal-gerenciar">
@@ -627,14 +658,15 @@
                     <i class="fas fa-trash-alt"></i>
                     <span>Excluir</span>
                 </button>
-                <button type="button" class="modal-cancel modal-btn-modern" onclick="fecharGerenciarMovimentacaoModal()">
+                <button type="button" class="modal-cancel modal-btn-modern"
+                    onclick="fecharGerenciarMovimentacaoModal()">
                     <i class="fas fa-times"></i>
                     <span>Cancelar</span>
                 </button>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Editar Movimentação -->
     <div id="editar-movimentacao-modal" class="modal-bg modal-hidden">
         <div class="modal-content modal-editar">
@@ -648,27 +680,30 @@
                         <i class="fas fa-edit"></i>
                         Produto
                     </label>
-                    <input id="editar-movimentacao-produto" type="text" placeholder="Nome do produto" class="input-editar" />
+                    <input id="editar-movimentacao-produto" type="text" placeholder="Nome do produto"
+                        class="input-editar" />
                 </div>
-                
+
                 <div class="form-row-editar">
                     <div class="form-group-editar">
                         <label for="editar-movimentacao-quantidade">
                             <i class="fas fa-sort-numeric-up"></i>
                             Quantidade
                         </label>
-                        <input id="editar-movimentacao-quantidade" type="number" min="1" placeholder="Qtd" class="input-editar" />
+                        <input id="editar-movimentacao-quantidade" type="number" min="1" placeholder="Qtd"
+                            class="input-editar" />
                     </div>
-                    
+
                     <div class="form-group-editar">
                         <label for="editar-movimentacao-valor-unitario">
                             <i class="fas fa-dollar-sign"></i>
                             Valor Unitário
                         </label>
-                        <input id="editar-movimentacao-valor-unitario" type="number" step="0.01" placeholder="R$ 0,00" class="input-editar" />
+                        <input id="editar-movimentacao-valor-unitario" type="number" step="0.01" placeholder="R$ 0,00"
+                            class="input-editar" />
                     </div>
                 </div>
-                
+
                 <div class="form-group-editar">
                     <label for="editar-movimentacao-data">
                         <i class="fas fa-calendar-alt"></i>
@@ -676,15 +711,16 @@
                     </label>
                     <input id="editar-movimentacao-data" type="date" class="input-editar" />
                 </div>
-                
+
                 <div class="form-group-editar">
                     <label for="editar-movimentacao-observacoes">
                         <i class="fas fa-sticky-note"></i>
                         Observações
                     </label>
-                    <textarea id="editar-movimentacao-observacoes" placeholder="Observações adicionais..." class="input-editar textarea-editar" rows="3"></textarea>
+                    <textarea id="editar-movimentacao-observacoes" placeholder="Observações adicionais..."
+                        class="input-editar textarea-editar" rows="3"></textarea>
                 </div>
-                
+
                 <div class="modal-actions modal-actions-editar">
                     <button type="submit" class="modal-confirm modal-btn-editar">
                         <i class="fas fa-save"></i>
@@ -817,7 +853,7 @@
                     if (typeof carregarDadosAtualizados === 'function') {
                         carregarDadosAtualizados();
                     }
-                    
+
                     if (typeof renderizarGrafico === 'function') {
                         const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || 'vendas';
                         const selectGrafico = document.getElementById('tipo-grafico');
@@ -867,7 +903,7 @@
                             btn.classList.add('nav-active');
                         }
                     });
-                    
+
                     // Renderizar conteúdo da aba salva após reload
                     setTimeout(() => {
                         if (tabSalva === 'vendas' && typeof renderizarVendas === 'function') {
@@ -877,7 +913,7 @@
                             if (typeof carregarDadosAtualizados === 'function') {
                                 carregarDadosAtualizados();
                             }
-                            
+
                             const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || 'vendas';
                             const selectGrafico = document.getElementById('tipo-grafico');
                             if (selectGrafico) {
@@ -889,7 +925,7 @@
                     }, 200);
                 }
             }
-            
+
             // Inicializar notificações
             setTimeout(() => {
                 if (typeof inicializarNotificacoes === 'function') {
