@@ -62,7 +62,6 @@
     <link rel="stylesheet" href="css/font-awesome-custom.css">
     <link rel="stylesheet" href="css/loading-overlay.css">
     <link rel="stylesheet" href="css/readme-viewer.css">
-    <link rel="stylesheet" href="css/police.css">
     <link rel="stylesheet" href="css/mobile-modals.css">
 
     <link rel="stylesheet" href="css/icon-fixes.css">
@@ -72,8 +71,6 @@
     <script src="https://unpkg.com/feather-icons"></script>
 
     <!-- JavaScript Modular -->
-    <script defer src="js/shortcuts.js"></script>
-    <script defer src="js/filtros.js"></script>
     <script defer src="js/dashboard.js"></script>
     <script defer src="js/estoque.js"></script>
     <script defer src="js/financeiro.js"></script>
@@ -82,10 +79,6 @@
     <script defer src="js/graficos.js"></script>
     <script defer src="js/configuracoes.js"></script>
     <script defer src="js/sheets-integration.js"></script>
-    <script defer src="js/tutorial.js"></script>
-    <script defer src="js/themes.js"></script>
-    <script defer src="js/readme-viewer.js"></script>
-    <script defer src="js/mobile-keyboard-handler.js"></script>
     <script defer src="js/main.js"></script>
 </head>
 
@@ -115,7 +108,7 @@
         
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 4.0</div>
+            <div class="version-info">Versão 5.0</div>
         </div>
     </aside>
 
@@ -136,8 +129,13 @@
         <section id="estoque" class="tab-section" style="overflow: visible;">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-boxes"></i>Controle de Estoque</h2>
             <form id="estoque-form">
-                <input id="produto" type="text" placeholder="Produto" list="produtos-lista" autocomplete="off" />
-                <datalist id="produtos-lista"></datalist>
+                <div class="produto-input-group">
+                    <input id="produto" type="text" placeholder="Produto" list="produtos-lista" autocomplete="off" />
+                    <button type="button" id="btn-selecionar-produto" class="btn-selecionar-produto" title="Selecionar produto existente">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <datalist id="produtos-lista"></datalist>
+                </div>
                 <input id="quantidade" type="number" min="0" placeholder="Quantidade" />
                 <button type="submit">Entrada de Produto</button>
             </form>
@@ -191,6 +189,22 @@
                         <button type="button" class="modal-cancel" onclick="fecharEdicaoProduto()">Cancelar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+        
+        <!-- Modal Selecionar Produto -->
+        <div id="selecionar-produto-modal" class="modal-bg modal-hidden">
+            <div class="modal-content modal-selecionar-produto">
+                <h3 class="modal-title">Selecionar Produto</h3>
+                <div class="lista-produtos-modal">
+                    <div class="busca-produto-item">
+                        <input id="busca-produto-input" type="text" placeholder="Buscar produto..." />
+                    </div>
+                    <div id="produtos-modal-lista"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-cancel" onclick="fecharSelecionarProdutoModal()">Cancelar</button>
+                </div>
             </div>
         </div>
 
@@ -598,7 +612,7 @@
             <form id="editar-movimentacao-form" class="form-editar">
                 <div class="form-group-editar">
                     <label for="editar-movimentacao-produto">
-                        <i class="fas fa-box"></i>
+                        <i class="fas fa-edit"></i>
                         Produto
                     </label>
                     <input id="editar-movimentacao-produto" type="text" placeholder="Nome do produto" class="input-editar" />
@@ -661,7 +675,7 @@
 
             if (isPWA) {
                 document.body.classList.add('pwa-mode');
-                console.log('PWA Mode ativado - Interface otimizada para app nativo');
+
             }
         }
 
@@ -671,10 +685,10 @@
                 detectPWAMode();
                 navigator.serviceWorker.register('./js/sw.js')
                     .then(function (registration) {
-                        console.log('SW registered: ', registration);
+
                     })
                     .catch(function (registrationError) {
-                        console.log('SW registration failed: ', registrationError);
+
                     });
             });
         } else {
@@ -766,12 +780,18 @@
             // Atualiza gráficos ao clicar na aba de gráficos
             if (tabId === 'graficos') {
                 setTimeout(() => {
+                    // Forçar recarregamento dos dados antes de renderizar gráficos
+                    if (typeof carregarDadosAtualizados === 'function') {
+                        carregarDadosAtualizados();
+                    }
+                    
                     if (typeof renderizarGrafico === 'function') {
                         const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || 'vendas';
                         const selectGrafico = document.getElementById('tipo-grafico');
                         if (selectGrafico) {
                             selectGrafico.value = ultimoGrafico;
                         }
+
                         renderizarGrafico(ultimoGrafico);
                     }
                 }, 250);
@@ -820,11 +840,17 @@
                         if (tabSalva === 'vendas' && typeof renderizarVendas === 'function') {
                             renderizarVendas();
                         } else if (tabSalva === 'graficos' && typeof renderizarGrafico === 'function') {
+                            // Forçar recarregamento dos dados antes de renderizar gráficos
+                            if (typeof carregarDadosAtualizados === 'function') {
+                                carregarDadosAtualizados();
+                            }
+                            
                             const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || 'vendas';
                             const selectGrafico = document.getElementById('tipo-grafico');
                             if (selectGrafico) {
                                 selectGrafico.value = ultimoGrafico;
                             }
+
                             renderizarGrafico(ultimoGrafico);
                         }
                     }, 200);

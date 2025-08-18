@@ -795,7 +795,7 @@
 .sync-disabled .lancamento-btn-gerenciar,
 .sync-disabled .modal-edit,
 .sync-disabled .modal-delete {
-  background: #4a5568 !important;
+  background: none !important;
   cursor: not-allowed !important;
   opacity: 0.5 !important;
   pointer-events: none !important;

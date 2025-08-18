@@ -154,7 +154,6 @@
     padding: 12px !important;
     font-size: 16px !important; /* Previne zoom no iOS */
     border-radius: 8px !important;
-    margin-bottom: 12px !important;
     box-sizing: border-box !important;
     
     /* Melhor experiência tátil */
