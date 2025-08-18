@@ -1181,59 +1181,75 @@ function verificarTimestamp(timestampLocal) {
   try {
     const planilha = SpreadsheetApp.openById(SHEET_ID);
     
+    // Coletar todos os IDs de ambas as abas
+    const todosIdsRemotos = [];
+    
     // Verificar aba Financeiro
     const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
-    let ultimoIdFinanceiro = null;
-    
     if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
       const dadosFinanceiro = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1).getValues();
-      if (dadosFinanceiro.length > 0) {
-        ultimoIdFinanceiro = String(dadosFinanceiro[dadosFinanceiro.length - 1][0]).replace(/^'/, '');
-      }
+      dadosFinanceiro.forEach(row => {
+        const id = String(row[0]).replace(/^'/, '');
+        if (id && id.length === 14) { // Validar formato DDMMAAAAHHMMSS
+          todosIdsRemotos.push(id);
+        }
+      });
     }
     
     // Verificar aba Estoque
     const abaEstoque = planilha.getSheetByName('Estoque');
-    let ultimoIdEstoque = null;
-    
     if (abaEstoque && abaEstoque.getLastRow() > 1) {
       const dadosEstoque = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 1).getValues();
-      if (dadosEstoque.length > 0) {
-        ultimoIdEstoque = String(dadosEstoque[dadosEstoque.length - 1][0]).replace(/^'/, '');
-      }
-    }
-    
-    // Encontrar o ID mais recente entre Financeiro e Estoque
-    let ultimoIdRemoto = null;
-    if (ultimoIdFinanceiro && ultimoIdEstoque) {
-      ultimoIdRemoto = ultimoIdFinanceiro > ultimoIdEstoque ? ultimoIdFinanceiro : ultimoIdEstoque;
-    } else if (ultimoIdFinanceiro) {
-      ultimoIdRemoto = ultimoIdFinanceiro;
-    } else if (ultimoIdEstoque) {
-      ultimoIdRemoto = ultimoIdEstoque;
+      dadosEstoque.forEach(row => {
+        const id = String(row[0]).replace(/^'/, '');
+        if (id && id.length === 14) { // Validar formato DDMMAAAAHHMMSS
+          todosIdsRemotos.push(id);
+        }
+      });
     }
     
     // Se não há dados remotos, considera atualizado
-    if (!ultimoIdRemoto) {
+    if (todosIdsRemotos.length === 0) {
       return {
         success: true,
         dadosAtualizados: true,
         ultimoIdRemoto: null,
-        timestampLocal: timestampLocal
+        timestampLocal: timestampLocal,
+        totalRegistrosRemotos: 0
       };
     }
     
-    // Comparar com timestamp local (último ID local)
-    const dadosAtualizados = !timestampLocal || ultimoIdRemoto <= timestampLocal;
+    // Ordenar IDs e pegar o mais recente
+    todosIdsRemotos.sort();
+    const ultimoIdRemoto = todosIdsRemotos[todosIdsRemotos.length - 1];
+    
+    // Comparar timestamps
+    let dadosAtualizados = true;
+    
+    if (!timestampLocal) {
+      // Se não há timestamp local, dados estão desatualizados
+      dadosAtualizados = false;
+    } else {
+      // Comparar o último ID remoto com o local
+      dadosAtualizados = ultimoIdRemoto <= timestampLocal;
+    }
+    
+    console.log('Verificação de timestamp:');
+    console.log('- Último ID remoto:', ultimoIdRemoto);
+    console.log('- Timestamp local:', timestampLocal);
+    console.log('- Dados atualizados:', dadosAtualizados);
+    console.log('- Total registros remotos:', todosIdsRemotos.length);
     
     return {
       success: true,
       dadosAtualizados: dadosAtualizados,
       ultimoIdRemoto: ultimoIdRemoto,
-      timestampLocal: timestampLocal
+      timestampLocal: timestampLocal,
+      totalRegistrosRemotos: todosIdsRemotos.length
     };
     
   } catch (error) {
+    console.error('Erro na verificação de timestamp:', error);
     return { success: false, message: error.toString() };
   }
 }

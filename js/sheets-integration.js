@@ -279,15 +279,10 @@ async function sincronizarFinanceiro() {
     }
 
     try {
-        // Inativar botões CRUD se não estiver já inativo
-        if (!document.body.classList.contains('sync-disabled')) {
-            document.body.classList.add('sync-disabled');
-        }
         
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
         updateMiniIndicator('checking');
-        mostrarNotificacaoSync('Sincronizando dados...', 'info');
         
         // Aguardar um pouco para mostrar o progresso
         await new Promise(resolve => setTimeout(resolve, 800));
@@ -369,6 +364,13 @@ async function sincronizarFinanceiro() {
         mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
         hideProgress();
         
+        // Parar loading manager se estiver ativo
+        if (typeof window.loadingManager !== 'undefined' && window.loadingManager) {
+          setTimeout(() => {
+            window.loadingManager.stopSyncLoading();
+          }, 500);
+        }
+        
         // Remover feedback visual após sincronização
         if (typeof removerFeedbackVisual === 'function') {
             removerFeedbackVisual();
@@ -387,14 +389,13 @@ async function sincronizarFinanceiro() {
         updateMiniIndicator('error');
         mostrarNotificacaoSync('Erro na sincronização', 'error');
         hideProgress();
+        
+        // Parar loading manager em caso de erro
+        if (typeof window.loadingManager !== 'undefined' && window.loadingManager) {
+          window.loadingManager.stopSyncLoading();
+        }
     } finally {
-        // Reativar botões CRUD apenas se foi esta função que os desativou
-        // (evita conflito com sincronizarTudo)
-        setTimeout(() => {
-            if (document.body.classList.contains('sync-disabled')) {
-                document.body.classList.remove('sync-disabled');
-            }
-        }, 500);
+        // Controle de sync-disabled gerenciado pela função sincronizarTudo
     }
 }
 
@@ -922,7 +923,6 @@ async function sincronizarTudo() {
         
         showProgress('Iniciando sincronização completa...');
         updateMiniIndicator('syncing');
-        mostrarNotificacaoSync('Iniciando sincronização completa...', 'info');
         
         // Sincronizar financeiro
         await sincronizarFinanceiro();
@@ -1119,12 +1119,6 @@ async function adicionarMovimentacaoEstoque(dados) {
     if (!url || url.includes('*')) return false;
     
     try {
-        // Bloquear botões durante operação se não estiver já bloqueado
-        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
-        if (!jaEstavaBloqueado) {
-            document.body.classList.add('sync-disabled');
-        }
-        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -1136,22 +1130,9 @@ async function adicionarMovimentacaoEstoque(dados) {
         });
         const result = await response.json();
         
-        // Reativar botões apenas se foi esta função que os desativou
-        if (!jaEstavaBloqueado) {
-            setTimeout(() => {
-                document.body.classList.remove('sync-disabled');
-            }, 500);
-        }
-        
         return result.success;
     } catch (error) {
         console.error('Erro ao adicionar movimentação de estoque:', error);
-        // Reativar botões em caso de erro
-        setTimeout(() => {
-            if (document.body.classList.contains('sync-disabled')) {
-                document.body.classList.remove('sync-disabled');
-            }
-        }, 500);
         return false;
     }
 }
@@ -1161,12 +1142,6 @@ async function excluirProdutoEstoque(nomeProduto) {
     if (!url || url.includes('*')) return false;
     
     try {
-        // Bloquear botões durante operação se não estiver já bloqueado
-        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
-        if (!jaEstavaBloqueado) {
-            document.body.classList.add('sync-disabled');
-        }
-        
         const response = await fetch(url, {
             method: 'POST',
             mode: 'cors',
@@ -1183,22 +1158,9 @@ async function excluirProdutoEstoque(nomeProduto) {
             console.error('Falha ao excluir:', result.message);
         }
         
-        // Reativar botões apenas se foi esta função que os desativou
-        if (!jaEstavaBloqueado) {
-            setTimeout(() => {
-                document.body.classList.remove('sync-disabled');
-            }, 500);
-        }
-        
         return result.success;
     } catch (error) {
         console.error('Erro ao excluir produto do estoque:', error);
-        // Reativar botões em caso de erro
-        setTimeout(() => {
-            if (document.body.classList.contains('sync-disabled')) {
-                document.body.classList.remove('sync-disabled');
-            }
-        }, 500);
         return false;
     }
 }
@@ -1212,12 +1174,6 @@ async function sincronizarEstoque() {
     
     try {
         console.log('=== INICIANDO SINCRONIZAÇÃO DE ESTOQUE ===');
-        
-        // Bloquear botões do estoque durante sincronização se não estiver já bloqueado
-        const jaEstavaBloqueado = document.body.classList.contains('sync-disabled');
-        if (!jaEstavaBloqueado) {
-            document.body.classList.add('sync-disabled');
-        }
         
         const response = await fetch(url, {
             method: 'POST',
@@ -1288,21 +1244,8 @@ async function sincronizarEstoque() {
         
         console.log('=== SINCRONIZAÇÃO DE ESTOQUE CONCLUÍDA ===');
         
-        // Reativar botões apenas se foi esta função que os desativou
-        if (!jaEstavaBloqueado) {
-            setTimeout(() => {
-                document.body.classList.remove('sync-disabled');
-            }, 500);
-        }
-        
     } catch (error) {
         console.error('Erro ao sincronizar estoque:', error);
-        // Reativar botões em caso de erro
-        setTimeout(() => {
-            if (document.body.classList.contains('sync-disabled')) {
-                document.body.classList.remove('sync-disabled');
-            }
-        }, 500);
     }
 }
 
@@ -1364,7 +1307,24 @@ function atualizarTimestampModificacao() {
     localStorage.setItem('ultimaModificacao', Date.now().toString());
 }
 
-// Função para verificar sincronização automática
+// Função para atualizar timestamp de última verificação
+function atualizarTimestampVerificacao() {
+    localStorage.setItem('ultimaVerificacao', Date.now().toString());
+}
+
+// Função para verificar se precisa verificar sincronização (evita verificações muito frequentes)
+function precisaVerificarSincronizacao() {
+    const ultimaVerificacao = localStorage.getItem('ultimaVerificacao');
+    if (!ultimaVerificacao) return true;
+    
+    const agora = Date.now();
+    const tempoDecorrido = agora - parseInt(ultimaVerificacao);
+    const INTERVALO_MINIMO = 30000; // 30 segundos
+    
+    return tempoDecorrido > INTERVALO_MINIMO;
+}
+
+// Função para verificar sincronização automática (otimizada)
 async function verificarSincronizacaoAutomatica() {
     const url = getCurrentUrl();
     if (!url || url.includes('*')) {
@@ -1373,6 +1333,12 @@ async function verificarSincronizacaoAutomatica() {
     }
     
     try {
+        // Usar verificação inteligente se disponível
+        if (typeof window.verificarSincronizacaoInteligente === 'function') {
+            return await window.verificarSincronizacaoInteligente();
+        }
+        
+        // Fallback para verificação por hash (método antigo)
         updateMiniIndicator('checking');
         
         const hashLocal = gerarHashDadosLocais();
@@ -1391,25 +1357,24 @@ async function verificarSincronizacaoAutomatica() {
         if (result.success) {
             if (result.sincronizado) {
                 updateMiniIndicator('connected-working');
-                return true; // Está sincronizado
+                return true;
             } else {
                 updateMiniIndicator('connected-pending');
-                return false; // Precisa sincronizar
+                return false;
             }
         } else {
             updateMiniIndicator('error');
-            return true; // Em caso de erro, não tenta sincronizar
+            return true;
         }
     } catch (error) {
         updateMiniIndicator('error');
-        return true; // Em caso de erro, não tenta sincronizar
+        return true;
     }
 }
 
-// Verificação automática REMOVIDA - apenas sincronização manual
+// Verificação automática DESABILITADA - apenas na inicialização
 function iniciarVerificacaoAutomatica() {
-    // Função desabilitada permanentemente - sincronização apenas manual
-    console.log('Verificação automática desabilitada - use o botão Sincronizar quando necessário');
+    console.log('Verificação periódica desabilitada - apenas verificação na inicialização');
 }
 
 // Função para testar conexão com Google Sheets
@@ -1476,4 +1441,6 @@ window.sincronizarEstoque = sincronizarEstoque;
 window.sincronizarTudo = sincronizarTudo;
 window.verificarSincronizacaoAutomatica = verificarSincronizacaoAutomatica;
 window.atualizarTimestampModificacao = atualizarTimestampModificacao;
+window.atualizarTimestampVerificacao = atualizarTimestampVerificacao;
+window.precisaVerificarSincronizacao = precisaVerificarSincronizacao;
 window.iniciarVerificacaoAutomatica = iniciarVerificacaoAutomatica;

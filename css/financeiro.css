@@ -353,13 +353,72 @@
 /* Estilos para o formulário financeiro integrado */
 #financeiro-form {
   background: #2d3748;
-  padding: 16px;
   border-radius: 12px;
   border: 1px solid #4a5568;
   margin-bottom: 20px;
 }
 
-#financeiro-form input:not([type="radio"]) {
+/* Header do formulário financeiro */
+.financeiro-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+  padding: 16px;
+  border-radius: 12px 12px 0 0;
+}
+
+.financeiro-form-header:hover {
+  background: rgba(23, 172, 175, 0.1);
+}
+
+/* Destaque quando ativado por atalho */
+.financeiro-form-header.shortcut-active {
+  background: rgba(23, 172, 175, 0.2);
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.4);
+  transform: scale(1.02);
+}
+
+#financeiro-form.shortcut-focused {
+  box-shadow: 0 0 0 3px rgba(23, 172, 175, 0.3);
+  border-color: #17acaf;
+  transform: scale(1.01);
+  transition: all 0.3s ease;
+}
+
+.financeiro-form-header h3 {
+  color: #e2e8f0;
+  margin: 0;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.financeiro-form-header h3 i {
+  color: #17acaf;
+}
+
+.financeiro-form-arrow {
+  color: #17acaf;
+  transition: transform 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.financeiro-form-arrow.rotated {
+  transform: rotate(90deg);
+}
+
+/* Conteúdo do formulário */
+.financeiro-form-content {
+  padding: 16px;
+  transition: all 0.3s ease;
+  border-radius: 0 0 12px 12px;
+}
+
+#financeiro-form-inner input:not([type="radio"]) {
   background: #232b38;
   color: #e2e8f0;
   border: 2px solid #4a5568;
@@ -377,18 +436,18 @@
   margin-bottom: 0;
 }
 
-#financeiro-form input:not([type="radio"]):hover {
+#financeiro-form-inner input:not([type="radio"]):hover {
   border-color: #17acaf;
   background-color: #17acaf22;
 }
 
-#financeiro-form input:not([type="radio"]):focus {
+#financeiro-form-inner input:not([type="radio"]):focus {
   outline: none;
   border-color: #17acaf22;
   box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
 }
 
-#financeiro-form button[type="submit"] {
+#financeiro-form-inner button[type="submit"] {
   background: #17acaf;
   color: white;
   border: none;
@@ -401,17 +460,17 @@
   padding: 12px 16px;
 }
 
-#financeiro-form button[type="submit"]:hover:not(:disabled) {
+#financeiro-form-inner button[type="submit"]:hover:not(:disabled) {
   background: #17acaf22;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
 }
 
-#financeiro-form button[type="submit"]:active:not(:disabled) {
+#financeiro-form-inner button[type="submit"]:active:not(:disabled) {
   transform: translateY(0);
 }
 
-#financeiro-form button[type="submit"]:disabled {
+#financeiro-form-inner button[type="submit"]:disabled {
   background: #4a5568;
   cursor: not-allowed;
   opacity: 0.7;
@@ -420,16 +479,72 @@
 }
 
 /* Navegação tipo planilha */
-#financeiro-form.navigation-active {
+#financeiro-form-inner.navigation-active {
   border-color: #17acaf;
   box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.2);
 }
 
-#financeiro-form input:focus,
-#financeiro-form select:focus {
+/* Indicador visual quando navegação Tab está ativa no form-content */
+.financeiro-form-content.navigation-active {
+  background: rgba(23, 172, 175, 0.05);
+  border: 2px solid rgba(23, 172, 175, 0.3);
+  border-radius: 0 0 12px 12px;
+  position: relative;
+}
+
+.financeiro-form-content.navigation-active::before {
+  content: "⌨️ Navegação Tab ativa - Use Tab/Shift+Tab para navegar";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17acaf;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 0 0 8px 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#financeiro-form-inner input:focus,
+#financeiro-form-inner select:focus {
   border-color: #17acaf;
   box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.3);
   outline: none;
+}
+
+/* Destaque para campos focados por atalho */
+.shortcut-focused {
+  border-color: #17acaf !important;
+  box-shadow: 0 0 0 3px rgba(23, 172, 175, 0.4) !important;
+  background-color: rgba(23, 172, 175, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+/* Animação de pulso para indicar ativação por atalho */
+@keyframes shortcut-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(23, 172, 175, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(23, 172, 175, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(23, 172, 175, 0); }
+}
+
+.shortcut-active {
+  animation: shortcut-pulse 1s ease-out;
+}
+
+/* Estado persistente para o header do financeiro */
+.financeiro-form-header.persistent-active {
+  background: rgba(23, 172, 175, 0.15);
+  border: 2px solid rgba(23, 172, 175, 0.3);
+  box-shadow: 0 0 0 1px rgba(23, 172, 175, 0.2);
+}
+
+#financeiro-form.persistent-focused {
+  border-color: rgba(23, 172, 175, 0.4);
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.2);
 }
 
 
@@ -634,18 +749,18 @@
 }
 
 /* Botão de submit com estado de carregamento */
-#financeiro-form button[type="submit"] {
+#financeiro-form-inner button[type="submit"] {
   transition: all 0.3s ease;
   position: relative;
 }
 
-#financeiro-form button[type="submit"]:disabled {
+#financeiro-form-inner button[type="submit"]:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   background: #4a5568;
 }
 
-#financeiro-form button[type="submit"]:disabled {
+#financeiro-form-inner button[type="submit"]:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   background: #4a5568;
@@ -655,7 +770,7 @@
   gap: 8px;
 }
 
-#financeiro-form button[type="submit"]:disabled::after {
+#financeiro-form-inner button[type="submit"]:disabled::after {
   content: '';
   width: 16px;
   height: 16px;
@@ -686,7 +801,7 @@
   pointer-events: none !important;
 }
 
-.sync-disabled #financeiro-form button[type="submit"]:disabled {
+.sync-disabled #financeiro-form-inner button[type="submit"]:disabled {
   opacity: 0.5;
 }
 
@@ -794,11 +909,11 @@
     margin: 4px 0;
   }
   
-  #financeiro-form {
+  .financeiro-form-content {
     padding: 12px;
   }
   
-  #financeiro-form input:not([type="radio"]) {
+  #financeiro-form-inner input:not([type="radio"]) {
     padding: 10px 12px;
     margin-bottom: 10px;
   }
@@ -807,8 +922,15 @@
     margin-bottom: 8px;
   }
   
-  #financeiro-form button[type="submit"] {
+  #financeiro-form-inner button[type="submit"] {
     padding: 12px 20px;
+  }
+  
+  /* Ajustar indicador de navegação em mobile */
+  .financeiro-form-content.navigation-active::before {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    content: "⌨️ Tab ativo";
   }
 }
 

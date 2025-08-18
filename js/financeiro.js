@@ -337,23 +337,72 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoriaInput = document.getElementById("categoria-lancamento");
     const subcategoriaInput = document.getElementById("subcategoria-lancamento");
     
-    if (!tipoInputs.length || !categoriaInput || !subcategoriaInput) return;
+    if (!tipoInputs.length || !categoriaInput || !subcategoriaInput) {
+      console.warn('Elementos do formulário não encontrados para atualizar categorias');
+      return;
+    }
     
     // Obter tipo selecionado
     const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked')?.value;
-    if (!tipoSelecionado) return;
+    if (!tipoSelecionado) {
+      console.warn('Nenhum tipo de lançamento selecionado');
+      // Limpar categorias se não há tipo selecionado
+      categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
+      subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
+      return;
+    }
     
     // Limpar e popular categorias
     categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
     subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
     
-    const cats = categorias[tipoSelecionado] || {};
+    // Verificar se as categorias estão definidas - tentar múltiplas fontes
+    let categoriasObj = null;
+    
+    if (typeof window.categorias !== 'undefined') {
+      categoriasObj = window.categorias;
+    } else if (typeof categorias !== 'undefined') {
+      categoriasObj = categorias;
+    } else {
+      // Tentar carregar do localStorage diretamente
+      try {
+        const categoriasLS = localStorage.getItem('categorias');
+        if (categoriasLS) {
+          categoriasObj = JSON.parse(categoriasLS);
+        }
+      } catch (e) {
+        console.error('Erro ao carregar categorias do localStorage:', e);
+      }
+    }
+    
+    if (!categoriasObj) {
+      console.error('Objeto categorias não está disponível em nenhuma fonte');
+      // Usar categorias padrão como fallback
+      categoriasObj = {
+        receita: {
+          "Vendas": ["Produtos", "Serviços"],
+          "Investimentos": ["Rendimentos", "Dividendos"],
+          "Outros": ["Doações", "Reembolsos"]
+        },
+        despesa: {
+          "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
+          "Pessoal": ["Salários", "Benefícios"],
+          "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
+          "Outros": ["Impostos", "Multas"]
+        }
+      };
+      console.log('Usando categorias padrão como fallback');
+    }
+    
+    const cats = categoriasObj[tipoSelecionado] || {};
     Object.keys(cats).forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
       opt.textContent = cat;
       categoriaInput.appendChild(opt);
     });
+    
+    console.log(`Categorias carregadas para ${tipoSelecionado}:`, Object.keys(cats));
     
     // Adicionar classe de atualização para animação
     const categoriaGroup = document.querySelector('.form-group-categoria');
@@ -378,13 +427,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoria = categoriaInput.value;
     if (!categoria) return;
     
-    const subs = (categorias[tipoSelecionado] && categorias[tipoSelecionado][categoria]) ? categorias[tipoSelecionado][categoria] : [];
+    // Obter categorias de forma robusta
+    let categoriasObj = null;
+    
+    if (typeof window.categorias !== 'undefined') {
+      categoriasObj = window.categorias;
+    } else if (typeof categorias !== 'undefined') {
+      categoriasObj = categorias;
+    } else {
+      try {
+        const categoriasLS = localStorage.getItem('categorias');
+        if (categoriasLS) {
+          categoriasObj = JSON.parse(categoriasLS);
+        }
+      } catch (e) {
+        console.error('Erro ao carregar categorias do localStorage:', e);
+      }
+    }
+    
+    if (!categoriasObj) {
+      console.error('Categorias não disponíveis para subcategorias');
+      return;
+    }
+    
+    const subs = (categoriasObj[tipoSelecionado] && categoriasObj[tipoSelecionado][categoria]) ? categoriasObj[tipoSelecionado][categoria] : [];
     subs.forEach(sub => {
       const opt = document.createElement("option");
       opt.value = sub;
       opt.textContent = sub;
       subcategoriaInput.appendChild(opt);
     });
+    
+    console.log(`Subcategorias carregadas para ${categoria}:`, subs);
     
     // Adicionar classe de atualização para animação
     const subcategoriaGroup = document.querySelector('.form-group-subcategoria');
@@ -409,10 +483,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Formulário de receitas/despesas
-  const financeiroForm = document.getElementById("financeiro-form");
+  const financeiroForm = document.getElementById("financeiro-form-inner");
   if (financeiroForm) {
     financeiroForm.addEventListener("submit", async function (e) {
       e.preventDefault();
+      
+      // Aguardar um momento para garantir que os valores estejam atualizados
+      // especialmente quando usando navegação por atalhos
+      await new Promise(resolve => setTimeout(resolve, 10));
       const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked');
       const categoriaInput = document.getElementById("categoria-lancamento");
       const subcategoriaInput = document.getElementById("subcategoria-lancamento");
@@ -423,14 +501,49 @@ document.addEventListener("DOMContentLoaded", function () {
       const submitBtn = financeiroForm.querySelector('button[type="submit"]');
       
       const tipo = tipoSelecionado?.value;
-      const categoria = categoriaInput.value;
-      const subcategoria = subcategoriaInput.value;
+      const categoria = categoriaInput.value.trim();
+      const subcategoria = subcategoriaInput.value.trim();
       const descricao = descInput.value.trim();
       const quantidade = parseInt(quantidadeInput.value) || 1;
       const valor = parseFloat(valorInput.value);
       const data = dataInput.value;
       
-      if (tipo && categoria && subcategoria && descricao && valor > 0 && data) {
+      // Debug detalhado dos valores
+      console.log('=== DEBUG VALIDAÇÃO FORMULÁRIO ===');
+      console.log('Tipo:', tipo);
+      console.log('Categoria raw:', categoriaInput.value);
+      console.log('Categoria trimmed:', categoria);
+      console.log('Subcategoria:', subcategoria);
+      console.log('Selected index categoria:', categoriaInput.selectedIndex);
+      console.log('Selected option text:', categoriaInput.options[categoriaInput.selectedIndex]?.text);
+      
+      // Validação mais rigorosa dos campos
+      if (!tipo) {
+        mostrarNotificacaoSync('Selecione o tipo de lançamento (Receita ou Despesa)!', 'error');
+        return;
+      }
+      if (!categoria || categoria === '' || categoriaInput.selectedIndex <= 0) {
+        console.warn('Categoria não selecionada adequadamente - falha silenciosa');
+        return; // Falha silenciosa para evitar erro indevido nos atalhos
+      }
+      if (!subcategoria) {
+        mostrarNotificacaoSync('Selecione uma subcategoria!', 'error');
+        return;
+      }
+      if (!descricao) {
+        mostrarNotificacaoSync('Preencha a descrição!', 'error');
+        return;
+      }
+      if (!valor || valor <= 0 || isNaN(valor)) {
+        mostrarNotificacaoSync('Preencha um valor válido maior que zero!', 'error');
+        return;
+      }
+      if (!data) {
+        mostrarNotificacaoSync('Selecione uma data!', 'error');
+        return;
+      }
+      
+      // Se chegou até aqui, todos os campos estão válidos
         // Desabilitar todos os botões CRUD imediatamente
         document.body.classList.add('sync-disabled');
         
@@ -451,13 +564,13 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Limpar campos imediatamente
         document.getElementById('tipo-receita').checked = true;
+        atualizarCategorias(); // Atualizar categorias ANTES de limpar
         categoriaInput.value = "";
         subcategoriaInput.value = "";
         descInput.value = "";
         quantidadeInput.value = "1";
         valorInput.value = "";
         dataInput.value = "";
-        atualizarCategorias();
         
         // Adicionar localmente IMEDIATAMENTE
         lancamentos.push(novoLancamento);
@@ -493,10 +606,39 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.remove('sync-disabled');
         const todosItems = document.querySelectorAll('.processando');
         todosItems.forEach(item => item.classList.remove('processando'));
-      } else {
-        mostrarNotificacaoSync('Preencha todos os campos obrigatórios!', 'error');
-      }
     });
+  }
+
+  // Função para controlar recolher/expandir do formulário
+  function setupFinanceiroFormToggle() {
+    const header = document.getElementById('financeiro-form-header');
+    const content = document.getElementById('financeiro-form-content');
+    const arrow = document.getElementById('financeiro-form-arrow');
+    
+    if (header && content && arrow) {
+      // Restaurar estado salvo
+      const savedState = loadFinanceiroFormState();
+      content.style.display = savedState ? 'block' : 'none';
+      arrow.classList.toggle('rotated', savedState);
+      
+      header.addEventListener('click', () => {
+        const isVisible = content.style.display !== 'none';
+        const newState = !isVisible;
+        content.style.display = newState ? 'block' : 'none';
+        arrow.classList.toggle('rotated', newState);
+        
+        // Salvar novo estado
+        saveFinanceiroFormState(newState);
+      });
+    }
+  }
+  
+  function loadFinanceiroFormState() {
+    return localStorage.getItem('financeiroFormExpanded') !== 'false';
+  }
+  
+  function saveFinanceiroFormState(expanded) {
+    localStorage.setItem('financeiroFormExpanded', expanded.toString());
   }
 
   // Expor funções globalmente
@@ -692,17 +834,36 @@ document.addEventListener("DOMContentLoaded", function () {
       const dataInput = document.getElementById("editar-data-lancamento");
       
       const tipo = tipoSelecionado?.value;
-      const categoria = categoriaInput.value;
-      const subcategoria = subcategoriaInput.value;
+      const categoria = categoriaInput.value.trim();
+      const subcategoria = subcategoriaInput.value.trim();
       const descricao = descInput.value.trim();
       const quantidade = parseInt(quantidadeInput.value) || 1;
       const valor = parseFloat(valorInput.value);
       const data = dataInput.value;
       
-      if (!tipo || !categoria || !subcategoria || !descricao || !valor || valor <= 0 || !data) {
-        if (typeof mostrarNotificacaoSync === 'function') {
-          mostrarNotificacaoSync('Preencha todos os campos corretamente!', 'error');
-        }
+      // Validação detalhada dos campos
+      if (!tipo) {
+        mostrarNotificacaoSync('Selecione o tipo de lançamento!', 'error');
+        return;
+      }
+      if (!categoria) {
+        mostrarNotificacaoSync('Selecione uma categoria!', 'error');
+        return;
+      }
+      if (!subcategoria) {
+        mostrarNotificacaoSync('Selecione uma subcategoria!', 'error');
+        return;
+      }
+      if (!descricao) {
+        mostrarNotificacaoSync('Preencha a descrição!', 'error');
+        return;
+      }
+      if (!valor || valor <= 0 || isNaN(valor)) {
+        mostrarNotificacaoSync('Preencha um valor válido maior que zero!', 'error');
+        return;
+      }
+      if (!data) {
+        mostrarNotificacaoSync('Selecione uma data!', 'error');
         return;
       }
       
@@ -825,7 +986,174 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Inicializar
-  atualizarCategorias();
-  renderizarLancamentos();
+  // ===== NAVEGAÇÃO NATIVA TIPO PLANILHA =====
+  
+  class FinanceiroNavigation {
+    constructor() {
+      this.formContent = null;
+      this.fields = [];
+      this.isActive = false;
+      this.init();
+    }
+
+    init() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.setup());
+      } else {
+        this.setup();
+      }
+    }
+
+    setup() {
+      this.formContent = document.getElementById('financeiro-form-content');
+      if (!this.formContent) return;
+
+      this.setupFields();
+      this.setupEventListeners();
+    }
+
+    setupFields() {
+      this.fields = [
+        () => document.querySelector('input[name="tipo-lancamento"]:checked'),
+        () => document.getElementById('categoria-lancamento'),
+        () => document.getElementById('subcategoria-lancamento'),
+        () => document.getElementById('descricao-lancamento'),
+        () => document.getElementById('quantidade-lancamento'),
+        () => document.getElementById('valor-lancamento'),
+        () => document.getElementById('data-lancamento')
+      ];
+    }
+
+    setupEventListeners() {
+      // Ativar navegação apenas quando clicar dentro do conteúdo do formulário
+      this.formContent.addEventListener('click', (e) => {
+        // Verificar se o clique foi em um elemento focalizável dentro do form-content
+        const focusableElements = this.formContent.querySelectorAll('input, select, button, textarea');
+        const isClickOnFocusable = Array.from(focusableElements).some(el => el.contains(e.target));
+        
+        if (isClickOnFocusable) {
+          this.isActive = true;
+          this.formContent.classList.add('navigation-active');
+        }
+      });
+
+      // Desativar navegação quando clicar fora do conteúdo do formulário
+      document.addEventListener('click', (e) => {
+        if (!this.formContent.contains(e.target)) {
+          this.isActive = false;
+          this.formContent.classList.remove('navigation-active');
+        }
+      });
+
+      // Configurar navegação Tab apenas nos campos do formulário
+      this.fields.forEach((fieldFn, index) => {
+        const field = fieldFn();
+        if (!field) return;
+
+        field.addEventListener('keydown', (e) => {
+          if (!this.isActive) return;
+
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            this.focusNextField(index, e.shiftKey);
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (index === this.fields.length - 1) {
+              this.submitAndReset();
+            } else {
+              this.focusNextField(index, false);
+            }
+          }
+        });
+      });
+
+      // Interceptar Tab no botão de submit para manter navegação dentro do form-content
+      const submitBtn = this.formContent.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.addEventListener('keydown', (e) => {
+          if (!this.isActive) return;
+          
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            if (e.shiftKey) {
+              // Shift+Tab: voltar para o último campo
+              this.focusNextField(this.fields.length - 1, false);
+            } else {
+              // Tab: ir para o primeiro campo
+              this.focusNextField(-1, false);
+            }
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            this.submitAndReset();
+          }
+        });
+      }
+    }
+
+    focusNextField(currentIndex, reverse = false) {
+      const direction = reverse ? -1 : 1;
+      let nextIndex = currentIndex + direction;
+      
+      if (nextIndex < 0) nextIndex = this.fields.length - 1;
+      if (nextIndex >= this.fields.length) nextIndex = 0;
+
+      const nextField = this.fields[nextIndex]();
+      if (nextField) {
+        nextField.focus();
+        if (nextField.select) nextField.select();
+      }
+    }
+
+    submitAndReset() {
+      const submitBtn = this.formContent.querySelector('button[type="submit"]');
+      if (submitBtn && !submitBtn.disabled) {
+        // Forçar atualização dos valores antes do submit
+        const categoriaInput = document.getElementById('categoria-lancamento');
+        const subcategoriaInput = document.getElementById('subcategoria-lancamento');
+        
+        // Disparar eventos change para garantir sincronização
+        if (categoriaInput) categoriaInput.dispatchEvent(new Event('change'));
+        if (subcategoriaInput) subcategoriaInput.dispatchEvent(new Event('change'));
+        
+        // Aguardar um momento para os eventos serem processados
+        setTimeout(() => {
+          submitBtn.click();
+          
+          setTimeout(() => {
+            this.resetToFirst();
+          }, 100);
+        }, 50);
+      }
+    }
+
+    resetToFirst() {
+      const firstField = document.querySelector('input[name="tipo-lancamento"]:checked');
+      if (firstField) {
+        firstField.focus();
+      }
+    }
+  }
+
+  // Inicializar navegação
+  setTimeout(() => {
+    new FinanceiroNavigation();
+  }, 500);
+
+  // Inicializar com verificação de categorias
+  function inicializarFinanceiro() {
+    // Garantir que as categorias estejam disponíveis
+    if (typeof window.categorias === 'undefined' && typeof categorias === 'undefined') {
+      console.log('Aguardando carregamento das categorias...');
+      setTimeout(inicializarFinanceiro, 100);
+      return;
+    }
+    
+    console.log('Inicializando módulo financeiro...');
+    setupFinanceiroFormToggle();
+    atualizarCategorias();
+    renderizarLancamentos();
+  }
+  
+  // Inicializar com delay para garantir que main.js carregou
+  setTimeout(inicializarFinanceiro, 50);
 });

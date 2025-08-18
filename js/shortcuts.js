@@ -27,6 +27,7 @@ class ShortcutSystem {
             'ArrowLeft': () => this.selectReceita(),
             'ArrowRight': () => this.selectDespesa(),
             'Enter': () => this.submitForm(),
+            'Tab': () => this.handleTabNavigation(),
             'Escape': () => this.clearForm()
         };
         
@@ -51,7 +52,7 @@ class ShortcutSystem {
     }
 
     setup() {
-        this.form = document.getElementById('financeiro-form');
+        this.form = document.getElementById('financeiro-form-inner');
         if (this.form) {
             this.setupFields();
             this.setupFieldListeners();
@@ -59,7 +60,21 @@ class ShortcutSystem {
         
         this.setupEventListeners();
         this.setupConfigListeners();
+        this.setupFinanceiroFormToggleListener();
         console.log('Sistema unificado de atalhos inicializado');
+    }
+
+    setupFinanceiroFormToggleListener() {
+        const header = document.getElementById('financeiro-form-header');
+        if (header) {
+            header.addEventListener('click', () => {
+                const content = document.getElementById('financeiro-form-content');
+                if (content && content.style.display === 'none') {
+                    // Formulário foi recolhido, limpar estado persistente
+                    this.clearFinanceiroFormPersistentActive();
+                }
+            });
+        }
     }
 
     setupFields() {
@@ -101,8 +116,16 @@ class ShortcutSystem {
             if (this.isFinanceiroTabActive()) {
                 const financeiroShortcut = this.financeiroShortcuts[e.key];
                 if (financeiroShortcut) {
-                    e.preventDefault();
-                    financeiroShortcut();
+                    // Para TAB, não prevenir o comportamento padrão se retornar true
+                    if (e.key === 'Tab') {
+                        const result = financeiroShortcut();
+                        if (!result) {
+                            e.preventDefault();
+                        }
+                    } else {
+                        e.preventDefault();
+                        financeiroShortcut();
+                    }
                 }
             }
             
@@ -171,6 +194,11 @@ class ShortcutSystem {
 
     navigateToTab(tabId) {
         if (typeof changeTab === 'function') {
+            // Limpar estado persistente do financeiro ao mudar de aba
+            if (tabId !== 'financeiro') {
+                this.clearFinanceiroFormPersistentActive();
+            }
+            
             changeTab(tabId);
             
             const navButtons = document.querySelectorAll('nav button');
@@ -196,12 +224,13 @@ class ShortcutSystem {
 
     // Ações dos atalhos do financeiro
     selectReceita() {
-        const form = document.getElementById('financeiro-form');
+        this.expandFinanceiroForm();
+        const form = document.getElementById('financeiro-form-inner');
         const receitaRadio = document.getElementById('tipo-receita');
         const receitaLabel = document.querySelector('.receita-label');
         
         if (form && receitaRadio && receitaLabel) {
-            form.focus();
+            this.highlightFinanceiroForm();
             receitaRadio.checked = true;
             receitaLabel.focus();
             
@@ -213,12 +242,13 @@ class ShortcutSystem {
     }
 
     selectDespesa() {
-        const form = document.getElementById('financeiro-form');
+        this.expandFinanceiroForm();
+        const form = document.getElementById('financeiro-form-inner');
         const despesaRadio = document.getElementById('tipo-despesa');
         const despesaLabel = document.querySelector('.despesa-label');
         
         if (form && despesaRadio && despesaLabel) {
-            form.focus();
+            this.highlightFinanceiroForm();
             despesaRadio.checked = true;
             despesaLabel.focus();
             
@@ -230,9 +260,76 @@ class ShortcutSystem {
     }
 
     submitForm() {
+        this.expandFinanceiroForm();
+        this.highlightFinanceiroForm();
         const submitBtn = this.form?.querySelector('button[type="submit"]');
         if (submitBtn && !submitBtn.disabled) {
             submitBtn.click();
+        }
+    }
+
+    handleTabNavigation() {
+        this.expandFinanceiroForm();
+        this.setFinanceiroFormPersistentActive();
+        // O comportamento padrão do TAB será mantido para navegação entre campos
+        return true;
+    }
+
+    expandFinanceiroForm() {
+        const header = document.getElementById('financeiro-form-header');
+        const content = document.getElementById('financeiro-form-content');
+        const arrow = document.getElementById('financeiro-form-arrow');
+        
+        if (header && content && arrow) {
+            // Expandir o formulário se estiver recolhido
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.classList.add('rotated');
+                
+                // Salvar estado expandido
+                if (typeof saveFinanceiroFormState === 'function') {
+                    saveFinanceiroFormState(true);
+                } else {
+                    localStorage.setItem('financeiroFormExpanded', 'true');
+                }
+            }
+        }
+    }
+
+    highlightFinanceiroForm() {
+        const header = document.getElementById('financeiro-form-header');
+        const form = document.getElementById('financeiro-form');
+        
+        if (header && form) {
+            // Adicionar destaque visual
+            header.classList.add('shortcut-active');
+            form.classList.add('shortcut-focused');
+            
+            // Remover destaque após um tempo
+            setTimeout(() => {
+                header.classList.remove('shortcut-active');
+                form.classList.remove('shortcut-focused');
+            }, 2000);
+        }
+    }
+
+    setFinanceiroFormPersistentActive() {
+        const header = document.getElementById('financeiro-form-header');
+        const form = document.getElementById('financeiro-form');
+        
+        if (header && form) {
+            header.classList.add('persistent-active');
+            form.classList.add('persistent-focused');
+        }
+    }
+
+    clearFinanceiroFormPersistentActive() {
+        const header = document.getElementById('financeiro-form-header');
+        const form = document.getElementById('financeiro-form');
+        
+        if (header && form) {
+            header.classList.remove('persistent-active');
+            form.classList.remove('persistent-focused');
         }
     }
 

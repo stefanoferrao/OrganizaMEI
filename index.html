@@ -73,7 +73,6 @@
 
     <!-- JavaScript Modular -->
     <script defer src="js/shortcuts.js"></script>
-    <script defer src="js/utils.js"></script>
     <script defer src="js/filtros.js"></script>
     <script defer src="js/dashboard.js"></script>
     <script defer src="js/estoque.js"></script>
@@ -83,13 +82,9 @@
     <script defer src="js/graficos.js"></script>
     <script defer src="js/configuracoes.js"></script>
     <script defer src="js/sheets-integration.js"></script>
-    <script defer src="js/financeiro-navigation.js"></script>
     <script defer src="js/tutorial.js"></script>
-    <script defer src="js/loading-manager.js"></script>
-    <script defer src="js/testar-conexao.js"></script>
     <script defer src="js/themes.js"></script>
     <script defer src="js/readme-viewer.js"></script>
-    <script defer src="js/data-integrity.js"></script>
     <script defer src="js/mobile-keyboard-handler.js"></script>
     <script defer src="js/main.js"></script>
 </head>
@@ -141,7 +136,8 @@
         <section id="estoque" class="tab-section" style="overflow: visible;">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-boxes"></i>Controle de Estoque</h2>
             <form id="estoque-form">
-                <input id="produto" type="text" placeholder="Produto" />
+                <input id="produto" type="text" placeholder="Produto" list="produtos-lista" autocomplete="off" />
+                <datalist id="produtos-lista"></datalist>
                 <input id="quantidade" type="number" min="0" placeholder="Quantidade" />
                 <button type="submit">Entrada de Produto</button>
             </form>
@@ -205,48 +201,57 @@
             <div id="filtro-info" class="filtro-info"></div>
 
             <div id="resumo-financeiro" class="resumo-financeiro"></div>
-            <form id="financeiro-form" tabindex="0">
-                <div class="form-group-tipo">
-                    <label for="tipo-lancamento">Tipo de Lançamento:</label>
-                    <div class="tipo-selector">
-                        <input type="radio" id="tipo-receita" name="tipo-lancamento" value="receita" checked>
-                        <label for="tipo-receita" class="tipo-label receita-label">
-                            <span class="tipo-icon"><i class="fas fa-plus-circle"></i></span>
-                            <span class="tipo-text">Receita</span>
-                        </label>
-                        <input type="radio" id="tipo-despesa" name="tipo-lancamento" value="despesa">
-                        <label for="tipo-despesa" class="tipo-label despesa-label">
-                            <span class="tipo-icon"><i class="fas fa-minus-circle"></i></span>
-                            <span class="tipo-text">Despesa</span>
-                        </label>
-                    </div>
+            <div id="financeiro-form">
+                <div class="financeiro-form-header" id="financeiro-form-header">
+                    <h3><i class="fas fa-plus"></i> Adicionar Lançamento</h3>
+                    <i class="fas fa-chevron-right financeiro-form-arrow" id="financeiro-form-arrow"></i>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group-categoria">
-                        <label for="categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
-                        <select id="categoria-lancamento">
-                            <option value="">Selecione uma categoria...</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group-subcategoria">
-                        <label for="subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
-                        <select id="subcategoria-lancamento">
-                            <option value="">Selecione uma subcategoria...</option>
-                        </select>
-                    </div>
+                <div class="financeiro-form-content" id="financeiro-form-content">
+                    <form id="financeiro-form-inner" tabindex="0">
+                        <div class="form-group-tipo">
+                            <label for="tipo-lancamento">Tipo de Lançamento:</label>
+                            <div class="tipo-selector">
+                                <input type="radio" id="tipo-receita" name="tipo-lancamento" value="receita" checked>
+                                <label for="tipo-receita" class="tipo-label receita-label">
+                                    <span class="tipo-icon"><i class="fas fa-plus-circle"></i></span>
+                                    <span class="tipo-text">Receita</span>
+                                </label>
+                                <input type="radio" id="tipo-despesa" name="tipo-lancamento" value="despesa">
+                                <label for="tipo-despesa" class="tipo-label despesa-label">
+                                    <span class="tipo-icon"><i class="fas fa-minus-circle"></i></span>
+                                    <span class="tipo-text">Despesa</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group-categoria">
+                                <label for="categoria-lancamento"><i class="fas fa-tags"></i>Categoria:</label>
+                                <select id="categoria-lancamento">
+                                    <option value="">Selecione uma categoria...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group-subcategoria">
+                                <label for="subcategoria-lancamento"><i class="fas fa-tag"></i>Subcategoria:</label>
+                                <select id="subcategoria-lancamento">
+                                    <option value="">Selecione uma subcategoria...</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <input id="descricao-lancamento" type="text" placeholder="Descrição" />
+                        
+                        <div class="form-row">
+                            <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
+                            <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
+                            <input id="data-lancamento" type="date" />
+                        </div>
+                        <button type="submit">Adicionar</button>
+                    </form>
                 </div>
-                
-                <input id="descricao-lancamento" type="text" placeholder="Descrição" />
-                
-                <div class="form-row">
-                    <input id="quantidade-lancamento" type="number" min="1" placeholder="Quantidade" value="1" />
-                    <input id="valor-lancamento" type="number" step="0.01" placeholder="Valor Total (R$)" />
-                    <input id="data-lancamento" type="date" />
-                </div>
-                <button type="submit">Adicionar</button>
-            </form>
+            </div>
             <ul id="financeiro-lista"></ul>
             
             <!-- Modal Gerenciar Lançamento -->
@@ -488,9 +493,10 @@
                                         </div>
                                         <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do Financeiro (apenas na aba Financeiro):</strong></p>
                                         <div class="shortcuts-list-config">
-                                            <div class="shortcut-item-config"><kbd>←</kbd> Selecionar Receita</div>
-                                            <div class="shortcut-item-config"><kbd>→</kbd> Selecionar Despesa</div>
-                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento</div>
+                                            <div class="shortcut-item-config"><kbd>←</kbd> Expandir formulário e selecionar Receita</div>
+                                            <div class="shortcut-item-config"><kbd>→</kbd> Expandir formulário e selecionar Despesa</div>
+                                            <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos (mantém formulário ativo)</div>
+                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento (mantém formulário ativo)</div>
                                             <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
                                         </div>
                                         <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos dos Gráficos (apenas na aba Gráficos):</strong></p>

@@ -45,23 +45,23 @@
 }
 
 /* Melhorias nos campos do formulário para atalhos */
-#financeiro-form input:not([type="radio"]),
-#financeiro-form select {
+#financeiro-form-inner input:not([type="radio"]),
+#financeiro-form-inner select {
     transition: all 0.2s ease;
     position: relative;
 }
 
-#financeiro-form input:not([type="radio"]):focus,
-#financeiro-form select:focus {
+#financeiro-form-inner input:not([type="radio"]):focus,
+#financeiro-form-inner select:focus {
     transform: scale(1.01);
 }
 
 /* Indicador visual para campo ativo */
-#financeiro-form .form-group-tipo .tipo-label {
+#financeiro-form-inner .form-group-tipo .tipo-label {
     transition: all 0.2s ease;
 }
 
-#financeiro-form .form-group-tipo input:focus + .tipo-label {
+#financeiro-form-inner .form-group-tipo input:focus + .tipo-label {
     transform: scale(1.05);
     box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.3);
 }

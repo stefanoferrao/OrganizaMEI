@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 50);
     
     atualizarSelectSaida();
+    atualizarListaProdutos();
   }
 
   function atualizarSelectSaida() {
@@ -104,6 +105,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Variável para armazenar movimentações de estoque
   let movimentacoesEstoque = [];
+  
+  // Função para atualizar lista suspensa de produtos
+  function atualizarListaProdutos() {
+    const datalist = document.getElementById("produtos-lista");
+    if (!datalist) return;
+    
+    datalist.innerHTML = "";
+    
+    // Carregar movimentações para obter todos os produtos já utilizados
+    carregarMovimentacoes();
+    const produtosUnicos = new Set();
+    
+    // Adicionar produtos do estoque atual
+    if (produtos && Array.isArray(produtos)) {
+      produtos.forEach(p => produtosUnicos.add(p.nome));
+    }
+    
+    // Adicionar produtos das movimentações (incluindo os sem estoque)
+    movimentacoesEstoque.forEach(mov => {
+      if (mov.produto && mov.produto.trim()) {
+        produtosUnicos.add(mov.produto.trim());
+      }
+    });
+    
+    // Criar options para o datalist
+    Array.from(produtosUnicos).sort().forEach(nomeProduto => {
+      const option = document.createElement("option");
+      option.value = nomeProduto;
+      datalist.appendChild(option);
+    });
+  }
   
   // Função para carregar movimentações
   function carregarMovimentacoes() {
@@ -316,6 +348,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Recalcular estoque
         recalcularEstoque();
         renderizarProdutos();
+        atualizarListaProdutos();
         
         // Atualizar módulo financeiro
         atualizarModuloFinanceiro();
@@ -347,6 +380,51 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   window.abrirSaidaProduto = abrirSaidaProduto;
+
+  // Adicionar evento para detectar produtos novos
+  const produtoInput = document.getElementById("produto");
+  if (produtoInput) {
+    produtoInput.addEventListener('input', function() {
+      const valor = this.value.trim();
+      if (valor) {
+        // Verificar se é um produto existente
+        carregarMovimentacoes();
+        const produtosExistentes = new Set();
+        
+        if (produtos && Array.isArray(produtos)) {
+          produtos.forEach(p => produtosExistentes.add(p.nome.toLowerCase()));
+        }
+        
+        movimentacoesEstoque.forEach(mov => {
+          if (mov.produto && mov.produto.trim()) {
+            produtosExistentes.add(mov.produto.trim().toLowerCase());
+          }
+        });
+        
+        const isNovo = !produtosExistentes.has(valor.toLowerCase());
+        
+        // Adicionar indicador visual para produto novo
+        if (isNovo && valor.length > 2) {
+          this.style.borderColor = '#f6ad55';
+          this.title = 'Produto novo - será adicionado ao catálogo';
+        } else {
+          this.style.borderColor = '#4a5568';
+          this.title = '';
+        }
+      }
+    });
+    
+    // Limpar estilo quando perde o foco
+    produtoInput.addEventListener('blur', function() {
+      this.style.borderColor = '';
+      this.title = '';
+    });
+    
+    // Restaurar estilo quando ganha foco
+    produtoInput.addEventListener('focus', function() {
+      this.style.borderColor = '#17acaf';
+    });
+  }
 
   // Formulário de entrada de produto
   const form = document.getElementById("estoque-form");
@@ -396,6 +474,7 @@ document.addEventListener("DOMContentLoaded", function () {
           recalcularEstoque();
           renderizarProdutos();
           atualizarSelectSaida();
+          atualizarListaProdutos();
           
           // Atualizar módulo financeiro
           atualizarModuloFinanceiro();
@@ -496,6 +575,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Recalcular estoque baseado nas movimentações
           recalcularEstoque();
           renderizarProdutos();
+          atualizarListaProdutos();
           
           // Atualizar módulo financeiro
           atualizarModuloFinanceiro();
@@ -734,6 +814,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Recalcular estoque baseado nas movimentações atualizadas
         recalcularEstoque();
         renderizarProdutos();
+        atualizarListaProdutos();
         
         // Atualizar módulo financeiro
         atualizarModuloFinanceiro();
@@ -785,6 +866,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Expor funções globalmente
   window.renderizarProdutos = renderizarProdutos;
   window.atualizarSelectSaida = atualizarSelectSaida;
+  window.atualizarListaProdutos = atualizarListaProdutos;
   window.forcarRecalculoLayout = forcarRecalculoLayout;
   
   // Sincronizar movimentações do Google Sheets ao inicializar
@@ -834,6 +916,7 @@ document.addEventListener("DOMContentLoaded", function () {
   carregarMovimentacoes();
   recalcularEstoque();
   renderizarProdutos();
+  atualizarListaProdutos();
   
   // Verificar se precisa sincronizar após reset de cookies
   const ultimaSincronizacao = localStorage.getItem('ultimaSincronizacaoEstoque');
@@ -865,7 +948,22 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Carregar e filtrar movimentações do produto
     carregarMovimentacoes();
-    const movimentacoesProduto = movimentacoesEstoque.filter(m => m.produto === nomeProduto);
+    const movimentacoesProduto = movimentacoesEstoque
+      .filter(m => m.produto === nomeProduto)
+      .sort((a, b) => {
+        // Converter datas DD/MM/AAAA para objetos Date para comparação
+        const parseDate = (dateStr) => {
+          if (!dateStr) return new Date(0);
+          const [dia, mes, ano] = dateStr.split('/');
+          return new Date(ano, mes - 1, dia);
+        };
+        
+        const dataA = parseDate(a.data);
+        const dataB = parseDate(b.data);
+        
+        // Ordenação decrescente (mais recente primeiro)
+        return dataB - dataA;
+      });
     
     lista.innerHTML = "";
     if (movimentacoesProduto.length === 0) {
@@ -1064,6 +1162,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Recalcular estoque
           recalcularEstoque();
           renderizarProdutos();
+          atualizarListaProdutos();
           
           // Atualizar módulo financeiro
           atualizarModuloFinanceiro();
@@ -1097,5 +1196,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Forçar recálculo inicial após carregamento completo
   setTimeout(() => {
     forcarRecalculoLayout();
+    atualizarListaProdutos(); // Garantir que a lista seja atualizada na inicialização
   }, 2000);
 });
