@@ -401,9 +401,42 @@
                 <!-- Guia Geral -->
                 <div id="config-geral" class="config-tab-content active">
                     <div class="configuracoes-container">
+                        <!-- Legenda do Indicador de Sincronização -->
+                        <div class="sync-legend-container">
+                            <div class="config-header">
+                                <i class="fas fa-circle"></i>
+                                <h3>Indicador de Sincronização</h3>
+                                <p>O ponto colorido no canto superior direito indica o status da integração</p>
+                            </div>
+                            
+                            <div class="sync-legend-items">
+                                <div class="sync-legend-item">
+                                    <div class="sync-legend-dot connected-working"></div>
+                                    <span class="sync-legend-text">Verde: Conectado e funcionando</span>
+                                </div>
+                                <div class="sync-legend-item">
+                                    <div class="sync-legend-dot connected-pending"></div>
+                                    <span class="sync-legend-text">Amarelo: Conectado com pendências</span>
+                                </div>
+                                <div class="sync-legend-item">
+                                    <div class="sync-legend-dot checking"></div>
+                                    <span class="sync-legend-text">Azul: Verificando conexão</span>
+                                </div>
+                                <div class="sync-legend-item">
+                                    <div class="sync-legend-dot error"></div>
+                                    <span class="sync-legend-text">Vermelho: Erro ou não configurado</span>
+                                </div>
+                                <div class="sync-legend-item">
+                                    <div class="sync-legend-dot syncing"></div>
+                                    <span class="sync-legend-text">Azul girando: Sincronizando dados</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr />
+                        
                         <button id="btn-importar-dados" class="config-btn" style="display: none;">Importar Dados</button>
                         <button id="btn-exportar-todos" class="config-btn" style="display: none;">Exportar todos dados</button>
-                        <hr />
                         <button id="btn-readme" class="config-btn"><i class="fas fa-book" style="color: #fff; margin-right: 8px !important;"></i> Ler README</button>
                         <button onclick="startTutorial()" class="config-btn"><i class="fas fa-graduation-cap" style="color: #fff; margin-right: 8px !important;"></i> Refazer Tutorial</button>
                     </div>

@@ -906,6 +906,100 @@ h2.text-xl.font-semibold.mb-4 i {
   margin-right: 8px;
 }
 
+/* Estilos para Legenda do Indicador de Sincronização */
+.sync-legend-container {
+  background: #2d3748;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 2px solid #17acaf;
+  box-shadow: 0 4px 16px rgba(23, 172, 175, 0.1);
+  box-sizing: border-box;
+}
+
+.sync-legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.sync-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.sync-legend-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sync-legend-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.sync-legend-dot.connected-working {
+  background: #38a169;
+}
+
+.sync-legend-dot.connected-pending {
+  background: #ecc94b;
+}
+
+.sync-legend-dot.checking {
+  background: #17acaf;
+}
+
+.sync-legend-dot.error {
+  background: #e53e3e;
+  animation: pulse 2s infinite;
+}
+
+.sync-legend-dot.syncing {
+  background: #17acaf;
+  animation: spin 1s linear infinite;
+}
+
+.sync-legend-text {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Responsividade para a legenda */
+@media (max-width: 600px) {
+  .sync-legend-container {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .sync-legend-items {
+    gap: 10px;
+    padding: 12px 0;
+  }
+  
+  .sync-legend-item {
+    padding: 6px 10px;
+  }
+  
+  .sync-legend-dot {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .sync-legend-text {
+    font-size: 0.9rem;
+  }
+}
+
 /* Estilos para ícones do menu hambúrguer */
 .menu-toggle i.fas.fa-bars,
 .menu-toggle i.fas.fa-times {
