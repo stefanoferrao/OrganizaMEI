@@ -143,6 +143,23 @@ button .fas, button .far, button .fab {
   justify-content: center;
   z-index: 99999;
   backdrop-filter: blur(2px);
+  opacity: 1;
+  transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/* Animação de fade-out para modais */
+.modal-bg.modal-fade-out {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  pointer-events: none;
+}
+
+/* Prevenir conflitos em mobile */
+@media screen and (max-width: 768px) {
+  .modal-bg.modal-fade-out {
+    display: flex !important;
+    visibility: visible !important;
+  }
 }
 
 /* Melhorar modal de saída especificamente */
@@ -378,6 +395,22 @@ button .fas, button .far, button .fab {
 
 .modal-hidden {
   display: none;
+}
+
+/* Animação de entrada para modais */
+.modal-bg:not(.modal-hidden) {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(2px);
+  }
 }
 
 .input-margin-bottom {

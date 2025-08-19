@@ -36,7 +36,9 @@
   .modal-bg.modal-hidden {
     display: none !important;
     visibility: hidden !important;
-    
+  }
+  
+  .modal-bg:not(.modal-hidden) {
     /* Configurações para lidar com teclado virtual */
     height: 100vh !important;
     height: 100dvh !important; /* Dynamic viewport height para navegadores modernos */

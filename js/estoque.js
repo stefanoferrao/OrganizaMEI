@@ -1085,7 +1085,13 @@ document.addEventListener("DOMContentLoaded", function () {
   };
   
   window.fecharMovimentacoesModal = function() {
-    document.getElementById("movimentacoes-modal").classList.add('modal-hidden');
+    const modal = document.getElementById("movimentacoes-modal");
+    modal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      modal.classList.add('modal-hidden');
+      modal.classList.remove('modal-fade-out');
+    }, 300);
   };
   
   window.abrirGerenciarMovimentacao = function(movimentacaoId) {
@@ -1106,13 +1112,25 @@ document.addEventListener("DOMContentLoaded", function () {
       ${movimentacao.data} | R$ ${valorTotal.toFixed(2)}
     `;
     
-    document.getElementById("movimentacoes-modal").classList.add('modal-hidden');
-    modal.classList.remove('modal-hidden');
+    const movimentacoesModal = document.getElementById("movimentacoes-modal");
+    movimentacoesModal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      movimentacoesModal.classList.add('modal-hidden');
+      movimentacoesModal.classList.remove('modal-fade-out');
+      modal.classList.remove('modal-hidden');
+    }, 300);
   };
   
   window.fecharGerenciarMovimentacaoModal = function() {
-    document.getElementById("gerenciar-movimentacao-modal").classList.add('modal-hidden');
-    movimentacaoSendoGerenciada = null;
+    const modal = document.getElementById("gerenciar-movimentacao-modal");
+    modal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      modal.classList.add('modal-hidden');
+      modal.classList.remove('modal-fade-out');
+      movimentacaoSendoGerenciada = null;
+    }, 300);
   };
   
   window.abrirEdicaoMovimentacao = function() {
@@ -1149,17 +1167,38 @@ document.addEventListener("DOMContentLoaded", function () {
   };
   
   window.fecharEdicaoMovimentacao = function() {
-    document.getElementById("editar-movimentacao-modal").classList.add('modal-hidden');
-    movimentacaoSendoGerenciada = null;
+    const modal = document.getElementById("editar-movimentacao-modal");
+    modal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      modal.classList.add('modal-hidden');
+      modal.classList.remove('modal-fade-out');
+      movimentacaoSendoGerenciada = null;
+    }, 300);
   };
   
   window.confirmarExclusaoMovimentacao = function() {
     if (movimentacaoSendoGerenciada !== null) {
       const movimentacaoId = movimentacaoSendoGerenciada;
-      document.getElementById("gerenciar-movimentacao-modal").classList.add('modal-hidden');
-      document.getElementById("movimentacoes-modal").classList.add('modal-hidden');
-      removerMovimentacao(movimentacaoId);
-      movimentacaoSendoGerenciada = null;
+      const gerenciarModal = document.getElementById("gerenciar-movimentacao-modal");
+      const movimentacoesModal = document.getElementById("movimentacoes-modal");
+      
+      gerenciarModal.classList.add('modal-fade-out');
+      
+      setTimeout(() => {
+        gerenciarModal.classList.add('modal-hidden');
+        gerenciarModal.classList.remove('modal-fade-out');
+        
+        movimentacoesModal.classList.add('modal-fade-out');
+        
+        setTimeout(() => {
+          movimentacoesModal.classList.add('modal-hidden');
+          movimentacoesModal.classList.remove('modal-fade-out');
+          
+          removerMovimentacao(movimentacaoId);
+          movimentacaoSendoGerenciada = null;
+        }, 300);
+      }, 300);
     }
   };
   
@@ -1256,7 +1295,14 @@ document.addEventListener("DOMContentLoaded", function () {
             renderizarDashboardResumo();
           }
           
-          fecharEdicaoMovimentacao();
+          const editarModal = document.getElementById("editar-movimentacao-modal");
+          editarModal.classList.add('modal-fade-out');
+          
+          setTimeout(() => {
+            editarModal.classList.add('modal-hidden');
+            editarModal.classList.remove('modal-fade-out');
+            movimentacaoSendoGerenciada = null;
+          }, 300);
         }
       } catch (error) {
         console.error('Erro na edição:', error);

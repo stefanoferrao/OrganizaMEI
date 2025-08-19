@@ -1097,6 +1097,22 @@
   z-index: 1000;
   padding-top: 10vh;
   overflow-y: auto;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Animação de fade-out para modais */
+.modal-bg.modal-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Prevenir conflitos em mobile */
+@media screen and (max-width: 768px) {
+  .modal-bg.modal-fade-out {
+    display: flex !important;
+    visibility: visible !important;
+  }
 }
 
 .modal-content {
@@ -1175,6 +1191,22 @@
 
 .modal-hidden {
   display: none;
+}
+
+/* Animação de entrada para modais */
+.modal-bg:not(.modal-hidden) {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(2px);
+  }
 }
 
 /* Estilos para formulário de edição */

@@ -785,8 +785,14 @@ document.addEventListener("DOMContentLoaded", function () {
   };
   
   window.fecharGerenciarLancamentoModal = function() {
-    document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
-    lancamentoSendoGerenciado = null;
+    const modal = document.getElementById("gerenciar-lancamento-modal");
+    modal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      modal.classList.add('modal-hidden');
+      modal.classList.remove('modal-fade-out');
+      lancamentoSendoGerenciado = null;
+    }, 300);
   };
   
   window.abrirEdicaoLancamento = function() {
@@ -830,13 +836,25 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById('editar-data-lancamento').value = dataFormatada;
     }
     
-    document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
-    modal.classList.remove('modal-hidden');
+    const gerenciarModal = document.getElementById("gerenciar-lancamento-modal");
+    gerenciarModal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      gerenciarModal.classList.add('modal-hidden');
+      gerenciarModal.classList.remove('modal-fade-out');
+      modal.classList.remove('modal-hidden');
+    }, 300);
   };
   
   window.fecharEdicaoLancamento = function() {
-    document.getElementById("editar-lancamento-modal").classList.add('modal-hidden');
-    lancamentoSendoGerenciado = null;
+    const modal = document.getElementById("editar-lancamento-modal");
+    modal.classList.add('modal-fade-out');
+    
+    setTimeout(() => {
+      modal.classList.add('modal-hidden');
+      modal.classList.remove('modal-fade-out');
+      lancamentoSendoGerenciado = null;
+    }, 300);
   };
   
   window.confirmarExclusaoLancamento = async function() {
@@ -847,13 +865,19 @@ document.addEventListener("DOMContentLoaded", function () {
     
     if (lancamentoSendoGerenciado !== null) {
       const lancamento = lancamentos[lancamentoSendoGerenciado];
-      document.getElementById("gerenciar-lancamento-modal").classList.add('modal-hidden');
+      const gerenciarModal = document.getElementById("gerenciar-lancamento-modal");
+      gerenciarModal.classList.add('modal-fade-out');
       
-      secureLog('=== INICIANDO EXCLUSÃO ROBUSTA ===');
-      secureLog('ID do lançamento a ser excluído:', lancamento.id);
-      
-      removerLancamento(lancamentoSendoGerenciado);
-      lancamentoSendoGerenciado = null;
+      setTimeout(() => {
+        gerenciarModal.classList.add('modal-hidden');
+        gerenciarModal.classList.remove('modal-fade-out');
+        
+        secureLog('=== INICIANDO EXCLUSÃO ROBUSTA ===');
+        secureLog('ID do lançamento a ser excluído:', lancamento.id);
+        
+        removerLancamento(lancamentoSendoGerenciado);
+        lancamentoSendoGerenciado = null;
+      }, 300);
     }
   };
   

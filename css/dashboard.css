@@ -514,39 +514,6 @@
   }
 }
 
-/* Garantir que o dashboard caiba na tela */
-@media (max-height: 800px) {
-  .dashboard-container {
-    gap: min(1vw, 12px);
-    max-height: calc(100vh - 100px);
-  }
-  
-  .dashboard-card {
-    min-height: min(12vh, 120px);
-    max-height: min(15vh, 140px);
-    padding: min(1.5vh, 16px) min(1.5vw, 12px);
-  }
-  
-  .dashboard-icon {
-    font-size: min(3vw, 1.8rem);
-    margin-bottom: min(0.8vh, 8px);
-  }
-  
-  .dashboard-label {
-    font-size: min(2vw, 0.9rem);
-    margin-bottom: min(0.5vh, 4px);
-  }
-  
-  .dashboard-value {
-    font-size: min(2.5vw, 1.3rem);
-  }
-  
-  .dashboard-periodo {
-    font-size: min(1.8vw, 0.8rem);
-    margin-top: min(0.3vh, 2px);
-  }
-}
-
 @media (max-height: 600px) {
   .dashboard-container {
     gap: min(0.8vw, 8px);
