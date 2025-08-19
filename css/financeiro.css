@@ -1271,3 +1271,26 @@
     right: 5px;
   }
 }
+
+/* === HOVER PARA TEMA PADRÃO === */
+/* Hover para lancamento-item no tema padrão */
+.lancamento-item:hover {
+  transform: translateX(6px);
+  box-shadow: 0 4px 15px rgba(23, 172, 175, 0.3);
+  transition: all 0.3s ease;
+}
+
+.lancamento-item.receita:hover {
+  box-shadow: 0 4px 15px rgba(56, 161, 105, 0.4);
+  background-color: #2c824cd7;
+}
+
+.lancamento-item.receita-vendas:hover {
+  box-shadow: 0 4px 15px rgba(49, 130, 206, 0.4);
+  background-color: #2c5382d7;
+}
+
+.lancamento-item.despesa:hover {
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+  background-color: #CC0000d7;
+}
