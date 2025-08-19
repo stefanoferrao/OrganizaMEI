@@ -108,7 +108,7 @@
 
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 5.0</div>
+            <div class="version-info">Versão 5.1</div>
         </div>
     </aside>
 
@@ -215,6 +215,17 @@
         <!-- Financeiro -->
         <section id="financeiro" class="tab-section">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-dollar-sign"></i>Financeiro</h2>
+
+            <!-- Campo de Pesquisa -->
+            <div class="pesquisa-financeiro">
+                <div class="pesquisa-input-group">
+                    <i class="fas fa-search pesquisa-icon"></i>
+                    <input id="pesquisa-financeiro" type="text" placeholder="Pesquisar por descrição, categoria ou valor..." />
+                    <button id="limpar-pesquisa" type="button" class="limpar-pesquisa" title="Limpar pesquisa">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
 
             <div id="filtro-info" class="filtro-info"></div>
 
@@ -426,23 +437,23 @@
                             <div class="sync-legend-items">
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot connected-working"></div>
-                                    <span class="sync-legend-text">Verde: Conectado e funcionando</span>
+                                    <span class="sync-legend-text">Conectado e funcionando</span>
                                 </div>
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot connected-pending"></div>
-                                    <span class="sync-legend-text">Amarelo: Conectado com pendências</span>
+                                    <span class="sync-legend-text">Conectado com pendências</span>
                                 </div>
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot checking"></div>
-                                    <span class="sync-legend-text">Azul: Verificando conexão</span>
+                                    <span class="sync-legend-text">Verificando conexão</span>
                                 </div>
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot syncing"></div>
-                                    <span class="sync-legend-text">Azul pulsando: Sincronizando dados</span>
+                                    <span class="sync-legend-text">Sincronizando dados</span>
                                 </div>
                                 <div class="sync-legend-item">
                                     <div class="sync-legend-dot error"></div>
-                                    <span class="sync-legend-text">Vermelho: Erro ou não configurado</span>
+                                    <span class="sync-legend-text">Erro ou não configurado</span>
                                 </div>
                             </div>
                         </div>
@@ -572,8 +583,7 @@
                                                 selecionar Despesa</div>
                                             <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos
                                                 (mantém formulário ativo)</div>
-                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Adicionar lançamento
-                                                (mantém formulário ativo)</div>
+
                                             <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
                                         </div>
                                         <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos

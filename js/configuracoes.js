@@ -27,7 +27,6 @@ class ShortcutSystem {
         this.financeiroShortcuts = {
             'ArrowLeft': () => this.selectReceita(),
             'ArrowRight': () => this.selectDespesa(),
-            'Enter': () => this.submitForm(),
             'Tab': () => this.handleTabNavigation(),
             'Escape': () => this.clearForm()
         };

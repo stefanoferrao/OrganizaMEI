@@ -1,29 +1,32 @@
 /* Tema Office - Cores Profissionais de Escritório */
 body[data-theme="office"] {
     /* Cores principais */
-    --primary-color: #2c3e50; /* Azul acinzentado profissional */
-    --secondary-color: #9d9d9d; /* Cinza azulado */
-    --accent-color: #1a252f; /* Cinza escuro */
+    --primary-color: #2c3e50;
+    /* Azul acinzentado profissional */
+    --secondary-color: #9d9d9d;
+    /* Cinza azulado */
+    --accent-color: #1a252f;
+    /* Cinza escuro */
     --background-color: #f8f9fa;
     --background-secondary: #e9ecef;
     --surface-color: #2c3e5022;
     --card-background: #2c3e50;
-    
+
     /* Cores de texto */
     --text-primary: #e9ecef;
     --text-secondary: #ffffff;
     --text-muted: #868686;
-    
+
     /* Cores de status */
     --success-color: #28a745;
     --warning-color: #ffc107;
     --error-color: #dc3545;
     --info-color: #17a2b8;
-    
+
     /* Gradientes */
     --gradient-primary: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #1a252f 100%);
     --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    
+
     /* Bordas e sombras */
     --border-color: #dee2e676;
     --shadow-color: rgba(44, 62, 80, 0.1);
@@ -122,13 +125,13 @@ body[data-theme="office"] .menu-toggle:hover {
     transform: scale(1.05) !important;
 }
 
-body[data-theme="office"] .menu-toggle i.fas.fa-bars, 
+body[data-theme="office"] .menu-toggle i.fas.fa-bars,
 body[data-theme="office"] .menu-toggle i.fas.fa-times {
     color: #ffffff !important;
 }
 
 /* === CARDS === */
-body[data-theme="office"] .card, 
+body[data-theme="office"] .card,
 body[data-theme="office"] .dashboard-card {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;
@@ -169,16 +172,16 @@ body[data-theme="office"] form button:hover {
 }
 
 /* === INPUTS === */
-body[data-theme="office"] input, 
-body[data-theme="office"] select, 
+body[data-theme="office"] input,
+body[data-theme="office"] select,
 body[data-theme="office"] textarea {
     background: var(--surface-color) !important;
     border: 2px solid var(--border-color) !important;
     color: var(--text-primary) !important;
 }
 
-body[data-theme="office"] input:focus, 
-body[data-theme="office"] select:focus, 
+body[data-theme="office"] input:focus,
+body[data-theme="office"] select:focus,
 body[data-theme="office"] textarea:focus {
     border-color: var(--secondary-color) !important;
     box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
@@ -445,144 +448,144 @@ body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
 
 /* Modais responsivos para tema office */
 @media screen and (max-width: 768px) {
-  body[data-theme="office"] .modal-bg {
-    background: rgba(0, 0, 0, 0.6) !important;
-  }
-  
-  body[data-theme="office"] .modal-content {
-    background: var(--card-background) !important;
-    border: 2px solid var(--border-color) !important;
-    box-shadow: 0 8px 32px var(--shadow-color) !important;
-  }
-  
-  body[data-theme="office"] .modal-title {
-    color: var(--secondary-color) !important;
-    border-bottom: 2px solid var(--border-color) !important;
-    padding-bottom: 8px !important;
-  }
-  
-  body[data-theme="office"] .modal-content input,
-  body[data-theme="office"] .modal-content select,
-  body[data-theme="office"] .modal-content textarea,
-  body[data-theme="office"] .input-editar {
-    background: var(--surface-color) !important;
-    border: 2px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
-  }
-  
-  body[data-theme="office"] .modal-content input:focus,
-  body[data-theme="office"] .modal-content select:focus,
-  body[data-theme="office"] .modal-content textarea:focus,
-  body[data-theme="office"] .input-editar:focus {
-    border-color: var(--secondary-color) !important;
-    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
-    background: var(--card-background) !important;
-  }
-  
-  body[data-theme="office"] .modal-confirm,
-  body[data-theme="office"] .modal-edit,
-  body[data-theme="office"] .modal-btn-modern,
-  body[data-theme="office"] .modal-confirm.modal-btn-editar {
-    background: var(--gradient-primary) !important;
-    box-shadow: 0 4px 12px var(--glow-color) !important;
-  }
-  
-  body[data-theme="office"] .modal-confirm:hover,
-  body[data-theme="office"] .modal-edit:hover,
-  body[data-theme="office"] .modal-btn-modern:hover,
-  body[data-theme="office"] .modal-confirm.modal-btn-editar:hover {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
-    box-shadow: 0 6px 20px var(--glow-color) !important;
-  }
-  
-  body[data-theme="office"] .modal-cancel,
-  body[data-theme="office"] .modal-cancel.modal-btn-modern,
-  body[data-theme="office"] .modal-cancel.modal-btn-editar {
-    background: linear-gradient(135deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
-    box-shadow: 0 4px 12px var(--shadow-color) !important;
-  }
-  
-  body[data-theme="office"] .modal-cancel:hover,
-  body[data-theme="office"] .modal-cancel.modal-btn-modern:hover,
-  body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
-    box-shadow: 0 6px 20px var(--shadow-color) !important;
-  }
-  
-  body[data-theme="office"] .modal-delete,
-  body[data-theme="office"] .modal-delete.modal-btn-modern {
-    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
-    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3) !important;
-  }
-  
-  body[data-theme="office"] .modal-delete:hover,
-  body[data-theme="office"] .modal-delete.modal-btn-modern:hover {
-    background: linear-gradient(135deg, #c53030 0%, #9c2626 100%) !important;
-    box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4) !important;
-  }
-  
-  body[data-theme="office"] .modal-info-card {
-    background: var(--card-background) !important;
-    border-left: 4px solid var(--secondary-color) !important;
-    box-shadow: 0 4px 12px var(--shadow-color) !important;
-    color: var(--text-primary) !important;
-  }
-  
-  body[data-theme="office"] .movimentacao-item {
-    background: var(--card-background) !important;
-    border-left: 4px solid var(--secondary-color) !important;
-    box-shadow: 0 4px 12px var(--shadow-color) !important;
-  }
-  
-  body[data-theme="office"] .movimentacao-item:hover {
-    box-shadow: 0 6px 20px var(--glow-color) !important;
-    border-left-color: var(--primary-color) !important;
-  }
-  
-  body[data-theme="office"] .btn-gerenciar-movimentacao {
-    background: var(--gradient-primary) !important;
-    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.3) !important;
-  }
-  
-  body[data-theme="office"] .btn-gerenciar-movimentacao:hover {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
-    box-shadow: 0 4px 12px var(--glow-color) !important;
-  }
-  
-  /* Ajustes para teclado virtual */
-  @media (max-height: 500px) {
+    body[data-theme="office"] .modal-bg {
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+
     body[data-theme="office"] .modal-content {
-      padding: 12px !important;
+        background: var(--card-background) !important;
+        border: 2px solid var(--border-color) !important;
+        box-shadow: 0 8px 32px var(--shadow-color) !important;
     }
-    
+
     body[data-theme="office"] .modal-title {
-      font-size: 1rem !important;
-      margin-bottom: 8px !important;
+        color: var(--secondary-color) !important;
+        border-bottom: 2px solid var(--border-color) !important;
+        padding-bottom: 8px !important;
     }
-  }
-  
-  /* Scrollbar customizada para tema office */
-  body[data-theme="office"] .modal-content::-webkit-scrollbar,
-  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar {
-    width: 6px !important;
-  }
-  
-  body[data-theme="office"] .modal-content::-webkit-scrollbar-track,
-  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-track {
-    background: var(--surface-color) !important;
-    border-radius: 3px !important;
-  }
-  
-  body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb,
-  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb {
-    background: var(--secondary-color) !important;
-    border-radius: 3px !important;
-  }
-  
-  body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb:hover,
-  body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color) !important;
-  }
+
+    body[data-theme="office"] .modal-content input,
+    body[data-theme="office"] .modal-content select,
+    body[data-theme="office"] .modal-content textarea,
+    body[data-theme="office"] .input-editar {
+        background: var(--surface-color) !important;
+        border: 2px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+    }
+
+    body[data-theme="office"] .modal-content input:focus,
+    body[data-theme="office"] .modal-content select:focus,
+    body[data-theme="office"] .modal-content textarea:focus,
+    body[data-theme="office"] .input-editar:focus {
+        border-color: var(--secondary-color) !important;
+        box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+        background: var(--card-background) !important;
+    }
+
+    body[data-theme="office"] .modal-confirm,
+    body[data-theme="office"] .modal-edit,
+    body[data-theme="office"] .modal-btn-modern,
+    body[data-theme="office"] .modal-confirm.modal-btn-editar {
+        background: var(--gradient-primary) !important;
+        box-shadow: 0 4px 12px var(--glow-color) !important;
+    }
+
+    body[data-theme="office"] .modal-confirm:hover,
+    body[data-theme="office"] .modal-edit:hover,
+    body[data-theme="office"] .modal-btn-modern:hover,
+    body[data-theme="office"] .modal-confirm.modal-btn-editar:hover {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+        box-shadow: 0 6px 20px var(--glow-color) !important;
+    }
+
+    body[data-theme="office"] .modal-cancel,
+    body[data-theme="office"] .modal-cancel.modal-btn-modern,
+    body[data-theme="office"] .modal-cancel.modal-btn-editar {
+        background: linear-gradient(135deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
+        box-shadow: 0 4px 12px var(--shadow-color) !important;
+    }
+
+    body[data-theme="office"] .modal-cancel:hover,
+    body[data-theme="office"] .modal-cancel.modal-btn-modern:hover,
+    body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
+        box-shadow: 0 6px 20px var(--shadow-color) !important;
+    }
+
+    body[data-theme="office"] .modal-delete,
+    body[data-theme="office"] .modal-delete.modal-btn-modern {
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3) !important;
+    }
+
+    body[data-theme="office"] .modal-delete:hover,
+    body[data-theme="office"] .modal-delete.modal-btn-modern:hover {
+        background: linear-gradient(135deg, #c53030 0%, #9c2626 100%) !important;
+        box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4) !important;
+    }
+
+    body[data-theme="office"] .modal-info-card {
+        background: var(--card-background) !important;
+        border-left: 4px solid var(--secondary-color) !important;
+        box-shadow: 0 4px 12px var(--shadow-color) !important;
+        color: var(--text-primary) !important;
+    }
+
+    body[data-theme="office"] .movimentacao-item {
+        background: var(--card-background) !important;
+        border-left: 4px solid var(--secondary-color) !important;
+        box-shadow: 0 4px 12px var(--shadow-color) !important;
+    }
+
+    body[data-theme="office"] .movimentacao-item:hover {
+        box-shadow: 0 6px 20px var(--glow-color) !important;
+        border-left-color: var(--primary-color) !important;
+    }
+
+    body[data-theme="office"] .btn-gerenciar-movimentacao {
+        background: var(--gradient-primary) !important;
+        box-shadow: 0 2px 6px rgba(44, 62, 80, 0.3) !important;
+    }
+
+    body[data-theme="office"] .btn-gerenciar-movimentacao:hover {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+        box-shadow: 0 4px 12px var(--glow-color) !important;
+    }
+
+    /* Ajustes para teclado virtual */
+    @media (max-height: 500px) {
+        body[data-theme="office"] .modal-content {
+            padding: 12px !important;
+        }
+
+        body[data-theme="office"] .modal-title {
+            font-size: 1rem !important;
+            margin-bottom: 8px !important;
+        }
+    }
+
+    /* Scrollbar customizada para tema office */
+    body[data-theme="office"] .modal-content::-webkit-scrollbar,
+    body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar {
+        width: 6px !important;
+    }
+
+    body[data-theme="office"] .modal-content::-webkit-scrollbar-track,
+    body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-track {
+        background: var(--surface-color) !important;
+        border-radius: 3px !important;
+    }
+
+    body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb,
+    body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb {
+        background: var(--secondary-color) !important;
+        border-radius: 3px !important;
+    }
+
+    body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb:hover,
+    body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-color) !important;
+    }
 }
 
 body[data-theme="office"] .cat-nome,
@@ -615,7 +618,7 @@ body[data-theme="office"] button[onclick^="adicionarCategoria"] {
     background: var(--gradient-primary) !important;
 }
 
-body[data-theme="office"] .cat-btn-editar i.fa-edit, 
+body[data-theme="office"] .cat-btn-editar i.fa-edit,
 body[data-theme="office"] .cat-btn-editar-sub i.fa-edit {
     color: var(--primary-color) !important;
 }
@@ -632,14 +635,14 @@ body[data-theme="office"] .resumo-financeiro strong {
 }
 
 body[data-theme="office"] .receita-label.tipo-label:hover,
-body[data-theme="office"] .tipo-selector input[type="radio"]:checked + .receita-label {
+body[data-theme="office"] .tipo-selector input[type="radio"]:checked+.receita-label {
     border-color: var(--success-color) !important;
     color: var(--success-color) !important;
     background: rgba(40, 167, 69, 0.1) !important;
 }
 
 body[data-theme="office"] .despesa-label.tipo-label:hover,
-body[data-theme="office"] .tipo-selector input[type="radio"]:checked + .despesa-label {
+body[data-theme="office"] .tipo-selector input[type="radio"]:checked+.despesa-label {
     border-color: var(--error-color) !important;
     color: var(--error-color) !important;
     background: rgba(220, 53, 69, 0.1) !important;
@@ -726,7 +729,7 @@ body[data-theme="office"] .shortcuts-header h3 i.fa-keyboard {
     color: var(--secondary-color) !important;
 }
 
-body[data-theme="office"] .checkbox-atalhos input[type="checkbox"]:checked + .checkmark {
+body[data-theme="office"] .checkbox-atalhos input[type="checkbox"]:checked+.checkmark {
     background: var(--secondary-color) !important;
     border-color: var(--secondary-color) !important;
 }
@@ -862,6 +865,29 @@ body[data-theme="office"] .mini-sync-indicator.success .mini-sync-dot {
 body[data-theme="office"] .mini-sync-indicator.error .mini-sync-dot {
     background: var(--error-color) !important;
     border-color: var(--error-color) !important;
+}
+
+/* === LEGENDA DO INDICADOR DE SINCRONIZAÇÃO === */
+body[data-theme="office"] .sync-legend-dot.connected-working {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(52, 73, 94, 0.3) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+body[data-theme="office"] .sync-legend-dot.connected-pending {
+    background: var(--warning-color) !important;
+}
+
+body[data-theme="office"] .sync-legend-dot.checking {
+    background: var(--info-color) !important;
+}
+
+body[data-theme="office"] .sync-legend-dot.syncing {
+    background: var(--info-color) !important;
+}
+
+body[data-theme="office"] .sync-legend-dot.error {
+    background: var(--error-color) !important;
 }
 
 /* === LOGO === */

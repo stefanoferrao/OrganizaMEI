@@ -3,9 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   opacity: 1;
+  height: fit-content;
+  max-height: calc(100vh - 80px);
+  overflow: visible;
 }
 
 #dashboard-resumo.animate {
@@ -64,41 +67,57 @@
 
 .dashboard-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: min(2vw, 20px);
   justify-content: center;
   margin-bottom: 24px;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto 24px auto;
-  padding: 0 16px;
+  padding: 0 min(2vw, 16px);
+  height: fit-content;
+  max-height: calc(100vh - 120px);
 }
 
 .dashboard-container.animate {
   animation: slideInLeft 0.6s ease-out 0.2s both;
 }
 
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: min(1.5vw, 16px);
+  }
+}
+
 @media (max-width: 600px) {
   .dashboard-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 0 8px;
+    gap: min(2vw, 12px);
+    padding: 0 min(2vw, 8px);
+    max-height: calc(100vh - 100px);
   }
 }
 
 .dashboard-card {
-  border-radius: 16px;
+  border-radius: min(2vw, 16px);
   box-shadow: 0 6px 24px rgba(49, 130, 206, 0.13);
-  min-width: 180px;
-  padding: 24px 20px;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  min-height: min(20vh, 180px);
+  max-height: min(25vh, 220px);
+  padding: min(3vh, 24px) min(2vw, 20px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   opacity: 1;
   transition: all 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .dashboard-card.animate {
@@ -131,11 +150,21 @@
   transition: all 0.1s ease;
 }
 
+@media (max-width: 1200px) {
+  .dashboard-card {
+    min-height: min(18vh, 160px);
+    max-height: min(22vh, 200px);
+    padding: min(2.5vh, 20px) min(2vw, 16px);
+  }
+}
+
 @media (max-width: 600px) {
   .dashboard-card {
-    padding: 16px 12px;
+    padding: min(2vh, 16px) min(3vw, 12px);
     min-width: 0;
-    border-radius: 12px;
+    border-radius: min(3vw, 12px);
+    min-height: min(15vh, 140px);
+    max-height: min(18vh, 160px);
   }
 }
 
@@ -223,10 +252,11 @@
 }
 
 .dashboard-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+  font-size: min(4vw, 2.5rem);
+  margin-bottom: min(1.5vh, 12px);
   transition: transform 0.3s ease;
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 
 .dashboard-card:hover .dashboard-icon {
@@ -300,20 +330,30 @@
 }
 
 .dashboard-label {
-  font-size: 1.1rem;
-  margin-bottom: 6px;
+  font-size: min(2.2vw, 1.1rem);
+  margin-bottom: min(0.8vh, 6px);
   font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-icon {
+    font-size: min(3.5vw, 2.2rem);
+    margin-bottom: min(1.2vh, 10px);
+  }
 }
 
 @media (max-width: 600px) {
   .dashboard-icon {
-    font-size: 2rem;
-    margin-bottom: 8px;
+    font-size: min(6vw, 2rem);
+    margin-bottom: min(1vh, 8px);
   }
   
   .dashboard-label {
-    font-size: 0.9rem;
-    margin-bottom: 4px;
+    font-size: min(3.5vw, 0.9rem);
+    margin-bottom: min(0.5vh, 4px);
   }
 }
 
@@ -332,11 +372,14 @@
 }
 
 .dashboard-value {
-  font-size: 1.7rem;
+  font-size: min(3vw, 1.7rem);
   font-weight: bold;
-  margin-bottom: 2px;
+  margin-bottom: min(0.3vh, 2px);
   transition: all 0.3s ease;
   position: relative;
+  line-height: 1.1;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .dashboard-card:hover .dashboard-value {
@@ -344,10 +387,17 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
+@media (max-width: 1200px) {
+  .dashboard-value {
+    font-size: min(2.8vw, 1.5rem);
+    margin-bottom: min(0.3vh, 2px);
+  }
+}
+
 @media (max-width: 600px) {
   .dashboard-value {
-    font-size: 1.4rem;
-    margin-bottom: 2px;
+    font-size: min(4.5vw, 1.4rem);
+    margin-bottom: min(0.2vh, 2px);
   }
 }
 
@@ -369,15 +419,25 @@
 }
 
 .dashboard-periodo {
-  font-size: 1rem;
-  margin-top: 4px;
+  font-size: min(2vw, 1rem);
+  margin-top: min(0.5vh, 4px);
   color: #e2e8f0;
+  line-height: 1.2;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-periodo {
+    font-size: min(1.8vw, 0.9rem);
+    margin-top: min(0.4vh, 3px);
+  }
 }
 
 @media (max-width: 600px) {
   .dashboard-periodo {
-    font-size: 0.8rem;
-    margin-top: 2px;
+    font-size: min(3vw, 0.8rem);
+    margin-top: min(0.3vh, 2px);
   }
   
   .dashboard-card:hover {
@@ -451,6 +511,85 @@
   }
   50% {
     background-position: 200% 0;
+  }
+}
+
+/* Garantir que o dashboard caiba na tela */
+@media (max-height: 800px) {
+  .dashboard-container {
+    gap: min(1vw, 12px);
+    max-height: calc(100vh - 100px);
+  }
+  
+  .dashboard-card {
+    min-height: min(12vh, 120px);
+    max-height: min(15vh, 140px);
+    padding: min(1.5vh, 16px) min(1.5vw, 12px);
+  }
+  
+  .dashboard-icon {
+    font-size: min(3vw, 1.8rem);
+    margin-bottom: min(0.8vh, 8px);
+  }
+  
+  .dashboard-label {
+    font-size: min(2vw, 0.9rem);
+    margin-bottom: min(0.5vh, 4px);
+  }
+  
+  .dashboard-value {
+    font-size: min(2.5vw, 1.3rem);
+  }
+  
+  .dashboard-periodo {
+    font-size: min(1.8vw, 0.8rem);
+    margin-top: min(0.3vh, 2px);
+  }
+}
+
+@media (max-height: 600px) {
+  .dashboard-container {
+    gap: min(0.8vw, 8px);
+    max-height: calc(100vh - 80px);
+  }
+  
+  .dashboard-card {
+    min-height: min(10vh, 100px);
+    max-height: min(12vh, 120px);
+    padding: min(1vh, 12px) min(1vw, 10px);
+  }
+  
+  .dashboard-icon {
+    font-size: min(2.5vw, 1.5rem);
+    margin-bottom: min(0.5vh, 6px);
+  }
+  
+  .dashboard-label {
+    font-size: min(1.8vw, 0.8rem);
+    margin-bottom: min(0.3vh, 3px);
+  }
+  
+  .dashboard-value {
+    font-size: min(2.2vw, 1.1rem);
+  }
+  
+  .dashboard-periodo {
+    font-size: min(1.5vw, 0.7rem);
+    margin-top: min(0.2vh, 1px);
+  }
+}
+
+/* Layout especial para telas muito largas */
+@media (min-width: 1400px) {
+  .dashboard-container {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1400px;
+    gap: 24px;
+  }
+  
+  .dashboard-card {
+    min-height: 200px;
+    max-height: 240px;
   }
 }
 

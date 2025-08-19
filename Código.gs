@@ -123,6 +123,12 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
+    if (data.action === 'verificarSincronizacaoInteligente') {
+      return ContentService
+        .createTextOutput(JSON.stringify(verificarSincronizacaoInteligente(data.dadosLocais)))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
     return ContentService
       .createTextOutput(JSON.stringify({success: false, message: 'Ação não reconhecida'}))
       .setMimeType(ContentService.MimeType.JSON);
@@ -1250,6 +1256,88 @@ function verificarTimestamp(timestampLocal) {
     
   } catch (error) {
     console.error('Erro na verificação de timestamp:', error);
+    return { success: false, message: error.toString() };
+  }
+}
+
+// NOVA FUNÇÃO: Verificação inteligente de sincronização
+function verificarSincronizacaoInteligente(dadosLocais) {
+  try {
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    
+    // Coletar dados remotos
+    const dadosRemotos = {
+      financeiro: [],
+      estoque: []
+    };
+    
+    // Ler dados do Financeiro
+    const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+    if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+      const dados = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 1).getValues();
+      dadosRemotos.financeiro = dados.map(row => String(row[0]).replace(/^'/, '')).filter(id => id);
+    }
+    
+    // Ler dados do Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const dados = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 1).getValues();
+      dadosRemotos.estoque = dados.map(row => String(row[0]).replace(/^'/, '')).filter(id => id);
+    }
+    
+    // Se não há dados locais nem remotos, considera sincronizado
+    if ((!dadosLocais.financeiro || dadosLocais.financeiro.length === 0) && 
+        (!dadosLocais.estoque || dadosLocais.estoque.length === 0) &&
+        dadosRemotos.financeiro.length === 0 && dadosRemotos.estoque.length === 0) {
+      return {
+        success: true,
+        sincronizado: true,
+        motivo: 'Ambos vazios'
+      };
+    }
+    
+    // Verificar se as quantidades são iguais
+    const quantidadesIguais = 
+      (dadosLocais.financeiro?.length || 0) === dadosRemotos.financeiro.length &&
+      (dadosLocais.estoque?.length || 0) === dadosRemotos.estoque.length;
+    
+    if (!quantidadesIguais) {
+      return {
+        success: true,
+        sincronizado: false,
+        motivo: 'Quantidades diferentes',
+        detalhes: {
+          financeiroLocal: dadosLocais.financeiro?.length || 0,
+          financeiroRemoto: dadosRemotos.financeiro.length,
+          estoqueLocal: dadosLocais.estoque?.length || 0,
+          estoqueRemoto: dadosRemotos.estoque.length
+        }
+      };
+    }
+    
+    // Verificar se os IDs são os mesmos (comparação mais precisa)
+    const idsFinanceiroLocal = (dadosLocais.financeiro || []).sort();
+    const idsFinanceiroRemoto = dadosRemotos.financeiro.sort();
+    const idsEstoqueLocal = (dadosLocais.estoque || []).sort();
+    const idsEstoqueRemoto = dadosRemotos.estoque.sort();
+    
+    const financeiroSincronizado = JSON.stringify(idsFinanceiroLocal) === JSON.stringify(idsFinanceiroRemoto);
+    const estoqueSincronizado = JSON.stringify(idsEstoqueLocal) === JSON.stringify(idsEstoqueRemoto);
+    
+    const sincronizado = financeiroSincronizado && estoqueSincronizado;
+    
+    return {
+      success: true,
+      sincronizado: sincronizado,
+      motivo: sincronizado ? 'Dados idênticos' : 'IDs diferentes',
+      detalhes: {
+        financeiroSincronizado: financeiroSincronizado,
+        estoqueSincronizado: estoqueSincronizado
+      }
+    };
+    
+  } catch (error) {
+    console.error('Erro na verificação inteligente:', error);
     return { success: false, message: error.toString() };
   }
 }

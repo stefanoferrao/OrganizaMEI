@@ -1,28 +1,31 @@
 /* Tema Police - Cores Policiais */
 :root {
     /* Cores principais */
-    --primary-color: #1e3a8a; /* Azul policial */
-    --secondary-color: #60a5fa; /* Azul claro */
-    --accent-color: #0f172a; /* Preto/cinza escuro */
+    --primary-color: #1e3a8a;
+    /* Azul policial */
+    --secondary-color: #60a5fa;
+    /* Azul claro */
+    --accent-color: #0f172a;
+    /* Preto/cinza escuro */
     --background-color: #0c1426;
     --surface-color: #1e293b;
     --card-background: #334155;
-    
+
     /* Cores de texto */
     --text-primary: #f8fafc;
     --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
-    
+
     /* Cores de status */
     --success-color: #059669;
     --warning-color: #d97706;
     --error-color: #dc2626;
     --info-color: #1e3a8a;
-    
+
     /* Gradientes */
     --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #365397 50%, #17375f 100%);
     --gradient-card: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    
+
     /* Bordas e sombras */
     --border-color: #475569;
     --shadow-color: rgba(12, 20, 38, 0.7);
@@ -121,12 +124,14 @@ body[data-theme="police"] .menu-toggle:hover {
     transform: scale(1.05) !important;
 }
 
-.menu-toggle i.fas.fa-bars, .menu-toggle i.fas.fa-times {
+.menu-toggle i.fas.fa-bars,
+.menu-toggle i.fas.fa-times {
     color: var(--text-primary) !important;
 }
 
 /* === CARDS === */
-.card, .dashboard-card {
+.card,
+.dashboard-card {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: 0 4px 12px var(--shadow-color) !important;
@@ -166,13 +171,17 @@ body[data-theme="police"] form button:hover {
 }
 
 /* === INPUTS === */
-input, select, textarea {
+input,
+select,
+textarea {
     background: var(--surface-color) !important;
     border: 2px solid var(--border-color) !important;
     color: var(--text-primary) !important;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     border-color: var(--secondary-color) !important;
     box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
 }
@@ -464,7 +473,7 @@ body[data-theme="police"] button[onclick^="adicionarCategoria"] {
     background: var(--gradient-primary) !important;
 }
 
-.cat-btn-editar i.fa-edit, 
+.cat-btn-editar i.fa-edit,
 .cat-btn-editar-sub i.fa-edit {
     color: var(--gradient-primary) !important;
 }
@@ -481,14 +490,14 @@ body[data-theme="police"] .resumo-financeiro strong {
 }
 
 body[data-theme="police"] .receita-label.tipo-label:hover,
-body[data-theme="police"] .tipo-selector input[type="radio"]:checked + .receita-label {
+body[data-theme="police"] .tipo-selector input[type="radio"]:checked+.receita-label {
     border-color: var(--secondary-color) !important;
     color: var(--secondary-color) !important;
     background: rgba(96, 165, 250, 0.1) !important;
 }
 
 body[data-theme="police"] .despesa-label.tipo-label:hover,
-body[data-theme="police"] .tipo-selector input[type="radio"]:checked + .despesa-label {
+body[data-theme="police"] .tipo-selector input[type="radio"]:checked+.despesa-label {
     border-color: var(--secondary-color) !important;
     color: var(--secondary-color) !important;
     background: rgba(96, 165, 250, 0.1) !important;
@@ -572,7 +581,7 @@ body[data-theme="police"] .shortcuts-header h3 i.fa-keyboard {
     color: var(--secondary-color) !important;
 }
 
-body[data-theme="police"] .checkbox-atalhos input[type="checkbox"]:checked + .checkmark {
+body[data-theme="police"] .checkbox-atalhos input[type="checkbox"]:checked+.checkmark {
     background: var(--secondary-color) !important;
     border-color: var(--secondary-color) !important;
 }
@@ -712,6 +721,29 @@ body[data-theme="police"] .mini-sync-indicator.success .mini-sync-dot {
 body[data-theme="police"] .mini-sync-indicator.error .mini-sync-dot {
     background: var(--error-color) !important;
     border-color: var(--error-color) !important;
+}
+
+/* === LEGENDA DO INDICADOR DE SINCRONIZAÇÃO === */
+body[data-theme="police"] .sync-legend-dot.connected-working {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+body[data-theme="police"] .sync-legend-dot.connected-pending {
+    background: var(--warning-color) !important;
+}
+
+body[data-theme="police"] .sync-legend-dot.checking {
+    background: var(--info-color) !important;
+}
+
+body[data-theme="police"] .sync-legend-dot.syncing {
+    background: var(--info-color) !important;
+}
+
+body[data-theme="police"] .sync-legend-dot.error {
+    background: var(--error-color) !important;
 }
 
 /* === LOGO === */

@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let subcategoriaTimeout = null;
   let avisoTimeout = null;
   let cachedFilteredResults = null;
+  let termoPesquisa = '';
   
   // Authorization check
   function checkAuthorization() {
@@ -119,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
   function filtrarLancamentos() {
     if (cachedFilteredResults && 
-        !window.filtroMes && !window.filtroAno) {
+        !window.filtroMes && !window.filtroAno && !termoPesquisa) {
       return cachedFilteredResults;
     }
     
@@ -132,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     });
     
+    // Filtro por mês/ano
     if (window.filtroMes || window.filtroAno) {
       const mesEhTodos = window.filtroMes === "todos";
       const anoEhTodos = window.filtroAno === "todos";
@@ -153,6 +155,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         return d.getMonth() + 1 === Number(window.filtroMes) && d.getFullYear() === Number(window.filtroAno);
+      });
+    }
+    
+    // Filtro por pesquisa
+    if (termoPesquisa) {
+      const termo = termoPesquisa.toLowerCase();
+      filtrados = filtrados.filter(l => {
+        const descricao = (l.descricao || '').toLowerCase();
+        const categoria = (l.categoria || '').toLowerCase();
+        const subcategoria = (l.subcategoria || '').toLowerCase();
+        const valor = (l.valor || 0).toString();
+        
+        return descricao.includes(termo) || 
+               categoria.includes(termo) || 
+               subcategoria.includes(termo) || 
+               valor.includes(termo);
       });
     }
     
@@ -1122,6 +1140,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function setupPesquisaFinanceiro() {
+    const inputPesquisa = document.getElementById('pesquisa-financeiro');
+    const btnLimpar = document.getElementById('limpar-pesquisa');
+    
+    if (!inputPesquisa || !btnLimpar) return;
+    
+    // Mostrar/ocultar botão limpar
+    function toggleLimparButton() {
+      if (inputPesquisa.value.trim()) {
+        btnLimpar.classList.add('visible');
+      } else {
+        btnLimpar.classList.remove('visible');
+      }
+    }
+    
+    // Evento de pesquisa
+    inputPesquisa.addEventListener('input', function() {
+      termoPesquisa = this.value.trim();
+      cachedFilteredResults = null;
+      renderizarLancamentos();
+      toggleLimparButton();
+    });
+    
+    // Botão limpar
+    btnLimpar.addEventListener('click', function() {
+      inputPesquisa.value = '';
+      termoPesquisa = '';
+      cachedFilteredResults = null;
+      renderizarLancamentos();
+      toggleLimparButton();
+      inputPesquisa.focus();
+    });
+    
+    // Inicializar estado do botão
+    toggleLimparButton();
+  }
+
   function inicializarFinanceiro() {
     let tentativas = 0;
     
@@ -1137,6 +1192,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const categorias = obterCategorias();
         if (categorias && Object.keys(categorias).length > 0) {
           setupFinanceiroFormToggle();
+          setupPesquisaFinanceiro();
           atualizarCategorias();
           renderizarLancamentos();
           verificarStatusSincronizacao();

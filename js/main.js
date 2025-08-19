@@ -585,7 +585,14 @@ async function verificarSincronizacaoInteligente() {
   }
   
   try {
-
+    // Usar nova verificação inteligente se disponível
+    if (typeof window.verificarSincronizacaoInteligentePrecisa === 'function') {
+      console.log('Usando verificação inteligente precisa...');
+      return await window.verificarSincronizacaoInteligentePrecisa();
+    }
+    
+    // Fallback para método antigo (timestamp)
+    console.log('Usando verificação por timestamp (fallback)...');
     
     // Obter último ID local (timestamp mais recente)
     const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
@@ -614,7 +621,6 @@ async function verificarSincronizacaoInteligente() {
     });
     
     const result = await response.json();
-
     
     if (result.success) {
       return result.dadosAtualizados;
@@ -633,8 +639,12 @@ async function verificarSincronizacaoInteligente() {
 async function acionarSincronizacaoSeNecessario() {
   console.log('=== VERIFICANDO SINCRONIZAÇÃO NA INICIALIZAÇÃO ===');
   
-  // Verificar se precisa verificar (evita verificações muito frequentes)
-  if (typeof window.precisaVerificarSincronizacao === 'function' && !window.precisaVerificarSincronizacao()) {
+  // Usar nova função de verificação se disponível
+  const deveVerificar = typeof window.deveVerificarSincronizacao === 'function' 
+    ? window.deveVerificarSincronizacao() 
+    : (typeof window.precisaVerificarSincronizacao === 'function' ? window.precisaVerificarSincronizacao() : true);
+  
+  if (!deveVerificar) {
     console.log('Verificação recente encontrada - pulando verificação');
     if (typeof updateMiniIndicator === 'function') {
       updateMiniIndicator('connected-working');
@@ -644,8 +654,10 @@ async function acionarSincronizacaoSeNecessario() {
   
   const dadosAtualizados = await verificarSincronizacaoInteligente();
   
-  // Atualizar timestamp da verificação
-  if (typeof window.atualizarTimestampVerificacao === 'function') {
+  // Marcar timestamp da verificação
+  if (typeof window.marcarUltimaVerificacao === 'function') {
+    window.marcarUltimaVerificacao();
+  } else if (typeof window.atualizarTimestampVerificacao === 'function') {
     window.atualizarTimestampVerificacao();
   }
   

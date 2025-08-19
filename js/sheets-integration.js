@@ -1,5 +1,41 @@
 // Integração com Google Sheets para OrganizaMEI - Controle Financeiro
 
+// ===== CONFIGURAÇÕES DE SINCRONIZAÇÃO =====
+const SYNC_CONFIG = {
+    INTERVALO_MINIMO_VERIFICACAO: 30000, // 30 segundos
+    TOLERANCIA_TIMESTAMP: 5000, // 5 segundos
+    MAX_TENTATIVAS_SYNC: 3,
+    DEBUG_MODE: false,
+    VERIFICACAO_INTELIGENTE: {
+        USAR_COMPARACAO_IDS: true,
+        SINCRONIZADO_SE_AMBOS_VAZIOS: true,
+        VERIFICACAO_RAPIDA: false
+    }
+};
+
+// Função para verificar se deve executar verificação de sincronização
+function deveVerificarSincronizacao() {
+    const ultimaVerificacao = localStorage.getItem('ultimaVerificacaoSync');
+    if (!ultimaVerificacao) return true;
+    
+    const agora = Date.now();
+    const tempoDecorrido = agora - parseInt(ultimaVerificacao, 10);
+    
+    return tempoDecorrido > SYNC_CONFIG.INTERVALO_MINIMO_VERIFICACAO;
+}
+
+// Função para marcar timestamp da última verificação
+function marcarUltimaVerificacao() {
+    localStorage.setItem('ultimaVerificacaoSync', Date.now().toString());
+}
+
+// Função para log condicional baseado no DEBUG_MODE
+function debugLog(message, data = null) {
+    if (SYNC_CONFIG.DEBUG_MODE) {
+        console.log(`[SYNC DEBUG] ${message}`, data || '');
+    }
+}
+
 // Função de inicialização (compatibilidade)
 function inicializarNotificacoes() {
     // Não precisa fazer nada, sistema já está pronto
@@ -1266,6 +1302,56 @@ async function verificarSincronizacaoAutomatica() {
     }
 }
 
+// NOVA FUNÇÃO: Verificação inteligente de sincronização (evita falsos positivos)
+async function verificarSincronizacaoInteligentePrecisa() {
+    const url = getCurrentUrl();
+    if (!url || url.includes('*')) {
+        debugLog('URL não configurada - considerando dados sincronizados');
+        return true;
+    }
+    
+    try {
+        // Coletar dados locais
+        const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+        const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesEstoque') || '[]');
+        
+        const dadosLocais = {
+            financeiro: lancamentos.map(l => String(l.id)).filter(id => id && id.length === 14),
+            estoque: movimentacoes.map(m => String(m.id)).filter(id => id && id.length === 14)
+        };
+        
+        debugLog('Dados locais para verificação:', {
+            financeiro: dadosLocais.financeiro.length,
+            estoque: dadosLocais.estoque.length
+        });
+        
+        // Chamar verificação inteligente no servidor
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ 
+                action: 'verificarSincronizacaoInteligente',
+                dadosLocais: dadosLocais
+            })
+        });
+        
+        const result = await response.json();
+        debugLog('Resultado da verificação inteligente:', result);
+        
+        if (result.success) {
+            return result.sincronizado;
+        } else {
+            debugLog('Erro na verificação inteligente:', result.message);
+            return true; // Em caso de erro, considera sincronizado
+        }
+        
+    } catch (error) {
+        debugLog('Erro ao verificar sincronização inteligente:', error);
+        return true; // Em caso de erro, considera sincronizado
+    }
+}
+
 // Verificação automática DESABILITADA - apenas na inicialização
 function iniciarVerificacaoAutomatica() {
     // Verificação periódica desabilitada - apenas verificação na inicialização
@@ -1320,6 +1406,10 @@ async function testarConexaoSheets() {
 }
 
 // Expor funções globalmente para uso em outros arquivos
+window.SYNC_CONFIG = SYNC_CONFIG;
+window.deveVerificarSincronizacao = deveVerificarSincronizacao;
+window.marcarUltimaVerificacao = marcarUltimaVerificacao;
+window.debugLog = debugLog;
 window.adicionarLancamentoSheets = adicionarLancamentoSheets;
 window.excluirLancamentoSheets = excluirLancamentoSheets;
 window.editarLancamentoSheets = editarLancamentoSheets;
@@ -1338,6 +1428,7 @@ window.testarConexaoSheets = testarConexaoSheets;
 window.sincronizarEstoque = sincronizarEstoque;
 window.sincronizarTudo = sincronizarTudo;
 window.verificarSincronizacaoAutomatica = verificarSincronizacaoAutomatica;
+window.verificarSincronizacaoInteligentePrecisa = verificarSincronizacaoInteligentePrecisa;
 window.atualizarTimestampModificacao = atualizarTimestampModificacao;
 window.atualizarTimestampVerificacao = atualizarTimestampVerificacao;
 window.precisaVerificarSincronizacao = precisaVerificarSincronizacao;

@@ -129,39 +129,64 @@ document.addEventListener("DOMContentLoaded", function () {
       label = "Vendas no período";
       
     } else if (tipo === "ticket") {
-      const ticketPorMes = {}, qtdPorMes = {};
+      const ticketPorPeriodo = {}, qtdPorPeriodo = {};
+      
+      // Verificar se deve ser diário (mês específico selecionado) ou mensal (filtro "Todos")
+      const filtroMes = window.filtroMes || localStorage.getItem('filtroMes');
+      const isDiario = filtroMes && filtroMes !== "todos";
+      
       lancamentos.forEach(l => {
         if (l.tipo === "receita" && l.categoria === "Vendas" && l.data) {
-          let mes, ano, d;
+          let dia, mes, ano, d;
           if (typeof l.data === 'string' && l.data.includes('/')) {
-            const [dia, m, a] = l.data.split('/');
-            mes = m;
-            ano = a;
-            d = new Date(a, m - 1, dia);
+            const [d1, m1, a1] = l.data.split('/');
+            dia = d1;
+            mes = m1;
+            ano = a1;
+            d = new Date(a1, m1 - 1, d1);
           } else {
-            const [a, m] = l.data.split("-");
-            mes = m;
-            ano = a;
             d = new Date(l.data);
+            dia = String(d.getDate()).padStart(2, '0');
+            mes = String(d.getMonth() + 1).padStart(2, '0');
+            ano = String(d.getFullYear());
           }
           
           // Aplicar filtro
           if (!aplicarFiltroData(d)) return;
           
-          const chave = `${mes}/${ano}`;
-          ticketPorMes[chave] = (ticketPorMes[chave] || 0) + l.valor;
+          // Definir chave baseada no tipo de agrupamento
+          const chave = isDiario ? `${dia}/${mes}` : `${mes}/${ano}`;
+          ticketPorPeriodo[chave] = (ticketPorPeriodo[chave] || 0) + l.valor;
 
           // Extrai quantidade da descrição
           const match = l.descricao.match(/(\d+)\s*unidade/i);
           const quantidade = match ? parseInt(match[1]) : 1;
-          qtdPorMes[chave] = (qtdPorMes[chave] || 0) + quantidade;
+          qtdPorPeriodo[chave] = (qtdPorPeriodo[chave] || 0) + quantidade;
         }
       });
-      Object.keys(ticketPorMes).sort().forEach(k => {
-        labels.push(k);
-        data.push(ticketPorMes[k] / qtdPorMes[k]);
+      
+      // Ordenar as chaves corretamente
+      const chavesOrdenadas = Object.keys(ticketPorPeriodo).sort((a, b) => {
+        if (isDiario) {
+          // Para ordenação diária (DD/MM)
+          const [diaA, mesA] = a.split('/');
+          const [diaB, mesB] = b.split('/');
+          const anoReferencia = window.filtroAno === "todos" ? new Date().getFullYear() : (window.filtroAno || new Date().getFullYear());
+          const dataA = new Date(anoReferencia, mesA - 1, diaA);
+          const dataB = new Date(anoReferencia, mesB - 1, diaB);
+          return dataA - dataB;
+        } else {
+          // Para ordenação mensal (MM/YYYY)
+          return a.localeCompare(b);
+        }
       });
-      label = "Ticket médio";
+      
+      chavesOrdenadas.forEach(k => {
+        labels.push(k);
+        data.push(ticketPorPeriodo[k] / qtdPorPeriodo[k]);
+      });
+      
+      label = isDiario ? "Ticket médio diário" : "Ticket médio";
       
     } else if (tipo === "patrimonio") {
       let saldo = 0;
@@ -209,34 +234,59 @@ document.addEventListener("DOMContentLoaded", function () {
       label = "Evolução do patrimônio";
       
     } else if (tipo === "fluxo") {
-      const fluxoPorMes = {};
+      const fluxoPorPeriodo = {};
+      
+      // Verificar se deve ser diário (mês específico selecionado) ou mensal (filtro "Todos")
+      const filtroMes = window.filtroMes || localStorage.getItem('filtroMes');
+      const isDiario = filtroMes && filtroMes !== "todos";
+      
       lancamentos.forEach(l => {
         if (l.data) {
-          let mes, ano, d;
+          let dia, mes, ano, d;
           if (typeof l.data === 'string' && l.data.includes('/')) {
-            const [dia, m, a] = l.data.split('/');
-            mes = m;
-            ano = a;
-            d = new Date(a, m - 1, dia);
+            const [d1, m1, a1] = l.data.split('/');
+            dia = d1;
+            mes = m1;
+            ano = a1;
+            d = new Date(a1, m1 - 1, d1);
           } else {
-            const [a, m] = l.data.split("-");
-            mes = m;
-            ano = a;
             d = new Date(l.data);
+            dia = String(d.getDate()).padStart(2, '0');
+            mes = String(d.getMonth() + 1).padStart(2, '0');
+            ano = String(d.getFullYear());
           }
           
           // Aplicar filtro
           if (!aplicarFiltroData(d)) return;
           
-          const chave = `${mes}/${ano}`;
-          fluxoPorMes[chave] = (fluxoPorMes[chave] || 0) + (l.tipo === "receita" ? l.valor : -l.valor);
+          // Definir chave baseada no tipo de agrupamento
+          const chave = isDiario ? `${dia}/${mes}` : `${mes}/${ano}`;
+          fluxoPorPeriodo[chave] = (fluxoPorPeriodo[chave] || 0) + (l.tipo === "receita" ? l.valor : -l.valor);
         }
       });
-      Object.keys(fluxoPorMes).sort().forEach(k => {
-        labels.push(k);
-        data.push(fluxoPorMes[k]);
+      
+      // Ordenar as chaves corretamente
+      const chavesOrdenadas = Object.keys(fluxoPorPeriodo).sort((a, b) => {
+        if (isDiario) {
+          // Para ordenação diária (DD/MM)
+          const [diaA, mesA] = a.split('/');
+          const [diaB, mesB] = b.split('/');
+          const anoReferencia = window.filtroAno === "todos" ? new Date().getFullYear() : (window.filtroAno || new Date().getFullYear());
+          const dataA = new Date(anoReferencia, mesA - 1, diaA);
+          const dataB = new Date(anoReferencia, mesB - 1, diaB);
+          return dataA - dataB;
+        } else {
+          // Para ordenação mensal (MM/YYYY)
+          return a.localeCompare(b);
+        }
       });
-      label = "Fluxo de caixa";
+      
+      chavesOrdenadas.forEach(k => {
+        labels.push(k);
+        data.push(fluxoPorPeriodo[k]);
+      });
+      
+      label = isDiario ? "Fluxo de caixa diário" : "Fluxo de caixa";
       
     } else if (tipo === "pizza-despesas") {
       chartType = "pie";
@@ -1332,14 +1382,6 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         backgroundColor: "#232b38"
       }
-    });
-    
-    // Log final para debug
-    console.log('Gráfico criado com sucesso:', {
-      tipo: tipo,
-      labels: labels.length,
-      data: data.length,
-      totalValor: data.reduce((a, b) => a + (b || 0), 0)
     });
   }
 

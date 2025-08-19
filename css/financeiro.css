@@ -1,5 +1,76 @@
 /* Financeiro Styles */
 
+/* Campo de Pesquisa */
+.pesquisa-financeiro {
+  margin-bottom: 16px;
+}
+
+.pesquisa-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #2d3748;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.pesquisa-input-group:hover {
+  border-color: #17acaf;
+}
+
+.pesquisa-input-group:focus-within {
+  border-color: #17acaf;
+  box-shadow: 0 0 0 3px rgba(23, 172, 175, 0.1);
+}
+
+.pesquisa-icon {
+  position: absolute;
+  left: 12px;
+  color: #a0aec0;
+  font-size: 1rem;
+  z-index: 2;
+}
+
+#pesquisa-financeiro {
+  background: transparent;
+  color: #e2e8f0;
+  border: none;
+  padding: 12px 16px 12px 40px;
+  font-size: 0.95rem;
+  width: 100%;
+  outline: none;
+  border-radius: 6px;
+}
+
+#pesquisa-financeiro::placeholder {
+  color: #a0aec0;
+}
+
+.limpar-pesquisa {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.limpar-pesquisa.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.limpar-pesquisa:hover {
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
+}
+
 /* Resumo Financeiro */
 .resumo-financeiro {
   margin-bottom: 16px;
@@ -243,6 +314,30 @@
   
   .notificacao-financeiro.show {
     transform: translateY(0);
+  }
+
+  /* Campo de pesquisa em mobile */
+  .pesquisa-financeiro {
+    margin-bottom: 12px;
+  }
+  
+  .pesquisa-input-group {
+    border-radius: 6px;
+  }
+  
+  #pesquisa-financeiro {
+    padding: 10px 14px 10px 36px;
+    font-size: 0.9rem;
+  }
+  
+  .pesquisa-icon {
+    left: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .limpar-pesquisa {
+    right: 6px;
+    padding: 6px;
   }
 
   /* Reduzir fontes dos itens financeiros */
