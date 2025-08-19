@@ -959,6 +959,159 @@ class ReadmeViewer {
     
 })();
 
+// ===== GITHUB CHANGELOG VIEWER =====
+class GitHubChangelogViewer {
+    constructor() {
+        this.owner = 'stefanoferrao';
+        this.repo = 'OrganizaMEI';
+        this.init();
+    }
+
+    init() {
+        const btnChangelog = document.getElementById('btn-changelog');
+        if (btnChangelog) {
+            btnChangelog.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showChangelog();
+            });
+        }
+    }
+
+    async fetchCommits() {
+        try {
+            let allCommits = [];
+            let page = 1;
+            let hasMore = true;
+            
+            while (hasMore) {
+                const response = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/commits?per_page=100&page=${page}`);
+                if (!response.ok) throw new Error('Erro ao buscar commits');
+                const commits = await response.json();
+                
+                if (commits.length === 0) {
+                    hasMore = false;
+                } else {
+                    allCommits = allCommits.concat(commits);
+                    page++;
+                }
+            }
+            
+            return allCommits.filter(commit => {
+                const message = commit.commit.message;
+                const lines = message.split('\n');
+                const hasDetails = lines.length > 1 && lines.slice(1).some(line => line.trim());
+                const isNotDelete = !message.toLowerCase().includes('delete') && !message.toLowerCase().includes('deleted');
+                return hasDetails && isNotDelete;
+            });
+        } catch (error) {
+            console.error('Erro:', error);
+            throw error;
+        }
+    }
+
+    formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('pt-BR', {
+            year: 'numeric', month: 'long', day: 'numeric', 
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+
+    formatDetails(details) {
+        const lines = details.split('\n').filter(line => line.trim());
+        let html = '<div class="changelog-details">';
+        
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('- ')) {
+                html += `<div class="changelog-item-detail"><i class="fas fa-circle"></i>${trimmed.substring(2)}</div>`;
+            } else {
+                html += `<div class="changelog-text">${trimmed}</div>`;
+            }
+        });
+        
+        html += '</div>';
+        return html;
+    }
+
+    generateHTML(commits) {
+        let html = '<div class="changelog-container">';
+        
+        commits.forEach((commit, index) => {
+            const fullMessage = commit.commit.message;
+            const lines = fullMessage.split('\n');
+            const title = lines[0];
+            const details = lines.slice(1).filter(line => line.trim()).join('\n');
+            const author = commit.commit.author.name;
+            const date = this.formatDate(commit.commit.author.date);
+            const sha = commit.sha.substring(0, 7);
+            
+            html += `
+                <div class="changelog-item ${index === 0 ? 'latest' : ''}">
+                    <div class="changelog-header">
+                        <div class="changelog-version">
+                            <i class="fas fa-code-branch"></i>
+                            ${sha} ${index === 0 ? '<span class="latest-badge">Mais recente</span>' : ''}
+                        </div>
+                        <div class="changelog-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            ${date}
+                        </div>
+                    </div>
+                    <h3 class="changelog-title">${title}</h3>
+                    ${details ? this.formatDetails(details) : ''}
+                    <div class="changelog-author">
+                        <i class="fas fa-user"></i>
+                        Por: ${author}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        return html;
+    }
+
+    async showChangelog() {
+        try {
+            Swal.fire({
+                title: 'Carregando atualizações...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: '#232b38',
+                color: '#e2e8f0'
+            });
+
+            const commits = await this.fetchCommits();
+            const htmlContent = this.generateHTML(commits);
+
+            Swal.close();
+
+            const isMobile = window.innerWidth <= 768;
+            
+            Swal.fire({
+                title: isMobile ? 'Atualizações' : 'OrganizaMEI - Últimas Atualizações',
+                html: htmlContent,
+                width: isMobile ? '95%' : '80%',
+                showCloseButton: true,
+                showConfirmButton: false,
+                background: '#232b38',
+                color: '#e2e8f0',
+                customClass: { popup: 'changelog-popup' }
+            });
+
+        } catch (error) {
+            Swal.close();
+            Swal.fire({
+                title: 'Erro',
+                text: 'Não foi possível carregar as atualizações do GitHub.',
+                icon: 'error',
+                background: '#232b38',
+                color: '#e2e8f0'
+            });
+        }
+    }
+}
+
 // ===== INICIALIZAÇÃO =====
 let shortcutSystem;
 
@@ -971,6 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.notificationQueue = shortcutSystem;
         
         new ReadmeViewer();
+        new GitHubChangelogViewer();
         window.themeManager = new ThemeManager();
         
         // Inicializar navegação das abas de configurações

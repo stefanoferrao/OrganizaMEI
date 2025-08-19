@@ -203,14 +203,14 @@ O sistema detecta automaticamente:
 
 ## 🔄 **Histórico de Versões**
 
-### 🆕 **v5.0 (Atual)**
-- 🎯 Interface otimizada e responsiva
-- 📱 Melhorias no PWA e mobile
-- 🔄 Sistema de sincronização aprimorado
-- 📊 Dashboard com novos indicadores
-- 🎨 Refinamentos visuais e UX
-- ⚡ Performance otimizada
-- 🛠️ Correções e melhorias gerais
+### 🆕 **v5.2 (Atual)**
+- 🎨 **Sistema de Temas Expandido:** Novos temas Office e Police Beta
+- 📱 **Mobile Otimizado:** Melhor suporte a teclado virtual e gestos touch
+- 🔄 **Sincronização Inteligente:** Verificação automática de dados desatualizados
+- 📊 **GitHub Integration:** Visualizador de changelog direto do repositório
+- 🎓 **Tutorial Aprimorado:** Sistema de onboarding mais intuitivo
+- ⌨️ **Atalhos Globais:** Sistema unificado de navegação por teclado
+- 🛠️ **Correções e Melhorias:** Performance e estabilidade aprimoradas
 
 ### **v4.0**
 - 🎓 Tutorial interativo completo
@@ -237,6 +237,46 @@ O sistema detecta automaticamente:
 - Funcionalidades básicas
 - Controle financeiro
 - Estoque simples
+
+---
+
+## 🆕 **Novidades da Versão 5.2**
+
+### 🎨 **Sistema de Temas Expandido**
+- **Novos temas Beta:** Office e Police com designs únicos
+- **Seletor aprimorado:** Interface mais intuitiva para escolha de temas
+- **Transições melhoradas:** Efeitos visuais mais suaves na troca
+- **Compatibilidade:** Migração automática de temas antigos
+
+### 📱 **Otimizações Mobile Avançadas**
+- **Teclado virtual:** Detecção inteligente e ajuste automático de layout
+- **Gestos touch:** Melhor resposta a toques e navegação
+- **Modais responsivos:** Adaptação automática ao teclado virtual
+- **Performance:** Carregamento mais rápido em dispositivos móveis
+
+### 🔄 **Sincronização Inteligente Aprimorada**
+- **Verificação automática:** Detecção de dados desatualizados na inicialização
+- **Sincronização condicional:** Executa apenas quando necessário
+- **Feedback visual:** Indicadores de status em tempo real
+- **Recuperação automática:** Correção inteligente de problemas de sincronização
+
+### 📊 **GitHub Integration**
+- **Changelog automático:** Visualização das últimas atualizações do repositório
+- **Histórico completo:** Acesso a todas as mudanças e melhorias
+- **Interface integrada:** Visualizador nativo dentro do sistema
+- **Atualizações em tempo real:** Sempre informado sobre novas versões
+
+### 🎓 **Tutorial e Onboarding Melhorados**
+- **Navegação inteligente:** Tutorial navega automaticamente pelas abas
+- **Progresso visual:** Barra de progresso e contador de etapas
+- **Flexibilidade:** Opção de pular, voltar ou refazer
+- **Auto-inicialização:** Inicia automaticamente para novos usuários
+
+### ⌨️ **Sistema de Atalhos Unificado**
+- **Atalhos globais:** F1-F8 ou 1-7 para navegação rápida
+- **Contextuais:** Atalhos específicos para cada módulo
+- **Configurável:** Ativar/desativar atalhos e feedback
+- **Feedback visual:** Notificações dos atalhos executados
 
 ---
 
@@ -288,12 +328,13 @@ O sistema detecta automaticamente:
 - **Flexibilidade:** Opção de pular, voltar ou refazer o tutorial
 - **Integração:** Tutorial navega automaticamente pelas abas
 
-### 🎨 **Sistema de Temas Avançado**
-- **Múltiplos temas:** Default e Police disponíveis
+### 🎨 **Sistema de Temas Expandido**
+- **Múltiplos temas:** Default, Police Beta e Office Beta disponíveis
 - **Transições suaves:** Overlay de transição entre temas
 - **Persistência:** Tema salvo automaticamente no navegador
 - **Preview visual:** Visualização dos temas antes da seleção
 - **Migração automática:** Conversão de temas antigos
+- **Novos temas Beta:** Office (corporativo) e Police (alternativo)
 
 ### ⌨️ **Sistema de Atalhos Unificado**
 - **Atalhos globais:** F1-F8 ou números 1-7 para navegação
@@ -404,7 +445,8 @@ O sistema detecta automaticamente:
 
 ### 🎨 **Temas Disponíveis**
 - **Default:** Tema padrão com cores azul/verde
-- **Police:** Tema alternativo com visual diferenciado
+- **Police Beta:** Tema alternativo com visual diferenciado
+- **Office Beta:** Tema corporativo com design profissional
 
 ## 💻 **Requisitos e Compatibilidade**
 
@@ -445,28 +487,39 @@ O sistema detecta automaticamente:
 ### 📁 **Estrutura de Arquivos**
 ```
 OrganizaMEI/
-├── css/            Estilos modulares
-│   ├── style.css       Estilos principais
-│   ├── dashboard.css   Dashboard
-│   ├── tutorial.css    Tutorial interativo
-│   ├── pwa.css         PWA styles
+├── css/                    Estilos modulares
+│   ├── style.css              Estilos principais
+│   ├── dashboard.css          Dashboard
+│   ├── tutorial.css           Tutorial interativo
+│   ├── pwa.css               PWA styles
+│   ├── mobile-modals.css      Modais responsivos
+│   ├── readme-viewer.css      Visualizador de documentação
 │   └── ...
-├── js/             JavaScript modular
-│   ├── main.js         Arquivo principal
-│   ├── tutorial.js     Tutorial interativo
-│   ├── themes.js       Sistema de temas
-│   ├── shortcuts.js    Atalhos de teclado
-│   └── ...
-├── themes/         Temas adicionais
-│   └── police.css      Tema Police
-├── src/            Recursos
-│   ├── favicon/        Ícones PWA
-│   └── OrganizaMEI.png  Logo
-├── docs/           Documentação
-├── index.html      Arquivo principal
-└── Código.gs       Script Google Apps Script
+├── js/                     JavaScript modular
+│   ├── main.js               Arquivo principal unificado
+│   ├── configuracoes.js      Sistema de configurações
+│   ├── dashboard.js          Dashboard e KPIs
+│   ├── estoque.js            Controle de estoque
+│   ├── financeiro.js         Gestão financeira
+│   ├── vendas.js             Histórico de vendas
+│   ├── graficos.js           Relatórios e gráficos
+│   ├── categorias.js         Gestão de categorias
+│   ├── sheets-integration.js Integração Google Sheets
+│   └── menu.js               Navegação e menus
+├── themes/                 Temas visuais
+│   ├── police.css            Tema Police Beta
+│   └── office.css            Tema Office Beta
+├── src/                    Recursos
+│   ├── favicon/              Ícones PWA completos
+│   └── OrganizaMEI.png       Logo principal
+├── docs/                   Documentação
+│   ├── README.md             Documentação principal
+│   ├── DOCUMENTAÇÃO.md       Documentação técnica
+│   └── SINCRONIZACAO-MELHORIAS.md
+├── index.html              Arquivo principal
+└── Código.gs               Script Google Apps Script
 ```
 
 ---
 
-**OrganizaMEI v5.0** - Sistema de gestão para MEI com interface otimizada, sincronização inteligente e experiência mobile aprimorada.
+**OrganizaMEI v5.2** - Sistema de gestão para MEI com temas expandidos, sincronização inteligente, integração GitHub e experiência mobile otimizada.

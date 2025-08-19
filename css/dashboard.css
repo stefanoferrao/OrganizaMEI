@@ -560,3 +560,106 @@
   }
 }
 
+/* ===== CHANGELOG STYLES ===== */
+.changelog-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+
+.changelog-item {
+  background: #2d3748;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-left: 4px solid #4a5568;
+}
+
+.changelog-item.latest {
+  border-left-color: #17acaf;
+}
+
+.changelog-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.changelog-version {
+  color: #17acaf;
+  font-weight: bold;
+}
+
+.latest-badge {
+  background: #17acaf;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+}
+
+.changelog-date {
+  color: #a0aec0;
+  font-size: 0.9rem;
+}
+
+.changelog-title {
+  color: #e2e8f0;
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.changelog-author {
+  color: #cbd5e0;
+  font-size: 0.9rem;
+}
+
+.changelog-details {
+  color: #a0aec0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 10px 0;
+  padding: 12px;
+  background: #1a202c;
+  border-radius: 8px;
+  border-left: 3px solid #4a5568;
+  text-align: left;
+}
+
+.changelog-item-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  color: #cbd5e0;
+}
+
+.changelog-item-detail i {
+  color: #17acaf;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+
+.changelog-text {
+  margin: 6px 0;
+  color: #a0aec0;
+}
+
+@media (max-width: 768px) {
+  .changelog-container {
+    max-height: 60vh;
+    padding: 0 5px;
+  }
+  
+  .changelog-item {
+    padding: 15px;
+  }
+  
+  .changelog-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+

@@ -862,3 +862,20 @@ body[data-theme="police"] .readme-viewer::-webkit-scrollbar-thumb {
 body[data-theme="police"] .readme-viewer::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color) !important;
 }
+
+/* === CHANGELOG === */
+body[data-theme="police"] .changelog-item.latest {
+    border-left-color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .changelog-version {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .latest-badge {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .changelog-item-detail i {
+    color: var(--secondary-color) !important;
+}

@@ -1006,3 +1006,20 @@ body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb {
 body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color) !important;
 }
+
+/* === CHANGELOG === */
+body[data-theme="office"] .changelog-item.latest {
+    border-left-color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .changelog-version {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .latest-badge {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .changelog-item-detail i {
+    color: var(--secondary-color) !important;
+}
