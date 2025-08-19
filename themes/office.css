@@ -221,7 +221,7 @@ body[data-theme="office"] h2.text-xl.font-semibold.mb-4 i {
 body[data-theme="office"] table {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 8px !important;
+    border-radius: 2px !important;
     overflow: hidden !important;
 }
 
@@ -248,7 +248,7 @@ body[data-theme="office"] ul:not(.readme-viewer ul) li:not(.readme-viewer li) {
     border-left: 3px solid var(--secondary-color) !important;
     margin-bottom: 8px !important;
     padding: 12px !important;
-    border-radius: 6px !important;
+    border-radius: 2px !important;
     transition: all 0.3s ease !important;
 }
 
@@ -267,7 +267,7 @@ body[data-theme="office"] .venda-icon i.fa-shopping-cart {
 
 body[data-theme="office"] .venda-item {
     background: var(--card-background) !important;
-    border-radius: 10px !important;
+    border-radius: 2px !important;
     margin-bottom: 5px !important;
     padding: 16px 20px !important;
     box-shadow: 0 2px 8px var(--shadow-color) !important;
@@ -573,13 +573,13 @@ body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
     body[data-theme="office"] .modal-content::-webkit-scrollbar-track,
     body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-track {
         background: var(--surface-color) !important;
-        border-radius: 3px !important;
+        border-radius: 2px !important;
     }
 
     body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb,
     body[data-theme="office"] .movimentacoes-container::-webkit-scrollbar-thumb {
         background: var(--secondary-color) !important;
-        border-radius: 3px !important;
+        border-radius: 2px !important;
     }
 
     body[data-theme="office"] .modal-content::-webkit-scrollbar-thumb:hover,
@@ -591,6 +591,10 @@ body[data-theme="office"] .modal-cancel.modal-btn-editar:hover {
 body[data-theme="office"] .cat-nome,
 body[data-theme="office"] .cat-sub-nome {
     color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .cat-card {
+    border-radius: 2px !important;
 }
 
 body[data-theme="office"] .cat-card[id*="receita"],
@@ -630,8 +634,16 @@ body[data-theme="office"] .cat-btn-editar-sub:hover {
 }
 
 /* === FINANCEIRO === */
+body[data-theme="office"] .resumo-financeiro {
+    border-radius: 2px !important;
+}
+
 body[data-theme="office"] .resumo-financeiro strong {
     color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] #financeiro-form {
+    border-radius: 2px !important;
 }
 
 body[data-theme="office"] .receita-label.tipo-label:hover,
@@ -672,6 +684,15 @@ body[data-theme="office"] .icon-editar-data i.fa-calendar-alt {
 }
 
 /* === CONFIGURAÇÕES === */
+body[data-theme="office"] .config-integracao,
+body[data-theme="office"] .shortcuts-config,
+body[data-theme="office"] .config-header,
+body[data-theme="office"] .theme-option,
+body[data-theme="office"] .config-content,
+body[data-theme="office"] .config-tabs {
+    border-radius: 2px !important;
+}
+
 body[data-theme="office"] .config-tab {
     background: none !important;
     color: var(--text-secondary) !important;
@@ -712,10 +733,19 @@ body[data-theme="office"] .sheets-actions button {
 
 body[data-theme="office"] .sheets-integration {
     border-color: var(--border-color) !important;
+    border-radius: 2px !important;
 }
 
 body[data-theme="office"] .sheets-integration h3 {
     color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .sheets-tabs-status {
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] .integration-status {
+    border-radius: 2px !important;
 }
 
 body[data-theme="office"] .integration-status .status-icon .fa-check-circle,
@@ -752,7 +782,7 @@ body[data-theme="office"] .shortcuts-arrow.rotated {
 body[data-theme="office"] .kpis-operacionais {
     background: var(--card-background) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 8px !important;
+    border-radius: 2px !important;
     box-shadow: 0 2px 8px var(--shadow-color) !important;
 }
 
@@ -813,7 +843,7 @@ body[data-theme="office"] .kpi-trend.neutral {
 body[data-theme="office"] .kpi-chart {
     background: rgba(52, 73, 94, 0.05) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 4px !important;
+    border-radius: 2px !important;
 }
 
 body[data-theme="office"] .kpi-metric {
@@ -868,6 +898,11 @@ body[data-theme="office"] .mini-sync-indicator.error .mini-sync-dot {
 }
 
 /* === LEGENDA DO INDICADOR DE SINCRONIZAÇÃO === */
+body[data-theme="office"] .sync-legend-container {
+    border-color: var(--secondary-color) !important;
+    border-radius: 2px !important;
+}
+
 body[data-theme="office"] .sync-legend-dot.connected-working {
     background: var(--secondary-color) !important;
     box-shadow: 0 0 10px rgba(52, 73, 94, 0.3) !important;
@@ -1005,6 +1040,46 @@ body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb {
 
 body[data-theme="office"] .readme-viewer::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color) !important;
+}
+
+/* === DASHBOARD === */
+body[data-theme="office"] .dashboard-card {
+    border-radius: 2px !important;
+}
+
+/* === GUIAS/NAVEGAÇÃO === */
+body[data-theme="office"] nav button {
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] .menu-toggle {
+    border-radius: 2px !important;
+}
+
+/* === BOTÕES === */
+body[data-theme="office"] button,
+body[data-theme="office"] .btn,
+body[data-theme="office"] form button,
+body[data-theme="office"] .config-btn,
+body[data-theme="office"] .sheets-config button {
+    border-radius: 2px !important;
+}
+
+/* === INPUTS === */
+body[data-theme="office"] input,
+body[data-theme="office"] select,
+body[data-theme="office"] textarea {
+    border-radius: 2px !important;
+}
+
+/* === MODAIS === */
+body[data-theme="office"] .modal-content {
+    border-radius: 2px !important;
+}
+
+/* === LOGO === */
+body[data-theme="office"] .logo-organizamei {
+    border-radius: 2px !important;
 }
 
 /* === CHANGELOG === */
