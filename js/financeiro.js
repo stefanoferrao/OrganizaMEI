@@ -1,3 +1,28 @@
+// Bloquear elementos imediatamente ao carregar
+function bloquearElementosIniciais() {
+  const elementos = document.querySelectorAll('input, select, button, textarea');
+  elementos.forEach(elemento => {
+    elemento.disabled = true;
+    elemento.classList.add('sync-disabled-initial');
+  });
+}
+
+// Liberar elementos após verificação
+function liberarElementosAposVerificacao() {
+  const elementos = document.querySelectorAll('input, select, button, textarea');
+  elementos.forEach(elemento => {
+    elemento.disabled = false;
+    elemento.classList.remove('sync-disabled-initial');
+  });
+}
+
+// Executar bloqueio imediatamente
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bloquearElementosIniciais);
+} else {
+  bloquearElementosIniciais();
+}
+
 // Financeiro - Receitas e Despesas
 document.addEventListener("DOMContentLoaded", function () {
   
@@ -394,8 +419,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     document.body.classList.remove('sync-disabled');
-    const todosItems = document.querySelectorAll('.processando');
-    todosItems.forEach(item => item.classList.remove('processando'));
+    const todosItems = document.querySelectorAll('.processando, .editando, .excluindo');
+    todosItems.forEach(item => {
+      item.classList.remove('processando', 'editando', 'excluindo');
+    });
   }
 
   function isValidWebAppUrl(url) {
@@ -700,8 +727,10 @@ document.addEventListener("DOMContentLoaded", function () {
       await syncToSheets(novoLancamento);
       
       document.body.classList.remove('sync-disabled');
-      const todosItems = document.querySelectorAll('.processando');
-      todosItems.forEach(item => item.classList.remove('processando'));
+      const todosItems = document.querySelectorAll('.processando, .editando, .excluindo');
+      todosItems.forEach(item => {
+        item.classList.remove('processando', 'editando', 'excluindo');
+      });
     });
   }
 
@@ -746,8 +775,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
     if (isValidWebAppUrl(webAppUrl)) {
       if (typeof verificarSincronizacaoAutomatica === 'function') {
-        setTimeout(verificarSincronizacaoAutomatica, 1000);
+        const promise = verificarSincronizacaoAutomatica();
+        if (promise && typeof promise.finally === 'function') {
+          promise.finally(() => {
+            liberarElementosAposVerificacao();
+          });
+        } else {
+          setTimeout(() => {
+            liberarElementosAposVerificacao();
+          }, 2000);
+        }
+      } else {
+        liberarElementosAposVerificacao();
       }
+    } else {
+      liberarElementosAposVerificacao();
     }
   }
   
@@ -996,7 +1038,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (btnGerenciar) {
           const item = btnGerenciar.closest('.lancamento-item');
           if (item) {
-            item.classList.add('processando');
+            item.classList.add('editando', 'processando');
             const lancamentoInfo = item.querySelector('.lancamento-info');
             if (lancamentoInfo) {
               lancamentoInfo.classList.add('processando');
@@ -1034,20 +1076,63 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       const eVenda = lancamentoAtualizado.categoria === 'Vendas' && lancamentoAtualizado.subcategoria === 'Produtos';
-      if (eVenda && typeof editarMovimentacaoEstoque === 'function') {
+      if (eVenda) {
         const quantidadeSegura = Math.max(lancamentoAtualizado.quantidade || 1, 1);
         const valorSeguro = lancamentoAtualizado.valor || 0;
-        editarMovimentacaoEstoque({
-          id: lancamentoAtualizado.id,
-          produto: lancamentoAtualizado.descricao,
-          categoria: 'Saída',
-          quantidade: lancamentoAtualizado.quantidade,
-          valorUnitario: valorSeguro / quantidadeSegura,
-          valorTotal: valorSeguro,
-          data: lancamentoAtualizado.data,
-          tipoMovimento: 'Venda',
-          observacoes: 'Venda de produto'
-        }).catch(console.error);
+        
+        // Atualizar movimentação de estoque localmente
+        let movimentacoesEstoque = [];
+        try {
+          movimentacoesEstoque = JSON.parse(localStorage.getItem('movimentacoesEstoque') || '[]');
+        } catch (error) {
+          console.error('Erro ao carregar movimentações de estoque:', error);
+          movimentacoesEstoque = [];
+        }
+        
+        const indexMovimentacao = movimentacoesEstoque.findIndex(m => m.id === lancamentoAtualizado.id);
+        if (indexMovimentacao >= 0) {
+          movimentacoesEstoque[indexMovimentacao] = {
+            ...movimentacoesEstoque[indexMovimentacao],
+            produto: lancamentoAtualizado.descricao,
+            quantidade: lancamentoAtualizado.quantidade,
+            valorUnitario: valorSeguro / quantidadeSegura,
+            valorTotal: valorSeguro,
+            data: lancamentoAtualizado.data
+          };
+          
+          try {
+            localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoesEstoque));
+          } catch (error) {
+            console.error('Erro ao salvar movimentações no localStorage:', error);
+          }
+          
+          // Recalcular estoque
+          if (typeof recalcularEstoque === 'function') {
+            recalcularEstoque();
+          } else if (typeof recalcularEstoqueGlobal === 'function') {
+            recalcularEstoqueGlobal();
+          }
+          
+          // Atualizar interface do estoque
+          if (typeof renderizarProdutos === 'function') {
+            renderizarProdutos();
+          }
+        }
+        
+        // Sincronizar com Google Sheets
+        if (typeof editarMovimentacaoEstoque === 'function') {
+          editarMovimentacaoEstoque({
+            id: lancamentoAtualizado.id,
+            produto: lancamentoAtualizado.descricao,
+            categoria: 'Saída',
+            quantidade: lancamentoAtualizado.quantidade,
+            valorUnitario: valorSeguro / quantidadeSegura,
+            valorTotal: valorSeguro,
+            data: lancamentoAtualizado.data,
+            tipoMovimento: 'Venda',
+            observacoes: 'Venda de produto'
+          }).catch(console.error);
+        }
       }
       
       if (typeof editarLancamentoSheets === 'function') {
@@ -1060,8 +1145,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       document.body.classList.remove('sync-disabled');
-      const todosItems = document.querySelectorAll('.processando');
-      todosItems.forEach(item => item.classList.remove('processando'));
+      const todosItems = document.querySelectorAll('.processando, .editando, .excluindo');
+      todosItems.forEach(item => {
+        item.classList.remove('processando', 'editando', 'excluindo');
+      });
     });
   }
 

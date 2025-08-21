@@ -1258,8 +1258,8 @@ document.addEventListener("DOMContentLoaded", function () {
           
           // Editar no Google Sheets se disponível
           const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
-          if (estoqueAtivo && typeof editarMovimentacaoEstoqueSheets === 'function') {
-            await editarMovimentacaoEstoqueSheets(movimentacaoAtualizada);
+          if (estoqueAtivo && typeof editarMovimentacaoEstoque === 'function') {
+            await editarMovimentacaoEstoque(movimentacaoAtualizada);
           }
           
           // Atualizar lançamento financeiro correspondente se for uma venda

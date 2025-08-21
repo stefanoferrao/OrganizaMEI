@@ -110,7 +110,7 @@ async function saveWebAppUrl() {
         
         // Estado de carregamento
         btn.disabled = true;
-        btn.innerHTML = '<span class="loading-spinner"></span> Salvando...';
+        btn.innerHTML = 'Sincronizando...';
         btn.classList.add('loading');
         
         // Animar progresso
@@ -140,7 +140,7 @@ async function saveWebAppUrl() {
         await new Promise(resolve => setTimeout(resolve, 300));
         
         // Estado de sucesso
-        btn.innerHTML = '✅ Salvo e Sincronizado!';
+        btn.innerHTML = 'Sincronizado!';
         btn.classList.remove('loading');
         btn.classList.add('success');
         progressContainer.remove();
@@ -590,7 +590,7 @@ async function editarMovimentacaoEstoque(movimentacao) {
             mode: 'cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({
-                action: 'updateEstoqueById',
+                action: 'editarMovimentacaoEstoqueSheets',
                 data: {
                     id: String(movimentacao.id),
                     produto: movimentacao.produto,

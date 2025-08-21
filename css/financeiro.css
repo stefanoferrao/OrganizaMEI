@@ -1,5 +1,3 @@
-/* Financeiro Styles */
-
 /* Campo de Pesquisa */
 .pesquisa-financeiro {
   margin-bottom: 16px;
@@ -88,8 +86,6 @@
   font-weight: 600;
 }
 
-
-
 /* Estilos para lançamentos financeiros */
 .lancamento-item {
   display: flex;
@@ -124,9 +120,19 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0) scale(1.02); }
-  25% { transform: translateX(-5px) scale(1.02); }
-  75% { transform: translateX(5px) scale(1.02); }
+
+  0%,
+  100% {
+    transform: translateX(0) scale(1.02);
+  }
+
+  25% {
+    transform: translateX(-5px) scale(1.02);
+  }
+
+  75% {
+    transform: translateX(5px) scale(1.02);
+  }
 }
 
 .lancamento-item.removendo {
@@ -138,16 +144,15 @@
   filter: grayscale(100%);
 }
 
-/* Feedback visual para exclusão/edição - aspecto cinza e reduzido */
+/* Animate.css based effects for edit/remove states */
 .lancamento-item.editando,
 .lancamento-item.excluindo {
   background: #4a5568 !important;
   opacity: 0.6;
-  transform: scale(0.95);
   pointer-events: none;
-  transition: all 0.3s ease;
   filter: grayscale(50%);
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .lancamento-item.editando::after {
@@ -163,7 +168,7 @@
   font-size: 0.75rem;
   font-weight: bold;
   z-index: 10;
-  animation: pulse 1.5s infinite;
+  animation: animate__pulse 1.5s infinite;
 }
 
 .lancamento-item.excluindo::after {
@@ -179,12 +184,7 @@
   font-size: 0.75rem;
   font-weight: bold;
   z-index: 10;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  animation: animate__pulse 1.5s infinite;
 }
 
 .lancamento-item.editando .lancamento-icon,
@@ -236,6 +236,7 @@
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -253,6 +254,7 @@
     transform: translateX(0) scale(1);
     max-height: 60px;
   }
+
   to {
     opacity: 0;
     transform: translateX(-100%) scale(0.8);
@@ -277,7 +279,7 @@
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9998;
   font-weight: bold;
   transform: translateX(100%);
@@ -311,7 +313,7 @@
     right: 10px;
     transform: translateY(-100%);
   }
-  
+
   .notificacao-financeiro.show {
     transform: translateY(0);
   }
@@ -320,21 +322,21 @@
   .pesquisa-financeiro {
     margin-bottom: 12px;
   }
-  
+
   .pesquisa-input-group {
     border-radius: 6px;
   }
-  
+
   #pesquisa-financeiro {
     padding: 10px 14px 10px 36px;
     font-size: 0.9rem;
   }
-  
+
   .pesquisa-icon {
     left: 10px;
     font-size: 0.9rem;
   }
-  
+
   .limpar-pesquisa {
     right: 6px;
     padding: 6px;
@@ -621,9 +623,17 @@
 
 /* Animação de pulso para indicar ativação por atalho */
 @keyframes shortcut-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(23, 172, 175, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(23, 172, 175, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(23, 172, 175, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(23, 172, 175, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(23, 172, 175, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(23, 172, 175, 0);
+  }
 }
 
 .shortcut-active {
@@ -879,6 +889,7 @@
   from {
     transform: translateY(-50%) rotate(0deg);
   }
+
   to {
     transform: translateY(-50%) rotate(360deg);
   }
@@ -968,8 +979,13 @@
 }
 
 @keyframes progress-indeterminate {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @media (max-width: 600px) {
@@ -978,49 +994,49 @@
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .aviso-texto {
     min-width: 100%;
   }
-  
+
   .aviso-btn {
     align-self: stretch;
   }
 
 
-  
+
   .integration-status {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .sheets-actions {
     flex-direction: column;
   }
-  
+
   .btn-sync-primary,
   .btn-test {
     width: 100%;
     margin: 4px 0;
   }
-  
+
   .financeiro-form-content {
     padding: 12px;
   }
-  
+
   #financeiro-form-inner input:not([type="radio"]) {
     padding: 10px 12px;
     margin-bottom: 10px;
   }
-  
+
   .form-row input:not([type="radio"]) {
     margin-bottom: 8px;
   }
-  
+
   #financeiro-form-inner button[type="submit"] {
     padding: 12px 20px;
   }
-  
+
   /* Ajustar indicador de navegação em mobile */
   .financeiro-form-content.navigation-active::before {
     font-size: 0.7rem;
@@ -1203,6 +1219,7 @@
     opacity: 0;
     backdrop-filter: blur(0px);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(2px);
@@ -1241,7 +1258,7 @@
   .modal-bg {
     padding-top: 5vh;
   }
-  
+
   .modal-content {
     padding: 20px 16px;
     margin: 16px;
@@ -1263,7 +1280,7 @@
     width: 100%;
     padding: 12px;
   }
-  
+
   .lancamento-item.editando::after,
   .lancamento-item.excluindo::after {
     font-size: 0.7rem;

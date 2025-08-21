@@ -113,6 +113,10 @@ function doPost(e) {
       return editarMovimentacaoEstoque(data.data);
     }
     
+    if (data.action === 'editarMovimentacaoEstoqueSheets') {
+      return editarMovimentacaoEstoqueSheets(data.data);
+    }
+    
     if (data.action === 'testarScript') {
       return testarScript();
     }
@@ -320,7 +324,7 @@ function editarMovimentacaoEstoque(dados) {
       const idPlanilha = String(values[i][0]).replace(/^'/, '');
       if (idPlanilha === targetId) {
         abaEstoque.getRange(i + 2, 1, 1, 9).setValues([[
-          "'" + dados.id,
+          dados.id,
           dados.produto,
           dados.categoria || '',
           dados.quantidade,
@@ -342,6 +346,106 @@ function editarMovimentacaoEstoque(dados) {
       .createTextOutput(JSON.stringify({success: false, message: 'Movimentação não encontrada para edição'}))
       .setMimeType(ContentService.MimeType.JSON);
       
+  } catch (error) {
+    console.error('Erro na edição de movimentação:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, message: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// FUNÇÃO ROBUSTA: Editar movimentação de estoque usando updateByIdBothSheets
+function editarMovimentacaoEstoqueSheets(dados) {
+  try {
+    if (!dados || !dados.id) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'ID é obrigatório para edição'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const planilha = SpreadsheetApp.openById(SHEET_ID);
+    let updatedCount = 0;
+    let messages = [];
+    const targetId = String(dados.id).replace(/^'/, '');
+    
+    console.log('Editando movimentação de estoque com ID:', targetId);
+    console.log('Dados para atualização:', dados);
+    
+    // Atualizar no Estoque
+    const abaEstoque = planilha.getSheetByName('Estoque');
+    if (abaEstoque && abaEstoque.getLastRow() > 1) {
+      const range = abaEstoque.getRange(2, 1, abaEstoque.getLastRow() - 1, 9);
+      const values = range.getValues();
+      
+      for (let i = 0; i < values.length; i++) {
+        const idPlanilha = String(values[i][0]).replace(/^'/, '');
+        if (idPlanilha === targetId) {
+          abaEstoque.getRange(i + 2, 1, 1, 9).setValues([[
+            dados.id,
+            dados.produto,
+            dados.categoria || '',
+            dados.quantidade,
+            dados.valorUnitario || 0,
+            dados.valorTotal || 0,
+            dados.data,
+            dados.tipoMovimento,
+            dados.observacoes || ''
+          ]]);
+          
+          updatedCount++;
+          messages.push('Estoque');
+          console.log('Movimentação atualizada no Estoque, linha:', i + 2);
+          break;
+        }
+      }
+    }
+    
+    // Atualizar no Financeiro se for uma venda
+    if (dados.tipoMovimento === 'Venda') {
+      const abaFinanceiro = planilha.getSheetByName('Financeiro') || planilha.getActiveSheet();
+      if (abaFinanceiro && abaFinanceiro.getLastRow() > 1) {
+        const range = abaFinanceiro.getRange(2, 1, abaFinanceiro.getLastRow() - 1, 8);
+        const values = range.getValues();
+        
+        for (let i = 0; i < values.length; i++) {
+          const idPlanilha = String(values[i][0]).replace(/^'/, '');
+          if (idPlanilha === targetId) {
+            abaFinanceiro.getRange(i + 2, 1, 1, 8).setValues([[
+              dados.id,
+              'receita',
+              'Vendas',
+              'Produtos',
+              dados.produto,
+              dados.quantidade || 1,
+              dados.valorTotal || 0,
+              dados.data
+            ]]);
+            
+            updatedCount++;
+            messages.push('Financeiro');
+            console.log('Lançamento atualizado no Financeiro, linha:', i + 2);
+            break;
+          }
+        }
+      }
+    }
+    
+    if (updatedCount > 0) {
+      console.log('Edição bem-sucedida. Total atualizado:', updatedCount);
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          success: true, 
+          message: `Movimentação atualizada em: ${messages.join(', ')}`,
+          updatedCount: updatedCount
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } else {
+      console.log('Movimentação não encontrada para edição com ID:', targetId);
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, message: 'Movimentação não encontrada para edição'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
   } catch (error) {
     console.error('Erro na edição de movimentação:', error);
     return ContentService
@@ -391,7 +495,7 @@ function updateByIdBothSheets(data) {
           }
           
           abaFinanceiro.getRange(i + 2, 1, 1, 8).setValues([[
-            "'" + data.id,
+            data.id,
             data.tipo,
             data.categoria,
             data.subcategoria,
@@ -419,12 +523,13 @@ function updateByIdBothSheets(data) {
         for (let i = 0; i < values.length; i++) {
           const idPlanilha = String(values[i][0]).replace(/^'/, '');
           if (idPlanilha === targetId) {
+            const valorUnitario = data.valor / (data.quantidade || 1);
             abaEstoque.getRange(i + 2, 1, 1, 9).setValues([[
               data.id,
               data.descricao,
               'Saída',
               data.quantidade || 1,
-              data.valor / (data.quantidade || 1),
+              valorUnitario,
               data.valor,
               data.data,
               'Venda',
@@ -502,7 +607,7 @@ function updateFinanceiroData(data) {
         }
         
         sheet.getRange(i + 2, 1, 1, 8).setValues([[
-          "'" + data.id,
+          data.id,
           data.tipo,
           data.categoria,
           data.subcategoria,
@@ -749,6 +854,8 @@ function insertFinanceiroData(data) {
     // Adicionar cabeçalhos se a planilha estiver vazia
     if (sheet.getLastRow() === 0) {
       sheet.getRange(1, 1, 1, 8).setValues([['ID', 'Tipo', 'Categoria', 'Subcategoria', 'Descrição', 'Quantidade', 'Valor', 'Data Lançamento']]);
+      // Formatar coluna A como texto simples
+      sheet.getRange('A:A').setNumberFormat('@');
     }
     
     // Verificar se já existe um lançamento com o mesmo ID
@@ -783,9 +890,10 @@ function insertFinanceiroData(data) {
       }
     }
     
-    // Inserir dados financeiros (forçar ID como texto com ')
-    sheet.appendRow([
-      "'" + identificador, // Adicionar ' para forçar como texto
+    // Inserir dados financeiros
+    const proximaLinha = sheet.getLastRow() + 1;
+    sheet.getRange(proximaLinha, 1, 1, 8).setValues([[
+      identificador,
       data.tipo, 
       data.categoria, 
       data.subcategoria, 
@@ -793,7 +901,9 @@ function insertFinanceiroData(data) {
       data.quantidade || 1,
       data.valor, 
       dataFormatada
-    ]);
+    ]]);
+    // Garantir que o ID seja formatado como texto
+    sheet.getRange(proximaLinha, 1).setNumberFormat('@');
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, message: 'Lançamento inserido com sucesso'}))
@@ -813,6 +923,8 @@ function insertFinanceiroBatch(dataArray) {
     // Adicionar cabeçalhos se a planilha estiver vazia
     if (sheet.getLastRow() === 0) {
       sheet.getRange(1, 1, 1, 8).setValues([['ID', 'Tipo', 'Categoria', 'Subcategoria', 'Descrição', 'Quantidade', 'Valor', 'Data Lançamento']]);
+      // Formatar coluna A como texto simples
+      sheet.getRange('A:A').setNumberFormat('@');
     }
     
     // Verificar duplicatas
@@ -848,7 +960,7 @@ function insertFinanceiroBatch(dataArray) {
         }
         
         rowsToInsert.push([
-          "'" + identificador, // Adicionar ' para forçar como texto
+          identificador,
           data.tipo,
           data.categoria,
           data.subcategoria,
@@ -864,6 +976,8 @@ function insertFinanceiroBatch(dataArray) {
     if (rowsToInsert.length > 0) {
       const startRow = sheet.getLastRow() + 1;
       sheet.getRange(startRow, 1, rowsToInsert.length, 8).setValues(rowsToInsert);
+      // Garantir que a coluna ID seja formatada como texto
+      sheet.getRange(startRow, 1, rowsToInsert.length, 1).setNumberFormat('@');
     }
     
     return ContentService
@@ -1009,6 +1123,8 @@ function criarAbaEstoque() {
     const aba = planilha.insertSheet('Estoque');
     const cabecalhos = ['ID', 'Produto', 'Categoria', 'Quantidade', 'Valor_Unitario', 'Valor_Total', 'Data_Movimento', 'Tipo_Movimento', 'Observacoes'];
     aba.getRange(1, 1, 1, cabecalhos.length).setValues([cabecalhos]);
+    // Formatar coluna A como texto simples
+    aba.getRange('A:A').setNumberFormat('@');
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, message: 'Aba criada'}))
@@ -1061,6 +1177,8 @@ function insertEstoqueData(data) {
       data.tipoMovimento,
       data.observacoes || ''
     ]]);
+    // Garantir que o ID seja formatado como texto
+    aba.getRange(proximaLinha, 1).setNumberFormat('@');
     
     return ContentService
       .createTextOutput(JSON.stringify({success: true, message: 'Movimentação de estoque inserida'}))
