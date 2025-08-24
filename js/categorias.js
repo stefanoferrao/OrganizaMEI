@@ -186,9 +186,9 @@ document.addEventListener("DOMContentLoaded", function () {
     atualizarCategorias();
     atualizarCategoriaSubcategoriaForm();
     
-    // Notificação de sucesso (se Notyf estiver disponível)
-    if (typeof notyf !== 'undefined') {
-      notyf.success(`Categoria "${novoNome}" atualizada!`);
+    // Notificação de sucesso
+    if (typeof mostrarNotificacaoSync === 'function') {
+      mostrarNotificacaoSync(`Categoria "${novoNome}" atualizada!`, 'success');
     }
   }
 
@@ -267,9 +267,9 @@ document.addEventListener("DOMContentLoaded", function () {
     atualizarCategorias();
     atualizarCategoriaSubcategoriaForm();
     
-    // Notificação de sucesso (se Notyf estiver disponível)
-    if (typeof notyf !== 'undefined') {
-      notyf.success(`Subcategoria "${novoNome}" atualizada!`);
+    // Notificação de sucesso
+    if (typeof mostrarNotificacaoSync === 'function') {
+      mostrarNotificacaoSync(`Subcategoria "${novoNome}" atualizada!`, 'success');
     }
   }
 

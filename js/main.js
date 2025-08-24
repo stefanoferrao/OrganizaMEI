@@ -16,6 +16,7 @@ const categorias = JSON.parse(localStorage.getItem("categorias")) || {
     "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
     "Pessoal": ["Salários", "Benefícios"],
     "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
+    "Quebra": ["Vencimento", "Avaria", "Perda", "Roubo", "Deterioração", "Outros"],
     "Outros": ["Impostos", "Multas"]
   }
 };
@@ -158,6 +159,7 @@ function carregarDadosAtualizados() {
         "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
         "Pessoal": ["Salários", "Benefícios"],
         "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
+        "Quebra": ["Vencimento", "Avaria", "Perda", "Roubo", "Deterioração", "Outros"],
         "Outros": ["Impostos", "Multas"]
       }
     };
@@ -197,46 +199,25 @@ function carregarDadosAtualizados() {
   }
 }
 
-// Sistema de notificação global unificado
+// Sistema de notificação global unificado - Agora usando DaisyUI
 function mostrarNotificacaoSync(message, type = 'info') {
-  // Cache container to avoid repeated DOM queries
-  let container = mostrarNotificacaoSync._container;
-  if (!container) {
-    container = document.getElementById('notification-container');
-    mostrarNotificacaoSync._container = container;
+  // Aguardar o DaisyUI estar carregado
+  if (window.DaisyUINotifications) {
+    return window.DaisyUINotifications.show(message, type);
+  } else {
+    // Fallback temporário até o DaisyUI carregar
+    console.log(`Notificação (${type}): ${message}`);
+    setTimeout(() => {
+      if (window.DaisyUINotifications) {
+        window.DaisyUINotifications.show(message, type);
+      }
+    }, 100);
   }
-  
-  if (!container) {
-    console.log(`[${type.toUpperCase()}] ${message}`);
-    return;
-  }
-  
-  container.innerHTML = '';
-  const notification = document.createElement('div');
-  notification.className = `sync-notification ${type}`;
-  
-  const iconMap = {
-    'success': '<i class="fas fa-check"></i>',
-    'error': '<i class="fas fa-times"></i>',
-    'warning': '<i class="fas fa-exclamation-triangle"></i>',
-    'info': '<i class="fas fa-info-circle"></i>'
-  };
-  const icon = iconMap[type] || iconMap['info'];
-  const sanitizedMessage = message
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;');
-  notification.innerHTML = `<span class="icon">${icon}</span> ${sanitizedMessage}`;
-  
-  container.appendChild(notification);
-  requestAnimationFrame(() => notification.classList.add('show'));
-  setTimeout(() => {
-    notification.classList.remove('show');
-    setTimeout(() => container.innerHTML = '', 300);
-  }, 2000);
 }
+
+// Aliases globais para compatibilidade
+window.showNotification = (message, type) => mostrarNotificacaoSync(message, type);
+window.notify = (message, type) => mostrarNotificacaoSync(message, type);
 
 // Função para formatar moeda brasileira
 function formatarMoedaBR(valor) {
@@ -302,7 +283,7 @@ function recalcularEstoqueGlobal() {
     
     if (mov.tipoMovimento === 'Entrada') {
       estoqueCalculado[mov.produto] += mov.quantidade;
-    } else if (mov.tipoMovimento === 'Saída' || mov.tipoMovimento === 'Venda') {
+    } else if (mov.tipoMovimento === 'Saída' || mov.tipoMovimento === 'Venda' || mov.tipoMovimento === 'Quebra') {
       estoqueCalculado[mov.produto] -= mov.quantidade;
     }
   });

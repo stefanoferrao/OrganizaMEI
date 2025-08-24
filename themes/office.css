@@ -1098,3 +1098,158 @@ body[data-theme="office"] .latest-badge {
 body[data-theme="office"] .changelog-item-detail i {
     color: var(--secondary-color) !important;
 }
+
+/* === MODAL OVERLAY - CLASSIFICAÇÃO DE QUEBRA === */
+body[data-theme="office"] .modal-overlay {
+    background: rgba(44, 62, 80, 0.85) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+body[data-theme="office"] .modal-overlay .modal-content {
+    background: linear-gradient(145deg, var(--card-background) 0%, var(--accent-color) 100%) !important;
+    border: 3px solid var(--secondary-color) !important;
+    box-shadow:
+        0 25px 80px var(--shadow-color),
+        0 0 30px var(--glow-color),
+        inset 0 1px 0 rgba(157, 157, 157, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .modal-overlay h3 {
+    color: var(--secondary-color) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+body[data-theme="office"] .modal-overlay .produto-section {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 5px solid var(--error-color) !important;
+    box-shadow: 0 8px 25px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay .produto-nome {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay .quebra-aviso {
+    background: rgba(220, 53, 69, 0.1) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    color: #f8d7da !important;
+}
+
+body[data-theme="office"] .modal-overlay .form-label {
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay select {
+    background: var(--accent-color) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow:
+        inset 0 2px 6px rgba(26, 37, 47, 0.4),
+        0 2px 8px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay select:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow:
+        0 0 0 3px var(--glow-color),
+        inset 0 2px 6px rgba(26, 37, 47, 0.4),
+        0 4px 12px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay select option {
+    background: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] .modal-overlay select option:hover,
+body[data-theme="office"] .modal-overlay select option:checked {
+    background: var(--card-background) !important;
+    color: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay button {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 6px 20px rgba(44, 62, 80, 0.4) !important;
+}
+
+body[data-theme="office"] .modal-overlay button:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    box-shadow: 0 10px 30px var(--glow-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay button[onclick*="Cancelar"] {
+    background: linear-gradient(135deg, var(--border-color) 0%, var(--accent-color) 100%) !important;
+    box-shadow: 0 6px 20px var(--shadow-color) !important;
+}
+
+body[data-theme="office"] .modal-overlay button[onclick*="Cancelar"]:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #0f1419 100%) !important;
+    box-shadow: 0 10px 30px var(--shadow-color) !important;
+}
+
+/* === TABS BOX === */
+body[data-theme="office"] .tabs-box .tab-label {
+    color: var(--text-secondary) !important;
+    padding: 12px 20px !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+    border-radius: 2px 2px 0 0 !important;
+}
+
+body[data-theme="office"] .tabs-box .tab-label:hover {
+    color: var(--secondary-color) !important;
+    background: rgba(157, 157, 157, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+body[data-theme="office"] .tabs-box .tab-label::after {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="office"] .tabs-box #tab-geral:checked~.tab-labels .tab-label:nth-child(1),
+body[data-theme="office"] .tabs-box #tab-integracao:checked~.tab-labels .tab-label:nth-child(2),
+body[data-theme="office"] .tabs-box #tab-atalhos:checked~.tab-labels .tab-label:nth-child(3),
+body[data-theme="office"] .tabs-box #tab-temas:checked~.tab-labels .tab-label:nth-child(4) {
+    color: var(--secondary-color) !important;
+    background: rgba(157, 157, 157, 0.15) !important;
+    border-bottom-color: var(--secondary-color) !important;
+}
+
+/* === DAISYUI STATUS INDICATOR === */
+body[data-theme="office"] .daisyui-status-dot {
+    border-color: rgba(157, 157, 157, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(157, 157, 157, 0.2) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator:hover .daisyui-status-dot {
+    box-shadow: 0 4px 12px var(--shadow-color), 0 0 12px rgba(157, 157, 157, 0.3) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.connected-working .daisyui-status-dot {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(52, 73, 94, 0.3) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.connected-pending .daisyui-status-dot {
+    background: var(--warning-color) !important;
+    border-color: rgba(255, 193, 7, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(255, 193, 7, 0.3) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.checking .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.syncing .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.page-load .daisyui-status-dot {
+    background: var(--secondary-color) !important;
+    border-color: rgba(157, 157, 157, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(157, 157, 157, 0.3) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.error .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.not-configured .daisyui-status-dot {
+    background: var(--error-color) !important;
+    border-color: rgba(220, 53, 69, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(220, 53, 69, 0.3) !important;
+}

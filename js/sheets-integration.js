@@ -41,11 +41,10 @@ function inicializarNotificacoes() {
     // Não precisa fazer nada, sistema já está pronto
 }
 
-// Atualizar indicador mini
+// Função de compatibilidade - agora delegada para DaisyUI Global
 function updateMiniIndicator(type) {
-    const indicator = document.getElementById('mini-sync-indicator');
-    if (indicator) {
-        indicator.className = `mini-sync-indicator ${type}`;
+    if (window.DaisyUIStatusIndicator) {
+        return window.DaisyUIStatusIndicator.updateStatus(type);
     }
 }
 
@@ -280,7 +279,7 @@ async function sincronizarFinanceiro() {
         
         showProgress('Conectando com Google Sheets...');
         updateSyncStatus('Sincronizando...', 'syncing');
-        updateMiniIndicator('checking');
+        updateMiniIndicator('syncing');
         
         // Aguardar um pouco para mostrar o progresso
         await new Promise(resolve => setTimeout(resolve, 800));
@@ -699,7 +698,7 @@ async function enviarTodosDados() {
     try {
         showProgress('Preparando dados...');
         updateSyncStatus('Enviando dados...', 'syncing');
-        updateMiniIndicator('checking');
+        updateMiniIndicator('syncing');
         mostrarNotificacaoSync('Enviando dados...', 'info');
         
         const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
@@ -905,13 +904,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sistema de notificação já está pronto
     
-    // Configurar clique no indicador mini
-    const miniIndicator = document.getElementById('mini-sync-indicator');
-    if (miniIndicator) {
-        miniIndicator.addEventListener('click', function() {
-            changeTab('configuracoes');
-        });
-    }
+    // DaisyUI Status Indicator já é inicializado pelo daisyui-global.js
     
     // Adicionar event listeners
     const saveUrlBtn = document.getElementById('btn-save-url');
@@ -970,7 +963,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Definir mini-sync-dot como azul ao carregar a página
+    // Definir daisyui-status-dot como azul ao carregar a página
     updateMiniIndicator('page-load');
     
     // Status inicial

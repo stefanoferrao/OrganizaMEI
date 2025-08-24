@@ -66,6 +66,7 @@
     <link rel="stylesheet" href="css/loading-overlay.css">
     <link rel="stylesheet" href="css/readme-viewer.css">
     <link rel="stylesheet" href="css/mobile-modals.css">
+    <link rel="stylesheet" href="css/daisyui-global.css">
 
     <link rel="stylesheet" href="css/icon-fixes.css">
 
@@ -74,6 +75,8 @@
     <script src="https://unpkg.com/feather-icons"></script>
 
     <!-- JavaScript Modular -->
+    <script defer src="js/daisyui-global.js"></script>
+    <script defer src="js/sync-utils.js"></script>
     <script defer src="js/dashboard.js"></script>
     <script defer src="js/estoque.js"></script>
     <script defer src="js/financeiro.js"></script>
@@ -111,7 +114,7 @@
 
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 5.3</div>
+            <div class="version-info">Versão 5.4</div>
         </div>
     </aside>
 
@@ -417,11 +420,18 @@
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-cog"></i>Configurações</h2>
 
             <!-- Guias de Configurações -->
-            <div class="config-tabs">
-                <button class="config-tab active" data-tab="geral"><i class="fas fa-cog"></i> Geral</button>
-                <button class="config-tab" data-tab="integracao"><i class="fas fa-link"></i> Integração</button>
-                <button class="config-tab" data-tab="atalhos"><i class="fas fa-keyboard"></i> Atalhos</button>
-                <button class="config-tab" data-tab="temas"><i class="fas fa-palette"></i> Temas</button>
+            <div class="tabs-box">
+                <input type="radio" name="config-tabs" id="tab-geral" class="tab-radio" checked>
+                <input type="radio" name="config-tabs" id="tab-integracao" class="tab-radio">
+                <input type="radio" name="config-tabs" id="tab-atalhos" class="tab-radio">
+                <input type="radio" name="config-tabs" id="tab-temas" class="tab-radio">
+                
+                <div class="tab-labels">
+                    <label for="tab-geral" class="tab-label"><i class="fas fa-cog"></i> Geral</label>
+                    <label for="tab-integracao" class="tab-label"><i class="fas fa-link"></i> Integração</label>
+                    <label for="tab-atalhos" class="tab-label"><i class="fas fa-keyboard"></i> Atalhos</label>
+                    <label for="tab-temas" class="tab-label"><i class="fas fa-palette"></i> Temas</label>
+                </div>
             </div>
 
             <!-- Conteúdo das Guias -->
@@ -621,13 +631,16 @@
         </section>
     </main>
 
-    <!-- Indicador Pequeno Sempre Ativo -->
-    <div id="mini-sync-indicator" class="mini-sync-indicator">
-        <div class="mini-sync-dot"></div>
+    <!-- DaisyUI Status Indicator -->
+    <div id="daisyui-status-indicator" class="daisyui-status-indicator">
+        <div class="daisyui-status-dot"></div>
     </div>
 
-    <!-- Container para Notificações -->
-    <div id="notification-container" style="position: fixed; top: 50px; right: 20px; z-index: 9998;"></div>
+    <!-- Container para DaisyUI Global (Alert Outline Style) -->
+    <div id="daisyui-notification-container"></div>
+    
+    <!-- Container antigo mantido para compatibilidade (oculto) -->
+    <div id="notification-container" style="display: none;"></div>
 
     <!-- Overlay de Sincronização -->
     <div id="sync-overlay" class="sync-overlay">

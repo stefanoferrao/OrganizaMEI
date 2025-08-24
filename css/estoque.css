@@ -131,7 +131,8 @@ button .fas, button .far, button .fab {
 }
 
 /* Modal Saída Produto */
-.modal-bg {
+.modal-bg,
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -148,7 +149,8 @@ button .fas, button .far, button .fab {
 }
 
 /* Animação de fade-out para modais */
-.modal-bg.modal-fade-out {
+.modal-bg.modal-fade-out,
+.modal-overlay.modal-fade-out {
   opacity: 0;
   backdrop-filter: blur(0px);
   pointer-events: none;
@@ -156,7 +158,8 @@ button .fas, button .far, button .fab {
 
 /* Prevenir conflitos em mobile */
 @media screen and (max-width: 768px) {
-  .modal-bg.modal-fade-out {
+  .modal-bg.modal-fade-out,
+  .modal-overlay.modal-fade-out {
     display: flex !important;
     visibility: visible !important;
   }
@@ -393,12 +396,14 @@ button .fas, button .far, button .fab {
   }
 }
 
-.modal-hidden {
+.modal-hidden,
+.modal-overlay.modal-hidden {
   display: none;
 }
 
 /* Animação de entrada para modais */
-.modal-bg:not(.modal-hidden) {
+.modal-bg:not(.modal-hidden),
+.modal-overlay:not(.modal-hidden) {
   animation: modalFadeIn 0.3s ease-out;
 }
 
@@ -1375,5 +1380,452 @@ datalist {
   
   .modal-btn-editar {
     width: 100%;
+  }
+}
+
+/* Modal Classificação de Quebra */
+.modal-classificacao-quebra {
+  min-width: 450px;
+  max-width: 550px;
+}
+
+.modal-header-quebra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #4a5568;
+}
+
+.modal-icon-quebra {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.quebra-info-card {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid #e53e3e;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.quebra-produto-nome {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #17acaf;
+  margin-bottom: 8px;
+}
+
+.quebra-detalhes {
+  font-size: 1rem;
+  color: #cbd5e0;
+}
+
+.quebra-quantidade {
+  color: #f56565;
+  font-weight: bold;
+}
+
+.form-quebra {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group-quebra {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group-quebra label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #e53e3e;
+  font-size: 14px;
+}
+
+.form-group-quebra label i {
+  width: 16px;
+  text-align: center;
+}
+
+.select-quebra,
+.textarea-quebra {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  border: 2px solid #4a5568;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #e2e8f0;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-quebra:focus,
+.textarea-quebra:focus {
+  border-color: #e53e3e;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  outline: none;
+}
+
+.textarea-quebra {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.modal-actions-quebra {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.modal-btn-quebra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-btn-quebra::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.modal-btn-quebra:hover::before {
+  left: 100%;
+}
+
+.modal-confirm-quebra {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.modal-confirm-quebra:hover {
+  background: linear-gradient(135deg, #c53030 0%, #9c2626 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+.modal-cancel-quebra {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 85, 104, 0.3);
+}
+
+.modal-cancel-quebra:hover {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
+}
+
+@media (max-width: 600px) {
+  .modal-classificacao-quebra {
+    min-width: auto;
+    max-width: 95vw;
+    margin: 20px;
+  }
+  
+  .modal-actions-quebra {
+    flex-direction: column;
+  }
+  
+  .modal-btn-quebra {
+    width: 100%;
+  }
+}
+
+/* Modal Overlay - Classificação de Quebra */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  backdrop-filter: blur(6px) !important;
+  animation: modalOverlayFadeIn 0.3s ease-out !important;
+}
+
+/* Container Principal */
+.modal-overlay .modal-content {
+  background: linear-gradient(145deg, #1a202c 0%, #0d1117 100%) !important;
+  border: 3px solid #17acaf !important;
+  border-radius: 20px !important;
+  padding: 32px !important;
+  box-shadow: 
+    0 25px 80px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(23, 172, 175, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  min-width: 450px !important;
+  max-width: 550px !important;
+  max-height: 90vh !important;
+  position: relative !important;
+  color: #ffffff !important;
+  animation: modalContentSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Cabeçalho */
+.modal-overlay .modal-header {
+  text-align: center !important;
+  margin-bottom: 28px !important;
+  padding-bottom: 20px !important;
+  border-bottom: 2px solid rgba(23, 172, 175, 0.3) !important;
+}
+
+.modal-overlay h3 {
+  color: #17acaf !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.modal-overlay h3::before {
+  content: "⚠️" !important;
+  font-size: 1.3rem !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+}
+
+/* Seção de Informações do Produto */
+.modal-overlay .produto-section {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+  border: 1px solid rgba(23, 172, 175, 0.2) !important;
+  border-left: 5px solid #e53e3e !important;
+  border-radius: 15px !important;
+  padding: 20px !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.modal-overlay .produto-nome {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #17acaf !important;
+  margin-bottom: 8px !important;
+}
+
+.modal-overlay .produto-quantidade {
+  font-size: 1rem !important;
+  color: #cbd5e0 !important;
+  margin-bottom: 12px !important;
+}
+
+.modal-overlay .quebra-aviso {
+  background: rgba(229, 62, 62, 0.1) !important;
+  border: 1px solid rgba(229, 62, 62, 0.3) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  color: #fbb6ce !important;
+  font-size: 0.95rem !important;
+  text-align: center !important;
+  font-weight: 500 !important;
+}
+
+/* Seção do Formulário */
+.modal-overlay .form-section {
+  margin-bottom: 28px !important;
+}
+
+.modal-overlay .form-label {
+  display: block !important;
+  color: #17acaf !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin-bottom: 12px !important;
+  text-align: left !important;
+}
+
+.modal-overlay select {
+  background: #000000 !important;
+  border: 2px solid #1a202c !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  margin-bottom: 8px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 
+    inset 0 2px 6px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  cursor: pointer !important;
+}
+
+.modal-overlay select:focus {
+  border-color: #17acaf !important;
+  box-shadow: 
+    0 0 0 3px rgba(23, 172, 175, 0.3),
+    inset 0 2px 6px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(23, 172, 175, 0.2) !important;
+  background: #000000 !important;
+  outline: none !important;
+}
+
+.modal-overlay select option {
+  background: #000000 !important;
+  color: #ffffff !important;
+  padding: 12px !important;
+  font-weight: 500 !important;
+}
+
+.modal-overlay select option:hover,
+.modal-overlay select option:checked {
+  background: #1a202c !important;
+  color: #17acaf !important;
+}
+
+/* Seção de Botões */
+.modal-overlay .actions-section {
+  display: flex !important;
+  gap: 16px !important;
+  justify-content: center !important;
+  padding-top: 20px !important;
+  border-top: 1px solid rgba(23, 172, 175, 0.2) !important;
+}
+
+.modal-overlay button {
+  background: linear-gradient(135deg, #17acaf 0%, #14a085 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 16px 32px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-width: 130px !important;
+  box-shadow: 0 6px 20px rgba(23, 172, 175, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.modal-overlay button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.modal-overlay button:hover::before {
+  left: 100% !important;
+}
+
+.modal-overlay button:hover {
+  background: linear-gradient(135deg, #14a085 0%, #0f7a6b 100%) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: 0 10px 30px rgba(23, 172, 175, 0.5) !important;
+}
+
+.modal-overlay button:active {
+  transform: translateY(-1px) scale(0.98) !important;
+  transition: all 0.1s !important;
+}
+
+.modal-overlay button[onclick*="Cancelar"] {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
+  box-shadow: 0 6px 20px rgba(74, 85, 104, 0.3) !important;
+}
+
+.modal-overlay button[onclick*="Cancelar"]:hover {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+  box-shadow: 0 10px 30px rgba(74, 85, 104, 0.5) !important;
+}
+
+/* Animações */
+@keyframes modalOverlayFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(6px);
+  }
+}
+
+@keyframes modalContentSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px) rotateX(10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .modal-overlay .modal-content {
+    min-width: auto !important;
+    max-width: 95vw !important;
+    margin: 20px !important;
+    padding: 24px !important;
+    border-radius: 16px !important;
+  }
+  
+  .modal-overlay .actions-section {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .modal-overlay button {
+    width: 100% !important;
+    padding: 14px 24px !important;
+  }
+  
+  .modal-overlay h3 {
+    font-size: 1.3rem !important;
   }
 }

@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
       
       if (mov.tipoMovimento === 'Entrada') {
         estoqueCalculado[mov.produto] += mov.quantidade;
-      } else if (mov.tipoMovimento === 'Saída' || mov.tipoMovimento === 'Venda') {
+      } else if (mov.tipoMovimento === 'Saída' || mov.tipoMovimento === 'Venda' || mov.tipoMovimento === 'Quebra') {
         estoqueCalculado[mov.produto] -= mov.quantidade;
       }
     });
@@ -522,108 +522,155 @@ document.addEventListener("DOMContentLoaded", function () {
       const valor = parseFloat(valorInput.value);
       
       if (!isNaN(idx) && !isNaN(qtd) && qtd > 0 && produtos[idx].quantidade >= qtd && !isNaN(valor) && valor >= 0) {
-        // Bloquear botões durante operação
-        document.body.classList.add('sync-disabled');
-        
-        // Desabilitar botão para evitar cliques duplos
-        const submitBtn = saidaModalForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processando...';
-        
         try {
           // Feedback visual imediato - fechar modal
           saidaModal.classList.add('modal-hidden');
           
-          // Feedback visual imediato - atualizar quantidade na tela
-          const item = document.querySelectorAll('.estoque-item')[idx];
-          if (item) {
-            const quantidadeSpan = item.querySelector('.estoque-quantidade');
-            const novaQuantidade = produtos[idx].quantidade - qtd;
-            if (quantidadeSpan) {
-              quantidadeSpan.innerHTML = `${novaQuantidade} <small>unidades</small>`;
+          // Usar função transacional se disponível
+          if (typeof registrarSaidaTransacional === 'function') {
+            await registrarSaidaTransacional(idx, qtd, valor);
+            
+            // Feedback visual de sucesso
+            const item = document.querySelectorAll('.estoque-item')[idx];
+            if (item) {
               item.classList.add('sucesso');
               setTimeout(() => {
                 item.classList.remove('sucesso');
               }, 1000);
             }
-          }
-          
-          // Gerar ID compartilhado para estoque e financeiro
-          const idCompartilhado = window.gerarIdentificadorUnico();
-          
-          // Criar movimentação de saída
-          const movimentacao = {
-            id: idCompartilhado,
-            produto: produtos[idx].nome,
-            categoria: 'Saída',
-            quantidade: qtd,
-            valorUnitario: valor / qtd,
-            valorTotal: valor,
-            data: new Date().toLocaleDateString('pt-BR'),
-            tipoMovimento: 'Venda',
-            observacoes: 'Venda de produto'
-          };
-          
-          // Carregar e adicionar movimentação
-          carregarMovimentacoes();
-          movimentacoesEstoque.push(movimentacao);
-          salvarMovimentacoes();
-          
-          // Salvar movimentação no Google Sheets se disponível
-          const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
-          if (estoqueAtivo && typeof adicionarMovimentacaoEstoque === 'function') {
-            await adicionarMovimentacaoEstoque(movimentacao);
-          }
-          
-          // Recalcular estoque baseado nas movimentações
-          recalcularEstoque();
-          renderizarProdutos();
-          atualizarListaProdutos();
-          
-          // Atualizar módulo financeiro
-          atualizarModuloFinanceiro();
-          
-          if (typeof renderizarDashboardResumo === 'function') {
-            renderizarDashboardResumo();
-          }
-          
-          // Registrar saída como lançamento financeiro com mesmo ID da movimentação
-          const novoLancamento = {
-            id: idCompartilhado,
-            tipo: "receita",
-            categoria: "Vendas",
-            subcategoria: "Produtos",
-            descricao: produtos[idx].nome,
-            quantidade: qtd,
-            valor: valor,
-            data: new Date().toLocaleDateString('pt-BR')
-          };
-          
-          lancamentos.push(novoLancamento);
-          salvarLancamentos();
-          
-          // Atualizar outras seções se necessário
-          if (typeof renderizarLancamentos === 'function') {
-            renderizarLancamentos();
-          }
-          if (typeof renderizarVendas === 'function') {
-            renderizarVendas();
-          }
-          
-          if (typeof adicionarLancamentoSheets === 'function') {
-            adicionarLancamentoSheets(novoLancamento).then(sucesso => {
-              if (sucesso && typeof updateSyncIndicator === 'function') {
-                updateSyncIndicator('success');
+            
+            // Atualizar interface do estoque
+            if (typeof recalcularEstoque === 'function') {
+              recalcularEstoque();
+            }
+            renderizarProdutos();
+            atualizarListaProdutos();
+            atualizarModuloFinanceiro();
+            
+            if (typeof renderizarDashboardResumo === 'function') {
+              renderizarDashboardResumo();
+            }
+          } else {
+            // Fallback para implementação antiga (sem transação)
+            console.warn('Função transacional não disponível, usando implementação de fallback');
+            
+            // Feedback visual imediato - atualizar quantidade na tela
+            const item = document.querySelectorAll('.estoque-item')[idx];
+            if (item) {
+              const quantidadeSpan = item.querySelector('.estoque-quantidade');
+              const novaQuantidade = produtos[idx].quantidade - qtd;
+              if (quantidadeSpan) {
+                quantidadeSpan.innerHTML = `${novaQuantidade} <small>unidades</small>`;
+                item.classList.add('sucesso');
+                setTimeout(() => {
+                  item.classList.remove('sucesso');
+                }, 1000);
               }
-            });
+            }
+            
+            // Bloquear botões durante operação
+            document.body.classList.add('sync-disabled');
+            
+            // Gerar ID compartilhado para estoque e financeiro
+            const idCompartilhado = window.gerarIdentificadorUnico();
+            
+            // PASSO 1: Registrar no módulo financeiro PRIMEIRO
+            let novoLancamento;
+            
+            if (valor === 0) {
+              // Produto com valor zero = Despesa categoria Quebra
+              const subcategoriaQuebra = await window.mostrarPopupClassificacaoQuebra(produtos[idx].nome, qtd);
+              if (!subcategoriaQuebra) {
+                throw new Error('Operação cancelada pelo usuário');
+              }
+              
+              novoLancamento = {
+                id: idCompartilhado,
+                tipo: "despesa",
+                categoria: "Quebra",
+                subcategoria: subcategoriaQuebra,
+                descricao: produtos[idx].nome,
+                quantidade: qtd,
+                valor: 0,
+                data: new Date().toLocaleDateString('pt-BR')
+              };
+            } else {
+              // Produto com valor > 0 = Receita categoria Vendas
+              novoLancamento = {
+                id: idCompartilhado,
+                tipo: "receita",
+                categoria: "Vendas",
+                subcategoria: "Produtos",
+                descricao: produtos[idx].nome,
+                quantidade: qtd,
+                valor: valor,
+                data: new Date().toLocaleDateString('pt-BR')
+              };
+            }
+            
+            lancamentos.push(novoLancamento);
+            salvarLancamentos();
+            
+            // Sincronizar financeiro com Google Sheets
+            if (typeof adicionarLancamentoSheets === 'function') {
+              await adicionarLancamentoSheets(novoLancamento);
+            }
+            
+            // PASSO 2: Registrar no módulo estoque DEPOIS
+            const tipoMovimento = valor === 0 ? 'Quebra' : 'Venda';
+            const observacoes = valor === 0 ? `Quebra de produto - ${novoLancamento.subcategoria}` : 'Venda de produto';
+            
+            const movimentacao = {
+              id: idCompartilhado,
+              produto: produtos[idx].nome,
+              categoria: 'Saída',
+              quantidade: qtd,
+              valorUnitario: qtd > 0 ? valor / qtd : 0,
+              valorTotal: valor,
+              data: new Date().toLocaleDateString('pt-BR'),
+              tipoMovimento: tipoMovimento,
+              observacoes: observacoes
+            };
+            
+            // Carregar e adicionar movimentação
+            carregarMovimentacoes();
+            movimentacoesEstoque.push(movimentacao);
+            salvarMovimentacoes();
+            
+            // Salvar movimentação no Google Sheets se disponível
+            const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
+            if (estoqueAtivo && typeof adicionarMovimentacaoEstoque === 'function') {
+              await adicionarMovimentacaoEstoque(movimentacao);
+            }
+            
+            // Recalcular e atualizar estoque
+            recalcularEstoque();
+            renderizarProdutos();
+            atualizarListaProdutos();
+            
+            // Atualizar módulo financeiro
+            atualizarModuloFinanceiro();
+            
+            if (typeof renderizarDashboardResumo === 'function') {
+              renderizarDashboardResumo();
+            }
+            
+            // Atualizar outras seções se necessário
+            if (typeof renderizarLancamentos === 'function') {
+              renderizarLancamentos();
+            }
+            if (typeof renderizarVendas === 'function') {
+              renderizarVendas();
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao processar saída:', error);
+          if (typeof mostrarNotificacaoSync === 'function') {
+            mostrarNotificacaoSync(error.message, 'error');
           }
         } finally {
-          // Reabilitar botão
+          // Reativar botões após operação
           setTimeout(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-            // Reativar botões após operação
             document.body.classList.remove('sync-disabled');
           }, 1000);
         }
@@ -635,12 +682,6 @@ document.addEventListener("DOMContentLoaded", function () {
         
         if (typeof mostrarNotificacaoSync === 'function') {
           mostrarNotificacaoSync(erro, 'error');
-        }
-        
-        const submitBtn = saidaModalForm.querySelector('button[type="submit"]');
-        if (submitBtn.disabled) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Confirmar Saída';
         }
       }
     });

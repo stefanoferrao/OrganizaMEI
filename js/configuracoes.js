@@ -1130,6 +1130,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Inicializar navegação das abas de configurações
         initConfigTabs();
         
+        // Garantir que a primeira aba esteja ativa após inicialização
+        setTimeout(() => {
+            const firstRadio = document.getElementById('tab-geral');
+            const firstContent = document.getElementById('config-geral');
+            if (firstRadio && firstContent && firstRadio.checked) {
+                firstContent.classList.add('active');
+            }
+        }, 100);
+        
         // Auto-iniciar tutorial para novos usuários
         const isFirstVisit = !localStorage.getItem('tutorial_completed') && 
                             !localStorage.getItem('produtos') && 
@@ -1147,25 +1156,65 @@ window.startTutorial = startTutorial;
 
 // ===== NAVEGAÇÃO ABAS CONFIGURAÇÕES =====
 function initConfigTabs() {
-    const configTabs = document.querySelectorAll('.config-tab');
+    const configRadios = document.querySelectorAll('.tab-radio');
     const configContents = document.querySelectorAll('.config-tab-content');
+    const tabLabels = document.querySelectorAll('.tab-label');
     
-    configTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const targetTab = tab.getAttribute('data-tab');
-            
-            // Remove active de todas as abas
-            configTabs.forEach(t => t.classList.remove('active'));
-            configContents.forEach(c => c.classList.remove('active'));
-            
-            // Adiciona active na aba clicada
-            tab.classList.add('active');
-            const targetContent = document.getElementById(`config-${targetTab}`);
-            if (targetContent) {
-                targetContent.classList.add('active');
+    // Adicionar eventos de change para os radio inputs
+    configRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) {
+                const targetTab = radio.id.replace('tab-', '');
+                
+                // Remove active de todos os conteúdos
+                configContents.forEach(c => c.classList.remove('active'));
+                
+                // Adiciona active no conteúdo correspondente
+                const targetContent = document.getElementById(`config-${targetTab}`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
             }
         });
     });
+    
+    // Adicionar eventos de click para os labels
+    tabLabels.forEach((label, index) => {
+        label.addEventListener('click', () => {
+            const radioId = label.getAttribute('for');
+            const radio = document.getElementById(radioId);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        // Suporte para navegação por teclado
+        label.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                label.click();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const direction = e.key === 'ArrowRight' ? 1 : -1;
+                const nextIndex = (index + direction + tabLabels.length) % tabLabels.length;
+                tabLabels[nextIndex].focus();
+                tabLabels[nextIndex].click();
+            }
+        });
+        
+        // Tornar labels focáveis
+        label.setAttribute('tabindex', '0');
+    });
+    
+    // Inicializar com a primeira aba ativa
+    const firstRadio = document.getElementById('tab-geral');
+    if (firstRadio && firstRadio.checked) {
+        const firstContent = document.getElementById('config-geral');
+        if (firstContent) {
+            firstContent.classList.add('active');
+        }
+    }
 }
 
 // Inicializar navegação das abas quando DOM estiver pronto

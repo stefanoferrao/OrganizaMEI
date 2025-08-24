@@ -1,8 +1,9 @@
 /* Configurações Styles */
 
-/* Guias de Configurações */
-.config-tabs {
+/* Guias de Configurações - Tabs Box usando Radio Inputs */
+.tabs-box {
   display: flex;
+  flex-direction: column;
   background: #2d3748;
   border-radius: 8px 8px 0 0;
   border: 1px solid #4a5568;
@@ -11,7 +12,16 @@
   overflow: hidden;
 }
 
-.config-tab {
+.tab-radio {
+  display: none;
+}
+
+.tab-labels {
+  display: flex;
+  width: 100%;
+}
+
+.tab-label {
   flex: 1;
   background: transparent;
   color: #a0aec0;
@@ -26,25 +36,76 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  user-select: none;
 }
 
-.config-tab:last-child {
+.tab-label:last-child {
   border-right: none;
 }
 
-.config-tab:hover {
+.tab-label:hover {
   background: #374151;
-  color: #e2e8f0;
+  color: #17acaf !important;
 }
 
-.config-tab.active {
+.tab-radio:checked + .tab-labels .tab-label,
+.tab-radio:checked ~ .tab-labels .tab-label:nth-child(1) {
+  background: transparent;
+  color: #a0aec0;
+  font-weight: 500;
+}
+
+#tab-geral:checked ~ .tab-labels .tab-label:nth-child(1),
+#tab-integracao:checked ~ .tab-labels .tab-label:nth-child(2),
+#tab-atalhos:checked ~ .tab-labels .tab-label:nth-child(3),
+#tab-temas:checked ~ .tab-labels .tab-label:nth-child(4) {
   background: #17acaf;
-  color: #fff;
+  color: #fff !important;
   font-weight: 600;
 }
 
-.config-tab i {
+.tab-label i {
   font-size: 0.9rem;
+}
+
+/* Melhorias de acessibilidade */
+.tab-label:focus {
+  outline: 2px solid #17acaf;
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.tab-label:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Indicador visual de aba ativa */
+.tab-label::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#tab-geral:checked ~ .tab-labels .tab-label:nth-child(1)::after,
+#tab-integracao:checked ~ .tab-labels .tab-label:nth-child(2)::after,
+#tab-atalhos:checked ~ .tab-labels .tab-label:nth-child(3)::after,
+#tab-temas:checked ~ .tab-labels .tab-label:nth-child(4)::after {
+  background: #17acaf;
+}
+
+/* Animação suave para hover */
+.tab-label {
+  position: relative;
+  transform: translateY(0);
+}
+
+.tab-label:hover {
+  transform: translateY(-1px);
 }
 
 .config-content {
@@ -284,25 +345,30 @@
 }
 
 @media (max-width: 600px) {
-  .config-tabs {
+  .tab-labels {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
   }
   
-  .config-tab {
+  .tab-label {
     border-right: 1px solid #4a5568;
     border-bottom: 1px solid #4a5568;
     padding: 10px 8px;
     font-size: 0.8rem;
   }
   
-  .config-tab:nth-child(2n) {
+  .tab-label:nth-child(2n) {
     border-right: none;
   }
   
-  .config-tab:nth-child(n+3) {
+  .tab-label:nth-child(n+3) {
     border-bottom: none;
+  }
+  
+  /* Remover indicador visual em mobile */
+  .tab-label::after {
+    display: none;
   }
   
   .config-content {

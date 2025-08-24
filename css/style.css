@@ -7,7 +7,7 @@
 /* Transições globais para mudança de temas */
 body, aside, main, nav button, form input, form select, form textarea, form button,
 .card, .dashboard-card, .cat-card, .lancamento-item, .resumo-financeiro,
-.config-tab, .tipo-label, .mini-sync-indicator .mini-sync-dot,
+.config-tab, .tipo-label, .daisyui-status-indicator .daisyui-status-dot,
 .logo-organizamei, .version-info, .sidebar-footer {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
@@ -482,185 +482,9 @@ body {
     -webkit-touch-callout: none;
   }
 }
-/* Customização do Notyf para o tema escuro */
-.notyf__toast {
-  background: #2d3748 !important;
-  border: 1px solid #4a5568 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
-  padding: 0px !important;
-  min-height: 16px !important;
-  max-width: 200px !important;
-  margin-top: 60px !important;
-  border-radius: 0px !important;
-  color: #3498db !important;
-}
 
-.notyf__toast--success {
-  background: #2d3748 !important;
-  border-left: 2px solid #38a169 !important;
-}
 
-.notyf__toast--error {
-  background: #2d3748 !important;
-  border-left: 2px solid #e53e3e !important;
-}
 
-.notyf__toast--warning {
-  background: #2d3748 !important;
-  border-left: 2px solid #ecc94b !important;
-}
-
-.notyf__message {
-  color: #e2e8f0 !important;
-  font-size: 0.55rem !important;
-  line-height: 1.1 !important;
-  font-weight: 400 !important;
-}
-
-.notyf__toast--warning .notyf__message {
-  color: #1a202c !important;
-}
-
-.notyf__icon {
-  width: 8px !important;
-  height: 8px !important;
-  margin-right: 2px !important;
-}
-
-.notyf__icon--success {
-  background: #38a169 !important;
-}
-
-.notyf__icon--error {
-  background: #e53e3e !important;
-}
-
-.notyf__icon--warning {
-  background: #ecc94b !important;
-}
-
-/* Responsivo para mobile */
-@media (max-width: 800px) {
-  .notyf__toast {
-    margin-top: 50px !important;
-    max-width: 100px !important;
-    padding: 1px 3px !important;
-  }
-  
-  .notyf__message {
-    font-size: 0.5rem !important;
-  }
-  
-  .notyf__icon {
-    width: 6px !important;
-    height: 6px !important;
-    margin-right: 1px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .notyf__toast {
-    margin-top: 45px !important;
-    max-width: 80px !important;
-    padding: 1px 2px !important;
-  }
-  
-  .notyf__message {
-    font-size: 0.45rem !important;
-  }
-  
-  .notyf__icon {
-    width: 5px !important;
-    height: 5px !important;
-    margin-right: 1px !important;
-  }
-}
-
-/* Indicador Mini Sempre Ativo */
-.mini-sync-indicator {
-  position: fixed;
-  top: 30px;
-  right: 30px;
-  z-index: 9999;
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-}
-
-.mini-sync-dot {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #ecc94b;
-  transition: all 0.3s ease;
-}
-
-.mini-sync-indicator:hover .mini-sync-dot {
-  transform: scale(1.3);
-}
-
-.mini-sync-indicator.success .mini-sync-dot {
-  background: #38a169;
-}
-
-.mini-sync-indicator.error .mini-sync-dot {
-  background: #e53e3e;
-  animation: pulse 2s infinite;
-}
-
-.mini-sync-indicator.syncing .mini-sync-dot {
-  background: #17acaf;
-  animation: pulse 1s ease-in-out infinite;
-}
-
-/* Novas classes para sincronização visual */
-.mini-sync-indicator.checking .mini-sync-dot {
-  background: #17acaf;
-}
-
-.mini-sync-indicator.connected-working .mini-sync-dot {
-  background: #38a169;
-}
-
-.mini-sync-indicator.not-configured .mini-sync-dot {
-  background: #e53e3e;
-}
-
-.mini-sync-indicator.connected-pending .mini-sync-dot {
-  background: #ecc94b;
-}
-
-.mini-sync-indicator.page-load .mini-sync-dot {
-  background: #17acaf;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 800px) {
-  .mini-sync-indicator {
-    top: 30px;
-    right: 30px;
-    width: 15px;
-    height: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mini-sync-indicator {
-    top: 25px;
-    right: 25px;
-    width: 15px;
-    height: 15px;
-  }
-}
 
 /* PWA Fullscreen Styles */
 @media all and (display-mode: fullscreen) {
@@ -680,6 +504,10 @@ body {
   main {
     padding-top: calc(24px + env(safe-area-inset-top));
   }
+  
+  #daisyui-notification-container {
+    top: calc(20px + env(safe-area-inset-top));
+  }
 
   @media (max-width: 800px) {
     main {
@@ -689,6 +517,10 @@ body {
     aside {
       padding-top: calc(60px + env(safe-area-inset-top));
     }
+    
+    #daisyui-notification-container {
+      top: calc(70px + env(safe-area-inset-top));
+    }
   }
 }
 
@@ -696,6 +528,16 @@ body {
   body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  #daisyui-notification-container {
+    top: calc(20px + env(safe-area-inset-top));
+  }
+  
+  @media (max-width: 800px) {
+    #daisyui-notification-container {
+      top: calc(70px + env(safe-area-inset-top));
+    }
   }
 }
 
@@ -1146,3 +988,5 @@ nav button i {
     opacity: 0;
   }
 }
+
+/* Estilos antigos de notificações removidos - Agora usando DaisyUI */

@@ -879,3 +879,157 @@ body[data-theme="police"] .latest-badge {
 body[data-theme="police"] .changelog-item-detail i {
     color: var(--secondary-color) !important;
 }
+
+/* === MODAL OVERLAY - CLASSIFICAÇÃO DE QUEBRA === */
+body[data-theme="police"] .modal-overlay {
+    background: rgba(12, 20, 38, 0.85) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+body[data-theme="police"] .modal-overlay .modal-content {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 3px solid #60a5fa !important;
+    box-shadow:
+        0 25px 80px rgba(12, 20, 38, 0.8),
+        0 0 30px rgba(96, 165, 250, 0.4),
+        inset 0 1px 0 rgba(96, 165, 250, 0.1) !important;
+    color: #f8fafc !important;
+}
+
+body[data-theme="police"] .modal-overlay h3 {
+    color: #60a5fa !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-theme="police"] .modal-overlay .produto-section {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    border: 1px solid rgba(96, 165, 250, 0.4) !important;
+    border-left: 5px solid #dc2626 !important;
+    box-shadow: 0 8px 25px rgba(12, 20, 38, 0.7) !important;
+}
+
+body[data-theme="police"] .modal-overlay .produto-nome {
+    color: #60a5fa !important;
+}
+
+body[data-theme="police"] .modal-overlay .quebra-aviso {
+    background: rgba(220, 38, 38, 0.15) !important;
+    border: 1px solid rgba(220, 38, 38, 0.4) !important;
+    color: #fbb6ce !important;
+}
+
+body[data-theme="police"] .modal-overlay .form-label {
+    color: #60a5fa !important;
+}
+
+body[data-theme="police"] .modal-overlay select {
+    background: #0f172a !important;
+    border: 2px solid #475569 !important;
+    color: #f8fafc !important;
+    box-shadow:
+        inset 0 2px 6px rgba(12, 20, 38, 0.6),
+        0 2px 8px rgba(12, 20, 38, 0.7) !important;
+}
+
+body[data-theme="police"] .modal-overlay select:focus {
+    border-color: #60a5fa !important;
+    box-shadow:
+        0 0 0 3px rgba(96, 165, 250, 0.4),
+        inset 0 2px 6px rgba(12, 20, 38, 0.6),
+        0 4px 12px rgba(96, 165, 250, 0.4) !important;
+}
+
+body[data-theme="police"] .modal-overlay select option {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+body[data-theme="police"] .modal-overlay select option:hover,
+body[data-theme="police"] .modal-overlay select option:checked {
+    background: #1e293b !important;
+    color: #60a5fa !important;
+}
+
+body[data-theme="police"] .modal-overlay button {
+    background: linear-gradient(135deg, #1e3a8a 0%, #365397 50%, #17375f 100%) !important;
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4) !important;
+}
+
+body[data-theme="police"] .modal-overlay button:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%) !important;
+    box-shadow: 0 10px 30px rgba(96, 165, 250, 0.4) !important;
+}
+
+body[data-theme="police"] .modal-overlay button[onclick*="Cancelar"] {
+    background: linear-gradient(135deg, #475569 0%, #0f172a 100%) !important;
+    box-shadow: 0 6px 20px rgba(12, 20, 38, 0.7) !important;
+}
+
+body[data-theme="police"] .modal-overlay button[onclick*="Cancelar"]:hover {
+    background: linear-gradient(135deg, #0f172a 0%, #0c1426 100%) !important;
+    box-shadow: 0 10px 30px rgba(12, 20, 38, 0.7) !important;
+}
+
+/* === TABS BOX === */
+body[data-theme="police"] .tabs-box .tab-label {
+    color: var(--text-secondary) !important;
+    padding: 12px 20px !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="police"] .tabs-box .tab-label:hover {
+    color: var(--secondary-color) !important;
+    background: rgba(96, 165, 250, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+body[data-theme="police"] .tabs-box .tab-label::after {
+    background: var(--secondary-color) !important;
+}
+
+body[data-theme="police"] .tabs-box #tab-geral:checked~.tab-labels .tab-label:nth-child(1),
+body[data-theme="police"] .tabs-box #tab-integracao:checked~.tab-labels .tab-label:nth-child(2),
+body[data-theme="police"] .tabs-box #tab-atalhos:checked~.tab-labels .tab-label:nth-child(3),
+body[data-theme="police"] .tabs-box #tab-temas:checked~.tab-labels .tab-label:nth-child(4) {
+    color: var(--secondary-color) !important;
+    background: rgba(96, 165, 250, 0.15) !important;
+    border-bottom-color: var(--secondary-color) !important;
+}
+
+/* === DAISYUI STATUS INDICATOR === */
+body[data-theme="police"] .daisyui-status-dot {
+    border-color: rgba(96, 165, 250, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(12, 20, 38, 0.7), 0 0 10px rgba(96, 165, 250, 0.3) !important;
+}
+
+body[data-theme="police"] .daisyui-status-indicator:hover .daisyui-status-dot {
+    box-shadow: 0 4px 12px rgba(12, 20, 38, 0.8), 0 0 15px rgba(96, 165, 250, 0.5) !important;
+}
+
+body[data-theme="police"] .daisyui-status-indicator.connected-working .daisyui-status-dot {
+    background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+body[data-theme="police"] .daisyui-status-indicator.connected-pending .daisyui-status-dot {
+    background: var(--warning-color) !important;
+    border-color: rgba(217, 119, 6, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(12, 20, 38, 0.7), 0 0 10px rgba(217, 119, 6, 0.4) !important;
+}
+
+body[data-theme="police"] .daisyui-status-indicator.checking .daisyui-status-dot,
+body[data-theme="police"] .daisyui-status-indicator.syncing .daisyui-status-dot,
+body[data-theme="police"] .daisyui-status-indicator.page-load .daisyui-status-dot {
+    background: var(--secondary-color) !important;
+    border-color: rgba(96, 165, 250, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(12, 20, 38, 0.7), 0 0 10px rgba(96, 165, 250, 0.4) !important;
+}
+
+body[data-theme="police"] .daisyui-status-indicator.error .daisyui-status-dot,
+body[data-theme="police"] .daisyui-status-indicator.not-configured .daisyui-status-dot {
+    background: var(--error-color) !important;
+    border-color: rgba(220, 38, 38, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(12, 20, 38, 0.7), 0 0 10px rgba(220, 38, 38, 0.4) !important;
+}

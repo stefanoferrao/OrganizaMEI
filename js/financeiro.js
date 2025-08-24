@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
       "Pessoal": ["Salários", "Benefícios"],
       "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
+      "Quebra": ["Vencimento", "Avaria", "Perda", "Roubo", "Deterioração", "Outros"],
       "Outros": ["Impostos", "Multas"]
     }
   };
@@ -343,36 +344,15 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
     
-    const eVenda = lancamento.categoria === 'Vendas' && lancamento.subcategoria === 'Produtos';
-    if (eVenda && lancamento.id) {
-      secureLog('=== REMOVENDO MOVIMENTAÇÃO DE ESTOQUE RELACIONADA ===');
+    try {
+      const eVenda = lancamento.categoria === 'Vendas' && lancamento.subcategoria === 'Produtos';
+    const eQuebra = lancamento.categoria === 'Quebra';
       
-      let movimentacoesEstoque = [];
-      try {
-        movimentacoesEstoque = JSON.parse(localStorage.getItem('movimentacoesEstoque') || '[]');
-      } catch (error) {
-        console.error('Erro ao carregar movimentações de estoque:', error);
-        movimentacoesEstoque = [];
-      }
-      
-      const indexMovimentacao = movimentacoesEstoque.findIndex(m => m.id === lancamento.id);
-      if (indexMovimentacao >= 0) {
-        const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
-        if (estoqueAtivo && typeof excluirMovimentacaoEstoque === 'function') {
-          try {
-            await excluirMovimentacaoEstoque(lancamento.id);
-          } catch (error) {
-            console.error('Erro ao remover movimentação do Google Sheets:', error);
-          }
-        }
+      // Usar função transacional se disponível e for uma venda
+      if (eVenda && typeof removerLancamentoTransacional === 'function') {
+        await removerLancamentoTransacional(index);
         
-        movimentacoesEstoque.splice(indexMovimentacao, 1);
-        try {
-          localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoesEstoque));
-        } catch (error) {
-          console.error('Erro ao salvar movimentações no localStorage:', error);
-        }
-        
+        // Recalcular estoque após remoção transacional
         if (typeof recalcularEstoque === 'function') {
           recalcularEstoque();
         } else if (typeof recalcularEstoqueGlobal === 'function') {
@@ -382,47 +362,94 @@ document.addEventListener("DOMContentLoaded", function () {
         if (typeof renderizarProdutos === 'function') {
           renderizarProdutos();
         }
+      } else {
+        // Fallback para remoção não-transacional (lançamentos que não são vendas)
+        if ((eVenda || eQuebra) && lancamento.id) {
+          secureLog('=== REMOVENDO MOVIMENTAÇÃO DE ESTOQUE RELACIONADA ===');
+          
+          let movimentacoesEstoque = [];
+          try {
+            movimentacoesEstoque = JSON.parse(localStorage.getItem('movimentacoesEstoque') || '[]');
+          } catch (error) {
+            console.error('Erro ao carregar movimentações de estoque:', error);
+            movimentacoesEstoque = [];
+          }
+          
+          const indexMovimentacao = movimentacoesEstoque.findIndex(m => m.id === lancamento.id);
+          if (indexMovimentacao >= 0) {
+            const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
+            if (estoqueAtivo && typeof excluirMovimentacaoEstoque === 'function') {
+              try {
+                await excluirMovimentacaoEstoque(lancamento.id);
+              } catch (error) {
+                console.error('Erro ao remover movimentação do Google Sheets:', error);
+              }
+            }
+            
+            movimentacoesEstoque.splice(indexMovimentacao, 1);
+            try {
+              localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoesEstoque));
+            } catch (error) {
+              console.error('Erro ao salvar movimentações no localStorage:', error);
+            }
+            
+            if (typeof recalcularEstoque === 'function') {
+              recalcularEstoque();
+            } else if (typeof recalcularEstoqueGlobal === 'function') {
+              recalcularEstoqueGlobal();
+            }
+            
+            if (typeof renderizarProdutos === 'function') {
+              renderizarProdutos();
+            }
+          }
+        }
+        
+        // Remover lançamento financeiro
+        lancamentos.splice(index, 1);
+        salvarLancamentos();
+        
+        // Sincronizar com Google Sheets
+        const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
+        if (isValidWebAppUrl(webAppUrl) && lancamento.id && typeof excluirLancamentoSheets === 'function') {
+          try {
+            await excluirLancamentoSheets(lancamento.id);
+          } catch (error) {
+            console.error('Erro na sincronização:', error);
+          }
+        }
       }
-    }
-    
-    lancamentos.splice(index, 1);
-    salvarLancamentos();
-    cachedFilteredResults = null;
-    
-    if (itemParaRemover) {
-      itemParaRemover.classList.add('saindo');
-      setTimeout(() => {
+      
+      cachedFilteredResults = null;
+      
+      if (itemParaRemover) {
+        itemParaRemover.classList.add('saindo');
+        setTimeout(() => {
+          renderizarLancamentos();
+        }, 300);
+      } else {
         renderizarLancamentos();
-      }, 300);
-    } else {
-      renderizarLancamentos();
-    }
-    
-    if (typeof renderizarDashboardResumo === 'function') {
-      renderizarDashboardResumo();
-    }
-    if (typeof atualizarFiltroMesAno === 'function') {
-      atualizarFiltroMesAno();
-    }
-    
-    const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
-    if (isValidWebAppUrl(webAppUrl) && lancamento.id && typeof excluirLancamentoSheets === 'function') {
-      try {
-        await excluirLancamentoSheets(lancamento.id);
-        mostrarNotificacaoSync('Item excluído e sincronizado!', 'success');
-      } catch (error) {
-        console.error('Erro na sincronização:', error);
-        mostrarNotificacaoSync('Item excluído (erro na sincronização)', 'warning');
       }
-    } else {
-      mostrarNotificacaoSync('Item excluído!', 'success');
+      
+      if (typeof renderizarDashboardResumo === 'function') {
+        renderizarDashboardResumo();
+      }
+      if (typeof atualizarFiltroMesAno === 'function') {
+        atualizarFiltroMesAno();
+      }
+      
+      mostrarNotificacaoSync('Item excluído com sucesso!', 'success');
+      
+    } catch (error) {
+      console.error('Erro na exclusão:', error);
+      mostrarNotificacaoSync('Erro na exclusão: ' + error.message, 'error');
+    } finally {
+      document.body.classList.remove('sync-disabled');
+      const todosItems = document.querySelectorAll('.processando, .editando, .excluindo');
+      todosItems.forEach(item => {
+        item.classList.remove('processando', 'editando', 'excluindo');
+      });
     }
-    
-    document.body.classList.remove('sync-disabled');
-    const todosItems = document.querySelectorAll('.processando, .editando, .excluindo');
-    todosItems.forEach(item => {
-      item.classList.remove('processando', 'editando', 'excluindo');
-    });
   }
 
   function isValidWebAppUrl(url) {
