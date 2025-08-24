@@ -428,7 +428,6 @@
 .lancamento-descricao {
   color: #f7fafc;
   font-size: 0.85rem;
-  margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1241,7 +1240,6 @@
   font-weight: bold;
   font-size: 1.1rem;
   cursor: pointer;
-  margin-left: 8px;
   text-shadow: 1px 1px 2px rgb(0, 0, 0);
   transition: all 0.2s ease;
 }
@@ -1564,7 +1562,7 @@
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
   .lancamento-item {
     min-height: 65px;
     height: 65px;
@@ -1580,15 +1578,15 @@
   }
 
   .lancamento-info strong {
-    font-size: 0.65rem !important;
+    font-size: 0.8rem !important;
   }
 
   .lancamento-info em {
-    font-size: 0.6rem !important;
+    font-size: 0.65rem !important;
   }
 
   .lancamento-descricao {
-    font-size: 0.65rem !important;
+    font-size: 0.7rem !important;
     line-height: 1.1;
   }
 
