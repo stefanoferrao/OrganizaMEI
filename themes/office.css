@@ -1409,6 +1409,86 @@ body[data-theme="office"] .join-item.btn.btn-disabled {
     }
 }
 
+/* === PAGINAÇÃO VENDAS === */
+body[data-theme="office"] #vendas-pagination {
+    margin: 20px 0 !important;
+}
+
+body[data-theme="office"] #vendas-pagination .join-item {
+    background: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    min-height: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 1rem !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] #vendas-pagination .join-item:hover:not(:disabled) {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px var(--glow-color) !important;
+}
+
+body[data-theme="office"] #vendas-pagination .join-item:disabled {
+    background: var(--accent-color) !important;
+    border-color: var(--surface-color) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+}
+
+body[data-theme="office"] #vendas-pagination .join-item.btn-active {
+    background: var(--gradient-primary) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+}
+
+body[data-theme="office"] #vendas-pagination-pages {
+    display: flex !important;
+    align-items: center !important;
+}
+
+body[data-theme="office"] #vendas-pagination-info {
+    color: var(--text-primary) !important;
+    font-size: 0.85rem !important;
+}
+
+body[data-theme="office"] .items-per-page {
+    background: rgba(52, 73, 94, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    font-size: 0.85rem !important;
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] .items-per-page label {
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] #vendas-items-per-page-select {
+    background: var(--card-background) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 2px !important;
+    padding: 6px 10px !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] #vendas-items-per-page-select:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+    background: var(--surface-color) !important;
+}
+
+body[data-theme="office"] #vendas-items-per-page-select option {
+    background: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
 /* === RESPONSIVIDADE PARA TAB-LABELS === */
 @media (max-width: 600px) {
     body[data-theme="office"] .tab-labels {

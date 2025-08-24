@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
   
 
   
+  // Variáveis de paginação para estoque
+  let paginaAtualEstoque = 1;
+  let itensPorPaginaEstoque = window.DaisyUIPagination ? window.DaisyUIPagination.loadItemsPerPage('Estoque') : 10;
+  let totalItensEstoque = 0;
+  
   function renderizarProdutos() {
     const lista = document.getElementById("estoque-lista");
     if (!lista) return;
@@ -10,7 +15,17 @@ document.addEventListener("DOMContentLoaded", function () {
     lista.innerHTML = "";
     if (!produtos || !Array.isArray(produtos)) return;
     
-    produtos.forEach((p, index) => {
+    // Atualizar total de itens
+    totalItensEstoque = produtos.length;
+    
+    // Calcular itens da página atual
+    const inicio = (paginaAtualEstoque - 1) * itensPorPaginaEstoque;
+    const fim = inicio + itensPorPaginaEstoque;
+    const itensPagina = produtos.slice(inicio, fim);
+    
+    itensPagina.forEach((p, index) => {
+      // Ajustar índice para o índice real no array completo
+      const realIndex = inicio + index;
       const item = document.createElement("li");
       item.classList.add("estoque-item");
       item.innerHTML = `
@@ -19,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="estoque-quantidade">${p.quantidade} <small>unidades</small></span>
         </div>
         <div class="estoque-acoes">
-          <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${index})">
+          <button class="btn-saida" title="Saída" onclick="abrirSaidaProduto(${realIndex})">
             <span class="icon-saida"><i class="fas fa-arrow-right"></i></span>
           </button>
           <button class="btn-movimentacoes" title="Ver Movimentações" onclick="abrirMovimentacoesProduto('${p.nome}')">
@@ -37,8 +52,62 @@ document.addEventListener("DOMContentLoaded", function () {
       lista.style.transform = '';
     }, 50);
     
+    renderizarPaginacaoEstoque();
     atualizarSelectSaida();
     atualizarListaProdutos();
+  }
+  
+  // Funções de paginação para estoque
+  function renderizarPaginacaoEstoque() {
+    const totalPaginas = Math.ceil(totalItensEstoque / itensPorPaginaEstoque);
+    
+    if (totalPaginas <= 1) {
+      const existingPagination = document.getElementById('estoque-pagination');
+      if (existingPagination) existingPagination.style.display = 'none';
+      return;
+    }
+    
+    // Criar controles de paginação se não existirem
+    let paginationContainer = document.getElementById('estoque-pagination');
+    if (!paginationContainer) {
+      paginationContainer = document.createElement('div');
+      paginationContainer.id = 'estoque-pagination';
+      paginationContainer.className = 'join';
+      paginationContainer.style.cssText = 'display: flex; justify-content: center; margin-top: 20px;';
+      
+      const estoqueSection = document.getElementById('estoque');
+      estoqueSection.appendChild(paginationContainer);
+    }
+    
+    paginationContainer.style.display = 'flex';
+    paginationContainer.innerHTML = `
+      <button id="estoque-prev" class="join-item btn btn-outline" ${paginaAtualEstoque === 1 ? 'disabled' : ''}>
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="join-item btn btn-active">${paginaAtualEstoque} / ${totalPaginas}</span>
+      <button id="estoque-next" class="join-item btn btn-outline" ${paginaAtualEstoque === totalPaginas ? 'disabled' : ''}>
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    `;
+    
+    // Eventos de navegação
+    document.getElementById('estoque-prev').onclick = () => {
+      if (paginaAtualEstoque > 1) {
+        paginaAtualEstoque--;
+        renderizarProdutos();
+      }
+    };
+    
+    document.getElementById('estoque-next').onclick = () => {
+      if (paginaAtualEstoque < totalPaginas) {
+        paginaAtualEstoque++;
+        renderizarProdutos();
+      }
+    };
+  }
+  
+  function resetarPaginacaoEstoque() {
+    paginaAtualEstoque = 1;
   }
 
   function atualizarSelectSaida() {
@@ -908,11 +977,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   
+  // Configurar seletor de itens por página se existir
+  if (window.DaisyUIPagination) {
+    const estoqueItemsSelect = document.getElementById('estoque-items-per-page-select');
+    if (estoqueItemsSelect) {
+      itensPorPaginaEstoque = window.DaisyUIPagination.setupItemsPerPageSelect(
+        'estoque-items-per-page-select',
+        'Estoque',
+        (newValue) => {
+          itensPorPaginaEstoque = newValue;
+          resetarPaginacaoEstoque();
+          renderizarProdutos();
+        }
+      );
+    }
+  }
+  
   // Expor funções globalmente
   window.renderizarProdutos = renderizarProdutos;
   window.atualizarSelectSaida = atualizarSelectSaida;
   window.atualizarListaProdutos = atualizarListaProdutos;
   window.forcarRecalculoLayout = forcarRecalculoLayout;
+  window.resetarPaginacaoEstoque = resetarPaginacaoEstoque;
   
   // Sincronizar movimentações do Google Sheets ao inicializar
   async function sincronizarMovimentacoesIniciais() {

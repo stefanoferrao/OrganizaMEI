@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Variáveis de paginação
   let paginaAtual = 1;
-  let itensPorPagina = 10;
+  let itensPorPagina = window.DaisyUIPagination ? window.DaisyUIPagination.loadItemsPerPage('Financeiro') : 10;
   let totalItens = 0;
   
   // Authorization check
@@ -1561,13 +1561,17 @@ document.addEventListener("DOMContentLoaded", function () {
       inputPesquisa.focus();
     });
     
-    // Evento para alterar itens por página
-    if (itemsPerPageSelect) {
-      itemsPerPageSelect.addEventListener('change', function() {
-        itensPorPagina = parseInt(this.value);
-        resetarPaginacao();
-        renderizarLancamentos();
-      });
+    // Evento para alterar itens por página usando sistema global
+    if (itemsPerPageSelect && window.DaisyUIPagination) {
+      itensPorPagina = window.DaisyUIPagination.setupItemsPerPageSelect(
+        'items-per-page-select', 
+        'Financeiro', 
+        (newValue) => {
+          itensPorPagina = newValue;
+          resetarPaginacao();
+          renderizarLancamentos();
+        }
+      );
     }
     
     // Inicializar estado do botão

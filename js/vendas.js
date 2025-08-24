@@ -1,6 +1,11 @@
 // Vendas - Itens Vendidos
 document.addEventListener("DOMContentLoaded", function () {
   
+  // Variáveis de paginação
+  let paginaAtualVendas = 1;
+  let itensPorPaginaVendas = window.DaisyUIPagination ? window.DaisyUIPagination.loadItemsPerPage('Vendas') : 10;
+  let totalItensVendas = 0;
+  
   function renderizarVendas() {
     const lista = document.getElementById("vendas-lista");
     if (!lista) return;
@@ -85,7 +90,15 @@ document.addEventListener("DOMContentLoaded", function () {
       return idB.localeCompare(idA);
     });
     
-    vendas.forEach((v, idx) => {
+    // Atualizar total de itens
+    totalItensVendas = vendas.length;
+    
+    // Calcular itens da página atual
+    const inicio = (paginaAtualVendas - 1) * itensPorPaginaVendas;
+    const fim = inicio + itensPorPaginaVendas;
+    const itensPagina = vendas.slice(inicio, fim);
+    
+    itensPagina.forEach((v, idx) => {
       const dataFormatada = v.data ? (v.data instanceof Date ? v.data.toLocaleDateString('pt-BR') : v.data) : '';
       const li = document.createElement('li');
       li.className = 'venda-item';
@@ -104,12 +117,158 @@ document.addEventListener("DOMContentLoaded", function () {
       
       lista.appendChild(li);
     });
+    
+    renderizarPaginacaoVendas();
   }
 
+  // Funções de paginação para vendas
+  function renderizarPaginacaoVendas() {
+    const paginationContainer = document.getElementById('vendas-pagination');
+    const paginationInfo = document.getElementById('vendas-pagination-info');
+    const paginationPages = document.getElementById('vendas-pagination-pages');
+    const prevBtn = document.getElementById('vendas-pagination-prev');
+    const nextBtn = document.getElementById('vendas-pagination-next');
+    
+    if (!paginationContainer || !paginationPages) return;
+    
+    // Remover classe de carregamento se existir
+    paginationContainer.classList.remove('vendas-pagination-loading');
+    
+    const totalPaginas = Math.ceil(totalItensVendas / itensPorPaginaVendas);
+    
+    // Mostrar informações se houver itens
+    if (paginationInfo && totalItensVendas > 0) {
+      const inicio = (paginaAtualVendas - 1) * itensPorPaginaVendas + 1;
+      const fim = Math.min(paginaAtualVendas * itensPorPaginaVendas, totalItensVendas);
+      
+      const itemsRange = document.getElementById('vendas-items-range');
+      const totalItemsSpan = document.getElementById('vendas-total-items');
+      
+      if (itemsRange) itemsRange.textContent = `${inicio}-${fim}`;
+      if (totalItemsSpan) totalItemsSpan.textContent = totalItensVendas;
+      
+      paginationInfo.style.display = 'block';
+    } else if (paginationInfo) {
+      paginationInfo.style.display = 'none';
+    }
+    
+    // Mostrar/ocultar paginação
+    if (totalPaginas <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    
+    paginationContainer.style.display = 'flex';
+    paginationContainer.setAttribute('role', 'navigation');
+    paginationContainer.setAttribute('aria-label', 'Navegação de páginas de vendas');
+    
+    // Limpar páginas existentes
+    paginationPages.innerHTML = '';
+    
+    // Botão anterior
+    prevBtn.disabled = paginaAtualVendas === 1;
+    prevBtn.setAttribute('aria-label', 'Página anterior');
+    prevBtn.onclick = () => {
+      if (paginaAtualVendas > 1) {
+        const paginationContainer = document.getElementById('vendas-pagination');
+        if (paginationContainer) {
+          paginationContainer.classList.add('vendas-pagination-loading');
+        }
+        
+        paginaAtualVendas--;
+        
+        setTimeout(() => {
+          renderizarVendas();
+        }, 100);
+      }
+    };
+    
+    // Botão próximo
+    nextBtn.disabled = paginaAtualVendas === totalPaginas;
+    nextBtn.setAttribute('aria-label', 'Próxima página');
+    nextBtn.onclick = () => {
+      if (paginaAtualVendas < totalPaginas) {
+        const paginationContainer = document.getElementById('vendas-pagination');
+        if (paginationContainer) {
+          paginationContainer.classList.add('vendas-pagination-loading');
+        }
+        
+        paginaAtualVendas++;
+        
+        setTimeout(() => {
+          renderizarVendas();
+        }, 100);
+      }
+    };
+    
+    // Gerar botões de página (simplificado)
+    const maxPaginasVisiveis = 5;
+    let inicioRange = Math.max(1, paginaAtualVendas - Math.floor(maxPaginasVisiveis / 2));
+    let fimRange = Math.min(totalPaginas, inicioRange + maxPaginasVisiveis - 1);
+    
+    if (fimRange - inicioRange + 1 < maxPaginasVisiveis) {
+      inicioRange = Math.max(1, fimRange - maxPaginasVisiveis + 1);
+    }
+    
+    // Páginas do range
+    for (let i = inicioRange; i <= fimRange; i++) {
+      const btn = criarBotaoPaginaVendas(i);
+      paginationPages.appendChild(btn);
+    }
+  }
+  
+  function criarBotaoPaginaVendas(numeroPagina) {
+    const btn = document.createElement('button');
+    btn.className = `join-item btn btn-outline ${numeroPagina === paginaAtualVendas ? 'btn-active' : ''}`;
+    btn.textContent = numeroPagina;
+    btn.setAttribute('aria-label', `Página ${numeroPagina}`);
+    btn.onclick = () => {
+      // Adicionar feedback visual durante navegação
+      const paginationContainer = document.getElementById('vendas-pagination');
+      if (paginationContainer) {
+        paginationContainer.classList.add('vendas-pagination-loading');
+      }
+      
+      paginaAtualVendas = numeroPagina;
+      
+      // Pequeno delay para mostrar o feedback visual
+      setTimeout(() => {
+        renderizarVendas();
+      }, 100);
+    };
+    return btn;
+  }
+  
+  function resetarPaginacaoVendas() {
+    paginaAtualVendas = 1;
+  }
+  
+  // Configurar seletor de itens por página
+  function setupPaginacaoVendas() {
+    if (window.DaisyUIPagination) {
+      const vendasItemsSelect = document.getElementById('vendas-items-per-page-select');
+      if (vendasItemsSelect) {
+        itensPorPaginaVendas = window.DaisyUIPagination.setupItemsPerPageSelect(
+          'vendas-items-per-page-select',
+          'Vendas',
+          (newValue) => {
+            itensPorPaginaVendas = newValue;
+            resetarPaginacaoVendas();
+            renderizarVendas();
+          }
+        );
+      }
+    }
+  }
+  
+  // Inicializar paginação
+  setupPaginacaoVendas();
 
   
-  // Expor função globalmente
+  // Expor funções globalmente
   window.renderizarVendas = renderizarVendas;
+  window.resetarPaginacaoVendas = resetarPaginacaoVendas;
+  window.setupPaginacaoVendas = setupPaginacaoVendas;
   
   // Renderizar vendas inicial se a aba estiver ativa
   if (document.getElementById('vendas')?.classList.contains('active')) {

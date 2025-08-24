@@ -113,7 +113,7 @@
 
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 5.5</div>
+            <div class="version-info">Versão 5.6</div>
         </div>
     </aside>
 
@@ -145,6 +145,18 @@
                 <input id="quantidade" type="number" min="0" placeholder="Quantidade" />
                 <button type="submit">Entrada de Produto</button>
             </form>
+            
+            <!-- Controles de itens por página para estoque -->
+            <div class="items-per-page" style="display: flex; align-items: center; gap: 8px; color: #a0aec0; font-size: 0.85rem; margin: 15px 0;">
+                <label for="estoque-items-per-page-select">Itens por página:</label>
+                <select id="estoque-items-per-page-select" class="select select-sm" style="background: #2d3748; border-color: #4a5568; color: #e2e8f0; min-height: 2rem; height: 2rem;">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            
             <ul id="estoque-lista"></ul>
 
 
@@ -397,6 +409,36 @@
         <!-- Vendas -->
         <section id="vendas" class="tab-section">
             <h2 class="text-xl font-semibold mb-4"><i class="fas fa-shopping-cart"></i>Itens Vendidos</h2>
+            
+            <!-- Controles de paginação compactos -->
+            <div class="items-per-page" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; color: #a0aec0; font-size: 0.85rem; margin-bottom: 15px; padding: 8px 12px; background: rgba(45, 55, 72, 0.3); border-radius: 6px; border: 1px solid #4a5568; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="vendas-items-per-page-select">Itens por página:</label>
+                    <select id="vendas-items-per-page-select" class="select select-sm" style="background: #2d3748; border-color: #4a5568; color: #e2e8f0; min-height: 2rem; height: 2rem;">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                
+                <div id="vendas-pagination-info" class="pagination-info" style="display: none; font-size: 0.8rem;">
+                    <span id="vendas-items-range"></span> de <span id="vendas-total-items"></span> vendas
+                </div>
+                
+                <div id="vendas-pagination" class="join" style="display: none;">
+                    <button id="vendas-pagination-prev" class="join-item btn btn-outline btn-sm" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div id="vendas-pagination-pages" class="join-item">
+                        <!-- Páginas serão inseridas aqui dinamicamente -->
+                    </div>
+                    <button id="vendas-pagination-next" class="join-item btn btn-outline btn-sm">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
             <ul id="vendas-lista"></ul>
         </section>
         <!-- Gráficos -->

@@ -179,4 +179,43 @@ function updateMiniIndicator(type) {
 // Expor função globalmente
 window.updateMiniIndicator = updateMiniIndicator;
 
+// Sistema de Paginação Global
+class DaisyUIPagination {
+  constructor() {
+    this.defaultItemsPerPage = 10;
+  }
+
+  // Salvar quantidade de itens por página para um módulo específico
+  saveItemsPerPage(module, itemsPerPage) {
+    localStorage.setItem(`itensPorPagina${module}`, itemsPerPage);
+  }
+
+  // Carregar quantidade de itens por página para um módulo específico
+  loadItemsPerPage(module) {
+    return parseInt(localStorage.getItem(`itensPorPagina${module}`)) || this.defaultItemsPerPage;
+  }
+
+  // Configurar select de itens por página
+  setupItemsPerPageSelect(selectId, module, callback) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    // Carregar valor salvo
+    const savedValue = this.loadItemsPerPage(module);
+    select.value = savedValue;
+
+    // Adicionar evento de mudança
+    select.addEventListener('change', () => {
+      const newValue = parseInt(select.value);
+      this.saveItemsPerPage(module, newValue);
+      if (callback) callback(newValue);
+    });
+
+    return savedValue;
+  }
+}
+
+// Instância global
+window.DaisyUIPagination = new DaisyUIPagination();
+
 // 
