@@ -367,13 +367,6 @@
     flex-shrink: 0;
   }
 
-  .lancamento-info strong {
-    font-size: 0.7rem !important;
-  }
-
-  .lancamento-info em {
-    font-size: 0.65rem !important;
-  }
 
   .lancamento-descricao {
     font-size: 0.7rem !important;
@@ -422,13 +415,13 @@
 .lancamento-info > span:last-child strong {
   color: #fff;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .lancamento-info > span:last-child em {
   color: #e2e8f0;
   font-style: italic;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   opacity: 0.9;
 }
 
@@ -487,7 +480,7 @@
 }
 
 .lancamento-descricao {
-  font-size: 0.98rem;
+  font-size: 0.85rem;
 }
 
 .lancamento-valor-container {
