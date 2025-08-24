@@ -385,11 +385,11 @@
 
   .lancamento-valor-container {
     min-width: 80px !important;
-    justify-content: center;
     text-align: right;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: center;
   }
 
   .lancamento-btn-gerenciar {
@@ -486,11 +486,14 @@
 }
 
 .lancamento-valor-container {
+  display: flex;
+  flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  min-width: 20px;
+  min-width: 120px;
   text-align: right;
   word-break: break-all;
+  height: 100%;
 }
 
 .lancamento-valor {

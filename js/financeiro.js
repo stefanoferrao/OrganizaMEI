@@ -272,8 +272,8 @@ document.addEventListener("DOMContentLoaded", function () {
           </span>
         </span>
         <span class="lancamento-valor-container">
-          <span class="lancamento-valor" title="Valor unitário: R$ ${(valorSeguro / quantidadeSegura).toFixed(2).replace('.', ',')}">R$ ${valorSeguro.toFixed(2).replace('.', ',')}</span><br>
-           <span class="lancamento-data">${sanitizeHTML(dataFormatada)}</span>
+          <span class="lancamento-valor" title="Valor unitário: R$ ${(valorSeguro / quantidadeSegura).toFixed(2).replace('.', ',')}">R$ ${valorSeguro.toFixed(2).replace('.', ',')}</span>
+          <span class="lancamento-data">${sanitizeHTML(dataFormatada)}</span>
         </span>
         <button data-index="${l._originalIndex}" class="lancamento-btn-gerenciar"><i class="fas fa-cog"></i></button>
       `;
