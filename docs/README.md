@@ -522,4 +522,4 @@ OrganizaMEI/
 
 ---
 
-**OrganizaMEI v5.2** - Sistema de gestão para MEI com temas expandidos, sincronização inteligente, integração GitHub e experiência mobile otimizada.
+**OrganizaMEI v5.4** - Sistema de gestão para MEI com temas expandidos, sincronização inteligente, integração GitHub e experiência mobile otimizada.
