@@ -90,11 +90,15 @@
 .lancamento-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 5px;
   border-radius: 8px;
-  padding: 4px 10px;
-  align-items: center;
+  padding: 8px 12px;
   transition: all 0.3s ease;
+  min-height: 60px;
+  height: 60px;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Estados visuais para feedback */
@@ -342,39 +346,108 @@
     padding: 6px;
   }
 
-  /* Reduzir fontes dos itens financeiros */
+  /* Cards mobile - altura fixa e layout otimizado */
+  .lancamento-item {
+    min-height: 70px;
+    height: 70px;
+    padding: 8px 10px;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .lancamento-info {
+    flex-direction: row;
+    gap: 6px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
   .lancamento-icon {
-    font-size: 1.2rem !important;
+    font-size: 0.9rem !important;
+    flex-shrink: 0;
+  }
+
+  .lancamento-info strong {
+    font-size: 0.7rem !important;
+  }
+
+  .lancamento-info em {
+    font-size: 0.65rem !important;
   }
 
   .lancamento-descricao {
-    font-size: 0.85rem !important;
+    font-size: 0.7rem !important;
+    line-height: 1.2;
   }
 
   .lancamento-valor {
-    font-size: 0.95rem !important;
+    font-size: 0.8rem !important;
+    font-weight: bold;
   }
 
   .lancamento-data {
-    font-size: 0.8rem !important;
-  }
-
-  .lancamento-btn-remover {
-    font-size: 1rem !important;
+    font-size: 0.65rem !important;
+    opacity: 0.8;
   }
 
   .lancamento-valor-container {
-    min-width: 100px !important;
+    min-width: 80px !important;
+    justify-content: center;
+    text-align: right;
+  }
+
+  .lancamento-btn-gerenciar {
+    font-size: 1rem !important;
+    padding: 8px;
+    min-width: 36px;
   }
 }
 
 .lancamento-info {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex: 1 1 0%;
   min-width: 0;
   transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.lancamento-info > span:last-child {
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+}
+
+.lancamento-info > span:last-child strong {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.lancamento-info > span:last-child em {
+  color: #e2e8f0;
+  font-style: italic;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.lancamento-descricao {
+  color: #f7fafc;
+  font-size: 0.85rem;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.95;
+}
+
+/* Estilo para quantidade e valor unitário */
+.lancamento-info smaller {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  display: block;
+  margin-top: 1px;
 }
 
 /* Feedback visual para lancamento-info durante processamento */
@@ -395,6 +468,22 @@
 
 .lancamento-icon {
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lancamento-icon .fa-credit-card {
+  font-size: 1.3rem;
+}
+
+.lancamento-icon .fa-shopping-cart {
+  font-size: 1.4rem;
+}
+
+.lancamento-icon .fa-dollar-sign {
+  font-size: 1.6rem;
 }
 
 .lancamento-descricao {
@@ -402,6 +491,7 @@
 }
 
 .lancamento-valor-container {
+  display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
@@ -575,7 +665,7 @@
   box-shadow: none;
 }
 
-/* Navegação tipo planilha */
+/* Navegação tipo planilha melhorada */
 #financeiro-form-inner.navigation-active {
   border-color: #17acaf;
   box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.2);
@@ -587,23 +677,47 @@
   border: 2px solid rgba(23, 172, 175, 0.3);
   border-radius: 0 0 12px 12px;
   position: relative;
+  animation: form-activate 0.3s ease;
+}
+
+@keyframes form-activate {
+  0% {
+    background: rgba(23, 172, 175, 0.1);
+    transform: scale(1.01);
+  }
+  100% {
+    background: rgba(23, 172, 175, 0.05);
+    transform: scale(1);
+  }
 }
 
 .financeiro-form-content.navigation-active::before {
-  content: "⌨️ Navegação Tab ativa - Use Tab/Shift+Tab para navegar";
+  content: "⌨️ Modo Teclado Ativo - Tab: navegar | Enter: próximo | Ctrl+Enter: salvar";
   position: absolute;
   top: -2px;
   left: 50%;
   transform: translateX(-50%);
-  background: #17acaf;
+  background: linear-gradient(135deg, #17acaf, #38a169);
   color: white;
-  padding: 4px 12px;
-  border-radius: 0 0 8px 8px;
+  padding: 6px 16px;
+  border-radius: 0 0 12px 12px;
   font-size: 0.75rem;
   font-weight: bold;
   z-index: 10;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: tooltip-appear 0.3s ease;
+}
+
+@keyframes tooltip-appear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 #financeiro-form-inner input:focus,
@@ -611,6 +725,8 @@
   border-color: #17acaf;
   box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.3);
   outline: none;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
 }
 
 /* Destaque para campos focados por atalho */
@@ -618,7 +734,33 @@
   border-color: #17acaf !important;
   box-shadow: 0 0 0 3px rgba(23, 172, 175, 0.4) !important;
   background-color: rgba(23, 172, 175, 0.1) !important;
-  transition: all 0.3s ease;
+  transform: scale(1.02) !important;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.shortcut-focused::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #17acaf;
+  border-radius: 10px;
+  pointer-events: none;
+  animation: field-pulse 2s infinite;
+}
+
+@keyframes field-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
 }
 
 /* Animação de pulso para indicar ativação por atalho */
@@ -638,6 +780,28 @@
 
 .shortcut-active {
   animation: shortcut-pulse 1s ease-out;
+}
+
+/* Feedback visual para atalhos do financeiro */
+.financeiro-shortcut-feedback {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: linear-gradient(135deg, #17acaf, #38a169);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid #38a169;
+}
+
+.financeiro-shortcut-feedback.show {
+  transform: translateX(0);
 }
 
 /* Estado persistente para o header do financeiro */
@@ -1040,8 +1204,8 @@
   /* Ajustar indicador de navegação em mobile */
   .financeiro-form-content.navigation-active::before {
     font-size: 0.7rem;
-    padding: 3px 8px;
-    content: "⌨️ Tab ativo";
+    padding: 4px 10px;
+    content: "⌨️ Teclado ativo";
   }
 }
 
@@ -1287,6 +1451,21 @@
     padding: 2px 6px;
     right: 5px;
   }
+  
+  /* Ajustes para mobile */
+  .financeiro-form-content.navigation-active::before {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    content: "⌨️ Modo Teclado - Tab/Enter";
+  }
+  
+  .financeiro-shortcut-feedback {
+    left: 10px;
+    right: 10px;
+    top: 70px;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
 }
 
 /* === HOVER PARA TEMA PADRÃO === */
@@ -1310,4 +1489,131 @@
 .lancamento-item.despesa:hover {
   box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
   background-color: #CC0000d7;
+}
+
+/* Estilos para paginação do financeiro */
+#financeiro-pagination {
+  margin: 20px 0;
+}
+
+#financeiro-pagination .btn {
+  background: #2d3748;
+  border-color: #4a5568;
+  color: #e2e8f0;
+  min-height: 2.5rem;
+  height: 2.5rem;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+#financeiro-pagination .btn:hover:not(:disabled) {
+  background: #17acaf;
+  border-color: #17acaf;
+  color: white;
+}
+
+#financeiro-pagination .btn:disabled {
+  background: #1a202c;
+  border-color: #2d3748;
+  color: #4a5568;
+  cursor: not-allowed;
+}
+
+#financeiro-pagination .btn.btn-active {
+  background: #17acaf;
+  border-color: #17acaf;
+  color: white;
+}
+
+#pagination-pages {
+  display: flex;
+  align-items: center;
+}
+
+/* Altura fixa para lista de lançamentos */
+#financeiro-lista {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+@media (max-width: 480px) {
+  #financeiro-pagination {
+    margin: 15px 0;
+  }
+  
+  #financeiro-pagination .btn {
+    min-height: 2rem;
+    height: 2rem;
+    padding: 0 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  #pagination-controls {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+  
+  .items-per-page {
+    justify-content: center;
+  }
+  
+  #items-per-page-select {
+    font-size: 0.8rem;
+  }
+  
+  #financeiro-lista {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 360px) {
+  .lancamento-item {
+    min-height: 65px;
+    height: 65px;
+    padding: 6px 8px;
+  }
+
+  .lancamento-info {
+    gap: 4px;
+  }
+
+  .lancamento-icon {
+    font-size: 0.8rem !important;
+  }
+
+  .lancamento-info strong {
+    font-size: 0.65rem !important;
+  }
+
+  .lancamento-info em {
+    font-size: 0.6rem !important;
+  }
+
+  .lancamento-descricao {
+    font-size: 0.65rem !important;
+    line-height: 1.1;
+  }
+
+  .lancamento-valor {
+    font-size: 0.75rem !important;
+  }
+
+  .lancamento-data {
+    font-size: 0.6rem !important;
+  }
+
+  .lancamento-valor-container {
+    min-width: 70px !important;
+  }
+
+  .lancamento-btn-gerenciar {
+    font-size: 0.9rem !important;
+    padding: 6px;
+    min-width: 32px;
+  }
 }

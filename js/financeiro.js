@@ -60,6 +60,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let cachedFilteredResults = null;
   let termoPesquisa = '';
   
+  // Variáveis de paginação
+  let paginaAtual = 1;
+  let itensPorPagina = 10;
+  let totalItens = 0;
+  
   // Authorization check
   function checkAuthorization() {
     // Basic authorization check - can be enhanced based on requirements
@@ -231,7 +236,15 @@ document.addEventListener("DOMContentLoaded", function () {
       return idB.localeCompare(idA);
     });
     
-    filtrados.forEach((l) => {
+    // Atualizar total de itens
+    totalItens = filtrados.length;
+    
+    // Calcular itens da página atual
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+    const itensPagina = filtrados.slice(inicio, fim);
+    
+    itensPagina.forEach((l) => {
       const item = document.createElement("li");
       const tipoIcon = obterIconeTipo(l.tipo, l.categoria);
       const quantidadeSegura = Math.max(l.quantidade || 1, 1);
@@ -255,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span>
             <strong>${sanitizeHTML(l.categoria || "-")}</strong> / <em>${sanitizeHTML(l.subcategoria || "-")}</em><br>
             <span class="lancamento-descricao">${sanitizeHTML(l.descricao)}</span>
-            ${l.quantidade && l.quantidade > 1 ? `<br><small>Qtd: ${l.quantidade} - R$ ${(valorSeguro / quantidadeSegura).toFixed(2).replace('.', ',')} cada</small>` : ''}
+            ${l.quantidade ? `<br><smaller>Qtd: ${l.quantidade} - R$ ${(valorSeguro / quantidadeSegura).toFixed(2).replace('.', ',')} cada</smaller>` : ''}
           </span>
         </span>
         <span class="lancamento-valor-container">
@@ -276,7 +289,9 @@ document.addEventListener("DOMContentLoaded", function () {
       
       lista.appendChild(item);
     });
+    
     renderizarResumoFinanceiro(filtrados);
+    renderizarPaginacao();
   }
 
   function renderizarResumoFinanceiro(filtrados = null) {
@@ -571,6 +586,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (elements.quantidade) elements.quantidade.value = "1";
     if (elements.valor) elements.valor.value = "";
     if (elements.data) elements.data.value = "";
+    
+    // Focar no primeiro campo após limpar
+    setTimeout(() => {
+      if (elements.categoria) elements.categoria.focus();
+    }, 100);
   }
 
   function processNewLancamento(formData) {
@@ -736,9 +756,10 @@ document.addEventListener("DOMContentLoaded", function () {
       
       document.body.classList.add('sync-disabled');
       
-      clearFormFields();
       const novoLancamento = processNewLancamento(formData);
+      clearFormFields();
       
+      resetarPaginacao();
       renderizarLancamentos();
       
       const tipoTexto = formData.tipo === 'receita' ? 'Receita' : 'Despesa';
@@ -797,6 +818,13 @@ document.addEventListener("DOMContentLoaded", function () {
   window.mostrarAvisoImportacao = mostrarAvisoImportacao;
   window.irParaConfiguracoes = irParaConfiguracoes;
   window.fecharAviso = fecharAviso;
+  
+  // Expor funções de atalhos para uso externo
+  window.ativarModoReceita = ativarModoReceita;
+  window.ativarModoDespesa = ativarModoDespesa;
+  window.limparFormularioFinanceiro = limparFormularioFinanceiro;
+  window.expandirFormularioFinanceiro = expandirFormularioFinanceiro;
+  window.showFinanceiroFeedback = showFinanceiroFeedback;
 
   function verificarStatusSincronizacao() {
     const webAppUrl = localStorage.getItem('googleSheetsWebAppUrl');
@@ -1199,11 +1227,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  class FinanceiroNavigation {
+  class FinanceiroKeyboardManager {
     constructor() {
       this.formContent = null;
+      this.formInner = null;
       this.fields = [];
-      this.isActive = false;
+      this.isFormActive = false;
+      this.currentFieldIndex = -1;
+      this.atalhosFeedbackEnabled = true;
       this.init();
     }
 
@@ -1217,70 +1248,287 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setup() {
       this.formContent = document.getElementById('financeiro-form-content');
-      if (!this.formContent) return;
+      this.formInner = document.getElementById('financeiro-form-inner');
+      if (!this.formContent || !this.formInner) return;
 
       this.setupFields();
       this.setupEventListeners();
+      this.loadSettings();
+    }
+
+    loadSettings() {
+      const feedbackEnabled = localStorage.getItem('atalhos-feedback-enabled');
+      this.atalhosFeedbackEnabled = feedbackEnabled === 'true';
     }
 
     setupFields() {
+      // Ordem específica para navegação otimizada
       this.fields = [
-        document.querySelector('input[name="tipo-lancamento"]'),
-        document.getElementById('categoria-lancamento'),
-        document.getElementById('subcategoria-lancamento'),
-        document.getElementById('descricao-lancamento'),
-        document.getElementById('quantidade-lancamento'),
-        document.getElementById('valor-lancamento'),
-        document.getElementById('data-lancamento')
-      ].filter(Boolean);
+        { element: document.getElementById('tipo-receita'), name: 'Tipo: Receita' },
+        { element: document.getElementById('categoria-lancamento'), name: 'Categoria' },
+        { element: document.getElementById('subcategoria-lancamento'), name: 'Subcategoria' },
+        { element: document.getElementById('descricao-lancamento'), name: 'Descrição' },
+        { element: document.getElementById('quantidade-lancamento'), name: 'Quantidade' },
+        { element: document.getElementById('valor-lancamento'), name: 'Valor' },
+        { element: document.getElementById('data-lancamento'), name: 'Data' }
+      ].filter(field => field.element);
     }
 
     setupEventListeners() {
-      this.formContent.addEventListener('click', (e) => {
-        const focusableElements = this.formContent.querySelectorAll('input, select, button, textarea');
-        const isClickOnFocusable = Array.from(focusableElements).some(el => el.contains(e.target));
+      // Atalhos globais específicos do financeiro (apenas quando na aba financeiro)
+      document.addEventListener('keydown', (e) => {
+        if (!this.isFinanceiroTabActive()) return;
         
-        if (isClickOnFocusable) {
-          this.isActive = true;
-          this.formContent.classList.add('navigation-active');
+        // Ctrl+Shift+R - Receita rápida
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+          e.preventDefault();
+          this.ativarFormularioReceita();
+          return;
+        }
+        
+        // Ctrl+Shift+D - Despesa rápida
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+          e.preventDefault();
+          this.ativarFormularioDespesa();
+          return;
+        }
+        
+        // Ctrl+Shift+L - Limpar formulário
+        if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+          e.preventDefault();
+          this.limparFormulario();
+          return;
+        }
+        
+        // Escape - Sair do modo formulário
+        if (e.key === 'Escape' && this.isFormActive) {
+          e.preventDefault();
+          this.desativarFormulario();
+          return;
         }
       });
 
-      document.addEventListener('click', (e) => {
-        if (!this.formContent.contains(e.target)) {
-          this.isActive = false;
-          this.formContent.classList.remove('navigation-active');
+      // Controle de foco no formulário
+      this.formContent.addEventListener('focusin', (e) => {
+        this.ativarModoFormulario();
+        this.updateCurrentFieldIndex(e.target);
+      });
+
+      this.formContent.addEventListener('focusout', (e) => {
+        // Só desativa se o foco saiu completamente do formulário
+        setTimeout(() => {
+          if (!this.formContent.contains(document.activeElement)) {
+            this.desativarModoFormulario();
+          }
+        }, 100);
+      });
+
+      // Navegação Tab inteligente
+      this.formInner.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          this.handleTabNavigation(e);
+        }
+        
+        // Enter para submeter (apenas se não estiver em textarea)
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+          if (e.target.tagName === 'SELECT' || e.target.type === 'date') {
+            // Para selects e inputs de data, Tab para próximo campo
+            e.preventDefault();
+            this.navegarProximoCampo();
+          } else if (e.target.type === 'submit' || e.target.tagName === 'BUTTON') {
+            // Permitir submit normal
+            return;
+          } else {
+            // Para outros inputs, Tab para próximo campo
+            e.preventDefault();
+            this.navegarProximoCampo();
+          }
         }
       });
 
-      this.fields.forEach((field, index) => {
-        if (field) {
-          field.addEventListener('keydown', (e) => {
-            if (this.isActive && e.key === 'Tab') {
-              this.handleTabNavigation(e, index);
-            }
+      // Feedback visual para campos
+      this.fields.forEach(field => {
+        if (field.element) {
+          field.element.addEventListener('focus', () => {
+            this.highlightField(field.element, field.name);
+          });
+          
+          field.element.addEventListener('blur', () => {
+            this.removeHighlight(field.element);
           });
         }
       });
     }
 
-    handleTabNavigation(e, currentIndex) {
-      const direction = e.shiftKey ? -1 : 1;
-      const nextIndex = currentIndex + direction;
-      
-      if (nextIndex >= 0 && nextIndex < this.fields.length) {
-        e.preventDefault();
-        const nextField = this.fields[nextIndex];
-        if (nextField && !nextField.disabled) {
-          nextField.focus();
-        }
+    isFinanceiroTabActive() {
+      const financeiroTab = document.getElementById('financeiro');
+      return financeiroTab && financeiroTab.classList.contains('active');
+    }
+
+    ativarFormularioReceita() {
+      this.expandirFormulario();
+      const tipoReceita = document.getElementById('tipo-receita');
+      if (tipoReceita) {
+        tipoReceita.checked = true;
+        tipoReceita.dispatchEvent(new Event('change'));
+        this.focarPrimeiroCampo();
+        this.showFeedback('Modo Receita ativado', 'field');
       }
+    }
+
+    ativarFormularioDespesa() {
+      this.expandirFormulario();
+      const tipoDespesa = document.getElementById('tipo-despesa');
+      if (tipoDespesa) {
+        tipoDespesa.checked = true;
+        tipoDespesa.dispatchEvent(new Event('change'));
+        this.focarPrimeiroCampo();
+        this.showFeedback('Modo Despesa ativado', 'field');
+      }
+    }
+
+    expandirFormulario() {
+      const formContent = document.getElementById('financeiro-form-content');
+      const arrow = document.getElementById('financeiro-form-arrow');
+      
+      if (formContent && formContent.style.display === 'none') {
+        formContent.style.display = 'block';
+        if (arrow) arrow.classList.add('rotated');
+        
+        // Salvar estado
+        localStorage.setItem('financeiroFormExpanded', 'true');
+      }
+    }
+
+    focarPrimeiroCampo() {
+      setTimeout(() => {
+        const categoria = document.getElementById('categoria-lancamento');
+        if (categoria) {
+          categoria.focus();
+        }
+      }, 100);
+    }
+
+    limparFormulario() {
+      if (typeof clearFormFields === 'function') {
+        clearFormFields();
+        this.showFeedback('Formulário limpo', 'global');
+        this.focarPrimeiroCampo();
+      }
+    }
+
+    ativarModoFormulario() {
+      this.isFormActive = true;
+      this.formContent.classList.add('navigation-active');
+    }
+
+    desativarModoFormulario() {
+      this.isFormActive = false;
+      this.formContent.classList.remove('navigation-active');
+      this.currentFieldIndex = -1;
+    }
+
+    desativarFormulario() {
+      this.desativarModoFormulario();
+      document.activeElement.blur();
+      this.showFeedback('Modo formulário desativado', 'global');
+    }
+
+    updateCurrentFieldIndex(element) {
+      this.currentFieldIndex = this.fields.findIndex(field => field.element === element);
+    }
+
+    handleTabNavigation(e) {
+      const direction = e.shiftKey ? -1 : 1;
+      const currentIndex = this.getCurrentFieldIndex();
+      let nextIndex = currentIndex + direction;
+      
+      // Circular navigation
+      if (nextIndex >= this.fields.length) {
+        nextIndex = 0;
+      } else if (nextIndex < 0) {
+        nextIndex = this.fields.length - 1;
+      }
+      
+      const nextField = this.fields[nextIndex];
+      if (nextField && nextField.element && !nextField.element.disabled) {
+        e.preventDefault();
+        nextField.element.focus();
+        this.currentFieldIndex = nextIndex;
+      }
+    }
+
+    navegarProximoCampo() {
+      const currentIndex = this.getCurrentFieldIndex();
+      let nextIndex = currentIndex + 1;
+      
+      if (nextIndex >= this.fields.length) {
+        // Se chegou ao final, focar no botão submit
+        const submitBtn = this.formInner.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.focus();
+          return;
+        }
+        nextIndex = 0; // Ou voltar ao início
+      }
+      
+      const nextField = this.fields[nextIndex];
+      if (nextField && nextField.element && !nextField.element.disabled) {
+        nextField.element.focus();
+        this.currentFieldIndex = nextIndex;
+      }
+    }
+
+    getCurrentFieldIndex() {
+      const activeElement = document.activeElement;
+      const index = this.fields.findIndex(field => field.element === activeElement);
+      return index >= 0 ? index : this.currentFieldIndex;
+    }
+
+    highlightField(element, fieldName) {
+      element.classList.add('shortcut-focused');
+      const feedbackEnabled = localStorage.getItem('atalhos-feedback-enabled');
+      if (feedbackEnabled === 'true' && fieldName) {
+        this.showFeedback(`Campo: ${fieldName}`, 'field');
+      }
+    }
+
+    removeHighlight(element) {
+      element.classList.remove('shortcut-focused');
+    }
+
+    showFeedback(message, type = 'global') {
+      const feedbackEnabled = localStorage.getItem('atalhos-feedback-enabled');
+      if (feedbackEnabled !== 'true') return;
+      
+      // Remove feedback anterior
+      const existingFeedback = document.querySelector('.shortcut-feedback');
+      if (existingFeedback) {
+        existingFeedback.remove();
+      }
+      
+      // Criar novo feedback
+      const feedback = document.createElement('div');
+      feedback.className = `shortcut-feedback ${type}`;
+      feedback.textContent = message;
+      
+      document.body.appendChild(feedback);
+      
+      // Mostrar
+      setTimeout(() => feedback.classList.add('show'), 10);
+      
+      // Remover após 2 segundos
+      setTimeout(() => {
+        feedback.classList.remove('show');
+        setTimeout(() => feedback.remove(), 300);
+      }, 2000);
     }
   }
 
   function setupPesquisaFinanceiro() {
     const inputPesquisa = document.getElementById('pesquisa-financeiro');
     const btnLimpar = document.getElementById('limpar-pesquisa');
+    const itemsPerPageSelect = document.getElementById('items-per-page-select');
     
     if (!inputPesquisa || !btnLimpar) return;
     
@@ -1297,6 +1545,7 @@ document.addEventListener("DOMContentLoaded", function () {
     inputPesquisa.addEventListener('input', function() {
       termoPesquisa = this.value.trim();
       cachedFilteredResults = null;
+      resetarPaginacao();
       renderizarLancamentos();
       toggleLimparButton();
     });
@@ -1306,10 +1555,20 @@ document.addEventListener("DOMContentLoaded", function () {
       inputPesquisa.value = '';
       termoPesquisa = '';
       cachedFilteredResults = null;
+      resetarPaginacao();
       renderizarLancamentos();
       toggleLimparButton();
       inputPesquisa.focus();
     });
+    
+    // Evento para alterar itens por página
+    if (itemsPerPageSelect) {
+      itemsPerPageSelect.addEventListener('change', function() {
+        itensPorPagina = parseInt(this.value);
+        resetarPaginacao();
+        renderizarLancamentos();
+      });
+    }
     
     // Inicializar estado do botão
     toggleLimparButton();
@@ -1334,8 +1593,18 @@ document.addEventListener("DOMContentLoaded", function () {
           atualizarCategorias();
           renderizarLancamentos();
           verificarStatusSincronizacao();
-          new FinanceiroNavigation();
+          new FinanceiroKeyboardManager();
           secureLog('Financeiro inicializado com sucesso');
+          
+          // Configurar atalhos globais do financeiro
+          setupFinanceiroGlobalShortcuts();
+          
+          // Configurar data padrão para hoje
+          const dataInput = document.getElementById('data-lancamento');
+          if (dataInput && !dataInput.value) {
+            const hoje = new Date().toISOString().split('T')[0];
+            dataInput.value = hoje;
+          }
         } else {
           setTimeout(tentar, INITIALIZATION_RETRY_INTERVAL_MS);
         }
@@ -1347,6 +1616,305 @@ document.addEventListener("DOMContentLoaded", function () {
     
     tentar();
   }
+
+  // Função para configurar atalhos globais específicos do financeiro
+  function setupFinanceiroGlobalShortcuts() {
+    // Remover listeners anteriores se existirem
+    if (window.financeiroShortcutsSetup) return;
+    window.financeiroShortcutsSetup = true;
+    
+    document.addEventListener('keydown', function(e) {
+      // Só ativar atalhos se estiver na aba financeiro
+      const financeiroTab = document.getElementById('financeiro');
+      if (!financeiroTab || !financeiroTab.classList.contains('active')) return;
+      
+      // Verificar se não está digitando em um campo de texto
+      const activeElement = document.activeElement;
+      const isTyping = activeElement && (
+        activeElement.tagName === 'INPUT' || 
+        activeElement.tagName === 'TEXTAREA' || 
+        activeElement.tagName === 'SELECT'
+      );
+      
+      // F9 - Expandir formulário e focar
+      if (e.key === 'F9') {
+        e.preventDefault();
+        const formContent = document.getElementById('financeiro-form-content');
+        const arrow = document.getElementById('financeiro-form-arrow');
+        
+        if (formContent) {
+          if (formContent.style.display === 'none') {
+            formContent.style.display = 'block';
+            if (arrow) arrow.classList.add('rotated');
+            localStorage.setItem('financeiroFormExpanded', 'true');
+          }
+          
+          // Focar no primeiro campo
+          setTimeout(() => {
+            const categoria = document.getElementById('categoria-lancamento');
+            if (categoria) categoria.focus();
+          }, 100);
+        }
+        
+        showFinanceiroFeedback('Formulário ativado - Use Tab para navegar');
+        return;
+      }
+      
+      // Ctrl+Enter - Submeter formulário de qualquer lugar
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.getElementById('financeiro-form-inner');
+        if (form) {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn && !submitBtn.disabled) {
+            submitBtn.click();
+            showFinanceiroFeedback('Lançamento adicionado!');
+          }
+        }
+        return;
+      }
+      
+      // Atalhos que só funcionam quando NÃO está digitando
+      if (!isTyping) {
+        // Ctrl+R - Receita rápida
+        if (e.ctrlKey && e.key === 'r') {
+          e.preventDefault();
+          ativarModoReceita();
+          return;
+        }
+        
+        // Ctrl+D - Despesa rápida  
+        if (e.ctrlKey && e.key === 'd') {
+          e.preventDefault();
+          ativarModoDespesa();
+          return;
+        }
+        
+        // Ctrl+L - Limpar formulário
+        if (e.ctrlKey && e.key === 'l') {
+          e.preventDefault();
+          limparFormularioFinanceiro();
+          return;
+        }
+      }
+    });
+  }
+  
+  function ativarModoReceita() {
+    expandirFormularioFinanceiro();
+    const tipoReceita = document.getElementById('tipo-receita');
+    if (tipoReceita) {
+      tipoReceita.checked = true;
+      tipoReceita.dispatchEvent(new Event('change'));
+      focarPrimeiroCampoFinanceiro();
+      showFinanceiroFeedback('Modo Receita ativado');
+    }
+  }
+  
+  function ativarModoDespesa() {
+    expandirFormularioFinanceiro();
+    const tipoDespesa = document.getElementById('tipo-despesa');
+    if (tipoDespesa) {
+      tipoDespesa.checked = true;
+      tipoDespesa.dispatchEvent(new Event('change'));
+      focarPrimeiroCampoFinanceiro();
+      showFinanceiroFeedback('Modo Despesa ativado');
+    }
+  }
+  
+  function expandirFormularioFinanceiro() {
+    const formContent = document.getElementById('financeiro-form-content');
+    const arrow = document.getElementById('financeiro-form-arrow');
+    
+    if (formContent && formContent.style.display === 'none') {
+      formContent.style.display = 'block';
+      if (arrow) arrow.classList.add('rotated');
+      localStorage.setItem('financeiroFormExpanded', 'true');
+    }
+  }
+  
+  function focarPrimeiroCampoFinanceiro() {
+    setTimeout(() => {
+      const categoria = document.getElementById('categoria-lancamento');
+      if (categoria) categoria.focus();
+    }, 150);
+  }
+  
+  function limparFormularioFinanceiro() {
+    if (typeof clearFormFields === 'function') {
+      clearFormFields();
+      showFinanceiroFeedback('Formulário limpo');
+      focarPrimeiroCampoFinanceiro();
+    }
+  }
+  
+  function showFinanceiroFeedback(message, duration = 2500) {
+    // Verificar se feedback está habilitado
+    const feedbackEnabled = localStorage.getItem('atalhos-feedback-enabled');
+    if (feedbackEnabled !== 'true') return;
+    
+    // Remover feedback anterior
+    const existingFeedback = document.querySelector('.financeiro-shortcut-feedback');
+    if (existingFeedback) existingFeedback.remove();
+    
+    // Criar novo feedback
+    const feedback = document.createElement('div');
+    feedback.className = 'financeiro-shortcut-feedback';
+    feedback.textContent = message;
+    
+    // Estilos inline para garantir que apareça corretamente
+    Object.assign(feedback.style, {
+      position: 'fixed',
+      top: '80px',
+      right: '20px',
+      background: '#17acaf',
+      color: 'white',
+      padding: '12px 20px',
+      borderRadius: '8px',
+      fontSize: '0.9rem',
+      fontWeight: 'bold',
+      zIndex: '9999',
+      transform: 'translateX(100%)',
+      transition: 'transform 0.3s ease',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+    });
+    
+    document.body.appendChild(feedback);
+    
+    // Animar entrada
+    setTimeout(() => {
+      feedback.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Remover após duração especificada
+    setTimeout(() => {
+      feedback.style.transform = 'translateX(100%)';
+      setTimeout(() => feedback.remove(), 300);
+    }, duration);
+  }
+
+  // Funções de paginação
+  function renderizarPaginacao() {
+    const paginationContainer = document.getElementById('financeiro-pagination');
+    const paginationControls = document.getElementById('pagination-controls');
+    const paginationPages = document.getElementById('pagination-pages');
+    const prevBtn = document.getElementById('pagination-prev');
+    const nextBtn = document.getElementById('pagination-next');
+    
+    if (!paginationContainer || !paginationPages) return;
+    
+    const totalPaginas = Math.ceil(totalItens / itensPorPagina);
+    
+    // Mostrar controles se houver itens
+    if (paginationControls && totalItens > 0) {
+      const inicio = (paginaAtual - 1) * itensPorPagina + 1;
+      const fim = Math.min(paginaAtual * itensPorPagina, totalItens);
+      
+      const itemsRange = document.getElementById('items-range');
+      const totalItemsSpan = document.getElementById('total-items');
+      
+      if (itemsRange) itemsRange.textContent = `${inicio}-${fim}`;
+      if (totalItemsSpan) totalItemsSpan.textContent = totalItens;
+      
+      paginationControls.style.display = 'flex';
+    } else if (paginationControls) {
+      paginationControls.style.display = 'none';
+    }
+    
+    // Mostrar/ocultar paginação
+    if (totalPaginas <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    
+    paginationContainer.style.display = 'flex';
+    
+    // Limpar páginas existentes
+    paginationPages.innerHTML = '';
+    
+    // Botão anterior
+    prevBtn.disabled = paginaAtual === 1;
+    prevBtn.onclick = () => {
+      if (paginaAtual > 1) {
+        paginaAtual--;
+        renderizarLancamentos();
+      }
+    };
+    
+    // Botão próximo
+    nextBtn.disabled = paginaAtual === totalPaginas;
+    nextBtn.onclick = () => {
+      if (paginaAtual < totalPaginas) {
+        paginaAtual++;
+        renderizarLancamentos();
+      }
+    };
+    
+    // Gerar botões de página
+    const maxPaginasVisiveis = 5;
+    let inicioRange = Math.max(1, paginaAtual - Math.floor(maxPaginasVisiveis / 2));
+    let fimRange = Math.min(totalPaginas, inicioRange + maxPaginasVisiveis - 1);
+    
+    if (fimRange - inicioRange + 1 < maxPaginasVisiveis) {
+      inicioRange = Math.max(1, fimRange - maxPaginasVisiveis + 1);
+    }
+    
+    // Primeira página
+    if (inicioRange > 1) {
+      const btn = criarBotaoPagina(1);
+      paginationPages.appendChild(btn);
+      
+      if (inicioRange > 2) {
+        const ellipsis = document.createElement('span');
+        ellipsis.textContent = '...';
+        ellipsis.className = 'join-item btn btn-disabled';
+        ellipsis.style.background = 'transparent';
+        ellipsis.style.border = 'none';
+        ellipsis.style.color = '#a0aec0';
+        paginationPages.appendChild(ellipsis);
+      }
+    }
+    
+    // Páginas do range
+    for (let i = inicioRange; i <= fimRange; i++) {
+      const btn = criarBotaoPagina(i);
+      paginationPages.appendChild(btn);
+    }
+    
+    // Última página
+    if (fimRange < totalPaginas) {
+      if (fimRange < totalPaginas - 1) {
+        const ellipsis = document.createElement('span');
+        ellipsis.textContent = '...';
+        ellipsis.className = 'join-item btn btn-disabled';
+        ellipsis.style.background = 'transparent';
+        ellipsis.style.border = 'none';
+        ellipsis.style.color = '#a0aec0';
+        paginationPages.appendChild(ellipsis);
+      }
+      
+      const btn = criarBotaoPagina(totalPaginas);
+      paginationPages.appendChild(btn);
+    }
+  }
+  
+  function criarBotaoPagina(numeroPagina) {
+    const btn = document.createElement('button');
+    btn.className = `join-item btn btn-outline ${numeroPagina === paginaAtual ? 'btn-active' : ''}`;
+    btn.textContent = numeroPagina;
+    btn.onclick = () => {
+      paginaAtual = numeroPagina;
+      renderizarLancamentos();
+    };
+    return btn;
+  }
+  
+  function resetarPaginacao() {
+    paginaAtual = 1;
+  }
+  
+  // Expor funções de paginação
+  window.resetarPaginacaoFinanceiro = resetarPaginacao;
 
   inicializarFinanceiro();
 });

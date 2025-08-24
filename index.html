@@ -67,7 +67,6 @@
     <link rel="stylesheet" href="css/readme-viewer.css">
     <link rel="stylesheet" href="css/mobile-modals.css">
     <link rel="stylesheet" href="css/daisyui-global.css">
-
     <link rel="stylesheet" href="css/icon-fixes.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -114,7 +113,7 @@
 
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 5.4</div>
+            <div class="version-info">Versão 5.5</div>
         </div>
     </aside>
 
@@ -289,6 +288,35 @@
                 </div>
             </div>
             <ul id="financeiro-lista"></ul>
+            
+            <!-- Controles de paginação -->
+            <div id="pagination-controls" class="pagination-controls" style="display: none; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+                <div class="pagination-info" style="color: #a0aec0; font-size: 0.85rem;">
+                    Mostrando <span id="items-range"></span> de <span id="total-items"></span> lançamentos
+                </div>
+                <div class="items-per-page" style="display: flex; align-items: center; gap: 8px; color: #a0aec0; font-size: 0.85rem;">
+                    <label for="items-per-page-select">Itens por página:</label>
+                    <select id="items-per-page-select" class="select select-sm" style="background: #2d3748; border-color: #4a5568; color: #e2e8f0; min-height: 2rem; height: 2rem;">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Paginação DaisyUI -->
+            <div id="financeiro-pagination" class="join" style="display: none; justify-content: center; margin-top: 20px;">
+                <button id="pagination-prev" class="join-item btn btn-outline" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="pagination-pages" class="join-item">
+                    <!-- Páginas serão inseridas aqui dinamicamente -->
+                </div>
+                <button id="pagination-next" class="join-item btn btn-outline">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
 
             <!-- Modal Gerenciar Lançamento -->
             <div id="gerenciar-lancamento-modal" class="modal-bg modal-hidden">
@@ -592,14 +620,14 @@
                                         <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos do
                                                 Financeiro (apenas na aba Financeiro):</strong></p>
                                         <div class="shortcuts-list-config">
-                                            <div class="shortcut-item-config"><kbd>←</kbd> Expandir formulário e
-                                                selecionar Receita</div>
-                                            <div class="shortcut-item-config"><kbd>→</kbd> Expandir formulário e
-                                                selecionar Despesa</div>
-                                            <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos
-                                                (mantém formulário ativo)</div>
-
-                                            <div class="shortcut-item-config"><kbd>Esc</kbd> Limpar formulário</div>
+                                            <div class="shortcut-item-config"><kbd>F9</kbd> Expandir formulário e focar</div>
+                                            <div class="shortcut-item-config"><kbd>Ctrl</kbd>+<kbd>R</kbd> Modo Receita rápido</div>
+                                            <div class="shortcut-item-config"><kbd>Ctrl</kbd>+<kbd>D</kbd> Modo Despesa rápido</div>
+                                            <div class="shortcut-item-config"><kbd>Ctrl</kbd>+<kbd>L</kbd> Limpar formulário</div>
+                                            <div class="shortcut-item-config"><kbd>Tab</kbd> Navegar pelos campos</div>
+                                            <div class="shortcut-item-config"><kbd>Enter</kbd> Próximo campo</div>
+                                            <div class="shortcut-item-config"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> Salvar lançamento</div>
+                                            <div class="shortcut-item-config"><kbd>Esc</kbd> Sair do modo formulário</div>
                                         </div>
                                         <p style="color: #e2e8f0; font-size: 0.9rem; margin: 12px 0;"><strong>Atalhos
                                                 dos Gráficos (apenas na aba Gráficos):</strong></p>

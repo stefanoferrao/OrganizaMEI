@@ -1253,3 +1253,182 @@ body[data-theme="office"] .daisyui-status-indicator.not-configured .daisyui-stat
     border-color: rgba(220, 53, 69, 0.4) !important;
     box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(220, 53, 69, 0.3) !important;
 }
+
+/* === PAGINAÇÃO === */
+body[data-theme="office"] #financeiro-pagination {
+    margin: 20px 0 !important;
+}
+
+body[data-theme="office"] #financeiro-pagination .btn {
+    background: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    min-height: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 1rem !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] #financeiro-pagination .btn:hover:not(:disabled) {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px var(--glow-color) !important;
+}
+
+body[data-theme="office"] #financeiro-pagination .btn:disabled {
+    background: var(--accent-color) !important;
+    border-color: var(--surface-color) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+}
+
+body[data-theme="office"] #financeiro-pagination .btn.btn-active {
+    background: var(--gradient-primary) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+}
+
+body[data-theme="office"] #pagination-pages {
+    display: flex !important;
+    align-items: center !important;
+}
+
+body[data-theme="office"] #pagination-controls {
+    color: var(--text-primary) !important;
+}
+
+body[data-theme="office"] #items-per-page-select {
+    background: var(--card-background) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 2px !important;
+    padding: 6px 10px !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] #items-per-page-select:focus {
+    border-color: var(--secondary-color) !important;
+    box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.15) !important;
+    background: var(--surface-color) !important;
+}
+
+body[data-theme="office"] #items-per-page-select option {
+    background: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Altura fixa para lista de lançamentos */
+body[data-theme="office"] #financeiro-lista {
+    min-height: 400px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+/* Estilos para elementos de paginação específicos */
+body[data-theme="office"] .pagination-info {
+    color: var(--text-primary) !important;
+    font-size: 0.85rem !important;
+}
+
+body[data-theme="office"] .items-per-page {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    color: var(--text-primary) !important;
+    font-size: 0.85rem !important;
+}
+
+body[data-theme="office"] .items-per-page label {
+    color: var(--text-primary) !important;
+}
+
+/* Botões de navegação da paginação */
+body[data-theme="office"] #pagination-prev,
+body[data-theme="office"] #pagination-next {
+    background: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 2px !important;
+}
+
+body[data-theme="office"] #pagination-prev:hover:not(:disabled),
+body[data-theme="office"] #pagination-next:hover:not(:disabled) {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px var(--glow-color) !important;
+}
+
+/* Ellipsis na paginação */
+body[data-theme="office"] .join-item.btn.btn-disabled {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-muted) !important;
+    cursor: default !important;
+}
+
+@media (max-width: 480px) {
+    body[data-theme="office"] #financeiro-pagination {
+        margin: 15px 0 !important;
+    }
+    
+    body[data-theme="office"] #financeiro-pagination .btn {
+        min-height: 2rem !important;
+        height: 2rem !important;
+        padding: 0 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    body[data-theme="office"] #pagination-controls {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 8px !important;
+    }
+    
+    body[data-theme="office"] .items-per-page {
+        justify-content: center !important;
+    }
+    
+    body[data-theme="office"] #items-per-page-select {
+        font-size: 0.8rem !important;
+    }
+    
+    body[data-theme="office"] #financeiro-lista {
+        min-height: 300px !important;
+    }
+    
+    body[data-theme="office"] .pagination-info {
+        font-size: 0.8rem !important;
+        text-align: center !important;
+    }
+}
+
+/* === RESPONSIVIDADE PARA TAB-LABELS === */
+@media (max-width: 600px) {
+    body[data-theme="office"] .tab-labels {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 1fr 1fr !important;
+    }
+    
+    body[data-theme="office"] .tab-label {
+        border-right: 1px solid var(--border-color) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 10px 8px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    body[data-theme="office"] .tab-label:nth-child(2n) {
+        border-right: none !important;
+    }
+    
+    body[data-theme="office"] .tab-label:nth-child(n+3) {
+        border-bottom: none !important;
+    }
+}

@@ -346,24 +346,24 @@
 
 @media (max-width: 600px) {
   .tab-labels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
   }
   
   .tab-label {
-    border-right: 1px solid #4a5568;
-    border-bottom: 1px solid #4a5568;
-    padding: 10px 8px;
-    font-size: 0.8rem;
+    border-right: 1px solid #4a5568 !important;
+    border-bottom: 1px solid #4a5568 !important;
+    padding: 10px 8px !important;
+    font-size: 0.8rem !important;
   }
   
   .tab-label:nth-child(2n) {
-    border-right: none;
+    border-right: none !important;
   }
   
   .tab-label:nth-child(n+3) {
-    border-bottom: none;
+    border-bottom: none !important;
   }
   
   /* Remover indicador visual em mobile */

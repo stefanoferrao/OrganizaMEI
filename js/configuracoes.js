@@ -25,8 +25,6 @@ class ShortcutSystem {
         };
         
         this.financeiroShortcuts = {
-            'ArrowLeft': () => this.selectReceita(),
-            'ArrowRight': () => this.selectDespesa(),
             'Tab': () => this.handleTabNavigation(),
             'Escape': () => this.clearForm()
         };
@@ -171,16 +169,7 @@ class ShortcutSystem {
         });
 
         const radioButtons = document.querySelectorAll('input[name="tipo-lancamento"]');
-        radioButtons.forEach(radio => {
-            radio.addEventListener('keydown', (e) => {
-                if (!this.isEnabled) return;
-                
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    this.toggleTipo();
-                }
-            });
-        });
+        // Radio buttons não precisam mais de atalhos de seta
     }
 
     refreshPage() {}
@@ -214,41 +203,7 @@ class ShortcutSystem {
         }
     }
 
-    selectReceita() {
-        this.expandFinanceiroForm();
-        const form = document.getElementById('financeiro-form-inner');
-        const receitaRadio = document.getElementById('tipo-receita');
-        const receitaLabel = document.querySelector('.receita-label');
-        
-        if (form && receitaRadio && receitaLabel) {
-            this.highlightFinanceiroForm();
-            receitaRadio.checked = true;
-            receitaLabel.focus();
-            
-            const event = new Event('change', { bubbles: true });
-            receitaRadio.dispatchEvent(event);
-            
-            this.showNotification('Receita selecionada', 'field');
-        }
-    }
-
-    selectDespesa() {
-        this.expandFinanceiroForm();
-        const form = document.getElementById('financeiro-form-inner');
-        const despesaRadio = document.getElementById('tipo-despesa');
-        const despesaLabel = document.querySelector('.despesa-label');
-        
-        if (form && despesaRadio && despesaLabel) {
-            this.highlightFinanceiroForm();
-            despesaRadio.checked = true;
-            despesaLabel.focus();
-            
-            const event = new Event('change', { bubbles: true });
-            despesaRadio.dispatchEvent(event);
-            
-            this.showNotification('Despesa selecionada', 'field');
-        }
-    }
+    // Funções selectReceita e selectDespesa removidas - não são mais necessárias
 
     submitForm() {
         this.expandFinanceiroForm();
@@ -372,16 +327,7 @@ class ShortcutSystem {
         element.classList.remove('shortcut-focused');
     }
 
-    toggleTipo() {
-        const receita = document.getElementById('tipo-receita');
-        const despesa = document.getElementById('tipo-despesa');
-        
-        if (receita.checked) {
-            this.selectDespesa();
-        } else {
-            this.selectReceita();
-        }
-    }
+    // Função toggleTipo removida - não é mais necessária
 
     isFinanceiroTabActive() {
         const financeiroTab = document.getElementById('financeiro');
