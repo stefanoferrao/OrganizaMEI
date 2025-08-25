@@ -728,6 +728,9 @@ async function acionarSincronizacaoSeNecessario() {
 
 document.addEventListener("DOMContentLoaded", async function () {
   try {
+    // Aplicar classe de carregamento para desabilitar botões
+    document.body.classList.add('page-loading');
+    
     // Inicializar loading manager
     loadingManager = new LoadingManager();
     window.loadingManager = loadingManager;
@@ -796,8 +799,63 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
       });
     }
+    
+    // Remover classe de carregamento após inicialização completa
+    // Aguardar que todos os módulos sejam carregados
+    const enableButtons = () => {
+      document.body.classList.remove('page-loading');
+      console.log('Página totalmente carregada - botões reabilitados');
+      
+      // Disparar evento customizado para notificar outros módulos
+      const event = new CustomEvent('pageFullyLoaded', {
+        detail: { timestamp: Date.now() }
+      });
+      document.dispatchEvent(event);
+    };
+    
+    // Aguardar carregamento de todos os módulos críticos
+    let modulesLoaded = 0;
+    const totalModules = 3; // estoque, relatorio, financeiro
+    
+    const checkModulesLoaded = () => {
+      modulesLoaded++;
+      if (modulesLoaded >= totalModules) {
+        setTimeout(enableButtons, 1000); // Aguardar mais 1 segundo após todos os módulos
+      }
+    };
+    
+    // Verificar se funções dos módulos estão disponíveis
+    const checkModule = (moduleName, checkFunction) => {
+      if (typeof checkFunction === 'function') {
+        console.log(`Módulo ${moduleName} carregado`);
+        checkModulesLoaded();
+      } else {
+        setTimeout(() => checkModule(moduleName, checkFunction), 100);
+      }
+    };
+    
+    // Verificar módulos principais
+    setTimeout(() => {
+      checkModule('estoque', window.renderizarProdutos);
+      checkModule('relatorio', window.renderizarRelatorios);
+      checkModule('financeiro', window.renderizarLancamentos);
+    }, 500);
+    
+    // Fallback: remover classe após 5 segundos independentemente
+    setTimeout(() => {
+      if (document.body.classList.contains('page-loading')) {
+        console.warn('Timeout atingido - forçando habilitação dos botões');
+        enableButtons();
+      }
+    }, 5000);
+    
   } catch (error) {
     console.error('Erro na inicialização:', error);
+    // Remover classe de carregamento mesmo em caso de erro
+    setTimeout(() => {
+      document.body.classList.remove('page-loading');
+      console.log('Botões reabilitados após erro na inicialização');
+    }, 3000);
   }
 });
 
@@ -805,6 +863,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 // Instanciar o gerenciador de loading globalmente
 let loadingManager;
+
+// Função global para forçar habilitação dos botões (para debug)
+window.forceEnableButtons = function() {
+  document.body.classList.remove('page-loading');
+  console.log('Botões forçadamente habilitados');
+};
 
 // Expor todas as funções globalmente
 window.mostrarNotificacaoSync = mostrarNotificacaoSync;
@@ -829,3 +893,224 @@ window.lancamentos = lancamentos;
 window.categorias = categorias;
 window.filtroMes = filtroMes;
 window.filtroAno = filtroAno;
+
+// ===== DAISYUI GLOBAL SYSTEM =====
+
+// DaisyUI Global System - Alert Outline Style, Footer e outros componentes
+// Sistema global DaisyUI com notificações, footer e outros componentes
+
+class DaisyUINotifications {
+  constructor() {
+    this.container = null;
+    this.notifications = [];
+    this.init();
+  }
+
+  init() {
+    // Criar container se não existir
+    if (!this.container) {
+      this.container = document.getElementById('daisyui-notification-container');
+      if (!this.container) {
+        this.container = document.createElement('div');
+        this.container.id = 'daisyui-notification-container';
+        document.body.appendChild(this.container);
+      }
+    }
+    return this.container;
+  }
+
+  show(message, type = 'info') {
+    const container = this.init();
+    
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = `daisyui-alert alert-${type} entering`;
+    
+    // Mapear ícones por tipo
+    const iconMap = {
+      'success': '<i class="fas fa-check-circle alert-icon"></i>',
+      'error': '<i class="fas fa-exclamation-circle alert-icon"></i>',
+      'warning': '<i class="fas fa-exclamation-triangle alert-icon"></i>',
+      'info': '<i class="fas fa-info-circle alert-icon"></i>'
+    };
+    
+    const icon = iconMap[type] || iconMap['info'];
+    
+    // Sanitizar mensagem
+    const sanitizedMessage = message
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
+    
+    notification.innerHTML = `
+      ${icon}
+      <span class="alert-text">${sanitizedMessage}</span>
+    `;
+    
+    // Calcular posição inicial (fora da tela, no topo)
+    const existingNotifications = container.querySelectorAll('.daisyui-alert');
+    const topOffset = existingNotifications.length * 60;
+    const startPosition = topOffset - 100;
+    
+    // Posicionar inicialmente fora da tela
+    notification.style.cssText = `
+      position: absolute;
+      top: ${startPosition}px;
+      width: 100%;
+      box-sizing: border-box;
+    `;
+    
+    container.appendChild(notification);
+    this.notifications.push(notification);
+    
+    // Animar entrada - vem do topo
+    setTimeout(() => {
+      notification.classList.remove('entering');
+      notification.classList.add('visible');
+      notification.style.top = `${topOffset}px`;
+    }, 10);
+    
+    // Animar saída após 3 segundos - volta para o topo
+    setTimeout(() => {
+      this.hideNotification(notification);
+    }, 3000);
+    
+    return notification;
+  }
+
+  hideNotification(notification) {
+    if (!notification || !notification.parentNode) return;
+    
+    // Animar saída - volta para o topo
+    notification.classList.remove('visible');
+    notification.classList.add('exiting');
+    
+    const currentTop = parseInt(notification.style.top);
+    notification.style.top = `${currentTop - 100}px`;
+    
+    // Remover após animação
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+        
+        // Remover da lista de notificações
+        const index = this.notifications.indexOf(notification);
+        if (index > -1) {
+          this.notifications.splice(index, 1);
+        }
+        
+        // Reposicionar notificações restantes
+        this.repositionNotifications();
+      }
+    }, 400);
+  }
+
+  repositionNotifications() {
+    const remainingNotifications = this.container.querySelectorAll('.daisyui-alert.visible');
+    remainingNotifications.forEach((notif, index) => {
+      notif.style.top = `${index * 60}px`;
+    });
+  }
+
+  // Método para limpar todas as notificações
+  clearAll() {
+    this.notifications.forEach(notification => {
+      if (notification.parentNode) {
+        this.hideNotification(notification);
+      }
+    });
+    this.notifications = [];
+  }
+}
+
+// Instância global
+window.DaisyUINotifications = new DaisyUINotifications();
+
+// Função de compatibilidade para substituir mostrarNotificacaoSync
+function mostrarNotificacaoSyncDaisyUI(message, type = 'info') {
+  return window.DaisyUINotifications.show(message, type);
+}
+
+// Aliases globais
+window.showDaisyNotification = (message, type) => window.DaisyUINotifications.show(message, type);
+window.daisyNotify = (message, type) => window.DaisyUINotifications.show(message, type);
+
+// Expor função globalmente para compatibilidade
+window.mostrarNotificacaoSyncDaisyUI = mostrarNotificacaoSyncDaisyUI;
+
+// DaisyUI Status Indicator Functions
+class DaisyUIStatusIndicator {
+  constructor() {
+    this.indicator = null;
+    this.init();
+  }
+
+  init() {
+    this.indicator = document.getElementById('daisyui-status-indicator');
+    if (this.indicator) {
+      this.indicator.addEventListener('click', () => {
+        if (typeof changeTab === 'function') {
+          changeTab('configuracoes');
+        }
+      });
+    }
+  }
+
+  updateStatus(type) {
+    if (this.indicator) {
+      this.indicator.className = `daisyui-status-indicator ${type}`;
+    }
+  }
+}
+
+// Instância global
+window.DaisyUIStatusIndicator = new DaisyUIStatusIndicator();
+
+// Função de compatibilidade
+function updateMiniIndicator(type) {
+  return window.DaisyUIStatusIndicator.updateStatus(type);
+}
+
+// Expor função globalmente
+window.updateMiniIndicator = updateMiniIndicator;
+
+// Sistema de Paginação Global
+class DaisyUIPagination {
+  constructor() {
+    this.defaultItemsPerPage = 10;
+  }
+
+  // Salvar quantidade de itens por página para um módulo específico
+  saveItemsPerPage(module, itemsPerPage) {
+    localStorage.setItem(`itensPorPagina${module}`, itemsPerPage);
+  }
+
+  // Carregar quantidade de itens por página para um módulo específico
+  loadItemsPerPage(module) {
+    return parseInt(localStorage.getItem(`itensPorPagina${module}`)) || this.defaultItemsPerPage;
+  }
+
+  // Configurar select de itens por página
+  setupItemsPerPageSelect(selectId, module, callback) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    // Carregar valor salvo
+    const savedValue = this.loadItemsPerPage(module);
+    select.value = savedValue;
+
+    // Adicionar evento de mudança
+    select.addEventListener('change', () => {
+      const newValue = parseInt(select.value);
+      this.saveItemsPerPage(module, newValue);
+      if (callback) callback(newValue);
+    });
+
+    return savedValue;
+  }
+}
+
+// Instância global
+window.DaisyUIPagination = new DaisyUIPagination();

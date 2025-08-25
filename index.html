@@ -58,20 +58,17 @@
     <link rel="stylesheet" href="css/categorias.css">
     <link rel="stylesheet" href="css/graficos.css">
     <link rel="stylesheet" href="css/configuracoes.css">
-    <link rel="stylesheet" href="css/filtros.css">
-    <link rel="stylesheet" href="css/form-categorias.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/sheets-integration.css">
-    <link rel="stylesheet" href="css/shortcuts.css">
-    <link rel="stylesheet" href="css/font-awesome-custom.css">
-    <link rel="stylesheet" href="css/loading-overlay.css">
     <link rel="stylesheet" href="css/readme-viewer.css">
-    <link rel="stylesheet" href="css/mobile-modals.css">
-    <link rel="stylesheet" href="css/daisyui-global.css">
-    <link rel="stylesheet" href="css/icon-fixes.css">
+    <link rel="stylesheet" href="css/relatorio.css">
+    <link rel="stylesheet" href="css/main.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SheetJS para geração de Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- JavaScript Modular -->
     <script defer src="js/daisyui-global.js"></script>
@@ -84,7 +81,8 @@
     <script defer src="js/graficos.js"></script>
     <script defer src="js/configuracoes.js"></script>
     <script defer src="js/sheets-integration.js"></script>
-    <script defer src="js/main.js"></script>
+    <script defer src="js/relatorio.js"></script>
+    <script defer src="js/main.js"></script></script>
 </head>
 
 <body>
@@ -107,13 +105,14 @@
                 <button onclick="changeTab('vendas')"><i class="fas fa-shopping-cart"></i>Vendas</button>
                 <button onclick="changeTab('categorias')"><i class="fas fa-tags"></i>Categorias</button>
                 <button onclick="changeTab('graficos')"><i class="fas fa-chart-bar"></i>Gráficos</button>
+                <button onclick="changeTab('relatorios')"><i class="fas fa-file-alt"></i>Relatórios</button>
                 <button onclick="changeTab('configuracoes')"><i class="fas fa-cog"></i>Configurações</button>
             </nav>
         </div>
 
         <!-- Rodapé da sidebar -->
         <div class="sidebar-footer">
-            <div class="version-info">Versão 5.65</div>
+            <div class="version-info">Versão 6.0</div>
         </div>
     </aside>
 
@@ -470,6 +469,13 @@
                 </select>
             </div>
             <canvas id="graficoDinamico"></canvas>
+        </section>
+        <!-- Relatórios -->
+        <section id="relatorios" class="tab-section">
+            <h2 class="text-xl font-semibold mb-4"><i class="fas fa-file-alt"></i>Relatórios</h2>
+            <div id="relatorios-content">
+                <!-- Conteúdo será carregado pelo JavaScript -->
+            </div>
         </section>
         <!-- Análises -->
         <section id="analises" class="tab-section">
@@ -963,6 +969,14 @@
                     }
                 }, 250);
             }
+            // Atualiza relatórios ao clicar na aba de relatórios
+            if (tabId === 'relatorios') {
+                setTimeout(() => {
+                    if (typeof inicializarRelatorios === 'function') {
+                        inicializarRelatorios();
+                    }
+                }, 100);
+            }
         }
 
         // Adicionar efeito visual aos botões de navegação
@@ -1019,6 +1033,8 @@
                             }
 
                             renderizarGrafico(ultimoGrafico);
+                        } else if (tabSalva === 'relatorios' && typeof inicializarRelatorios === 'function') {
+                            inicializarRelatorios();
                         }
                     }, 200);
                 }

@@ -132,6 +132,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     
+    if (document.body.classList.contains('page-loading')) {
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync('Aguarde o carregamento da página', 'warning');
+      }
+      return;
+    }
+    
     if (!produtos[index]) {
       console.error('Produto não encontrado no índice:', index);
       if (typeof mostrarNotificacaoSync === 'function') {
@@ -1137,6 +1144,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.body.classList.contains('sync-disabled')) {
       if (typeof mostrarNotificacaoSync === 'function') {
         mostrarNotificacaoSync('Aguarde a sincronização terminar', 'warning');
+      }
+      return;
+    }
+    
+    if (document.body.classList.contains('page-loading')) {
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync('Aguarde o carregamento da página', 'warning');
       }
       return;
     }

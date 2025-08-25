@@ -1313,6 +1313,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 10);
       
       return;
+      
     }
 
     chartInstance = new Chart(ctx, {
@@ -1410,6 +1411,8 @@ document.addEventListener("DOMContentLoaded", function () {
     renderizarGrafico(ultimoGrafico);
   }
 
-  // Expor função globalmente
+
+  
+  // Expor funções globalmente
   window.renderizarGrafico = renderizarGrafico;
 });

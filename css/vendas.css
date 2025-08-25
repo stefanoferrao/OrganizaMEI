@@ -1,0 +1,357 @@
+/* Vendas Styles */
+
+/* Itens Vendidos - Vendas */
+.venda-item {
+  background: #232b38;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(49, 130, 206, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: box-shadow 0.2s;
+  border-left: 6px solid #17acaf;
+}
+
+@media (max-width: 480px) {
+  .venda-item {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .venda-meta {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .venda-icon {
+    margin-right: 12px;
+    font-size: 1.3rem !important;
+  }
+
+  /* Reduzir fontes dos itens de vendas */
+  .venda-produto {
+    font-size: 1rem !important;
+  }
+
+  .venda-quantidade {
+    font-size: 0.85rem !important;
+  }
+
+  .venda-valor {
+    font-size: 1rem !important;
+  }
+
+  .venda-data {
+    font-size: 10px !important;
+  }
+
+  .venda-meta {
+    min-width: 100px !important;
+  }
+  
+  /* Garantir que a paginação não quebre o layout em mobile */
+  #vendas-pagination-pages {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.venda-item:hover {
+  box-shadow: 0 4px 16px rgba(49, 130, 206, 0.18);
+  border-left: 6px solid #1fdadd;
+}
+
+.venda-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.venda-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.venda-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 120px;
+  gap: 4px;
+}
+
+.venda-produto {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #1fdadd;
+}
+
+.venda-quantidade {
+  font-size: 0.98rem;
+  color: #a0aec0;
+}
+
+.venda-valor {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #17acaf;
+}
+
+.venda-data {
+  font-size: 11px;
+  color: #a0aec0;
+}
+
+.venda-icon {
+  font-size: 1.7rem;
+  margin-right: 18px;
+  color: #17acaf;
+}
+
+.venda-icon .fas {
+  font-size: 1.7rem;
+  color: #17acaf;
+}
+
+/* Container principal de vendas com melhor espaçamento */
+#vendas {
+  padding-bottom: 20px;
+}
+
+/* Melhorar espaçamento entre lista e paginação */
+#vendas-lista {
+  margin-bottom: 10px;
+}
+
+/* Animações suaves para botões de paginação */
+#vendas-pagination .join-item {
+  position: relative;
+  overflow: hidden;
+}
+
+#vendas-pagination .join-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(23, 172, 175, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+#vendas-pagination .join-item:hover::before {
+  left: 100%;
+}
+
+/* Melhorar feedback visual para botão ativo */
+#vendas-pagination .join-item.btn-active {
+  box-shadow: 0 2px 8px rgba(23, 172, 175, 0.3);
+  position: relative;
+}
+
+#vendas-pagination .join-item.btn-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 2px;
+  background: #1fdadd;
+  border-radius: 1px;
+}
+
+/* Estados de foco melhorados */
+#vendas-pagination .join-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.5);
+}
+
+/* Indicador de carregamento para paginação */
+.vendas-pagination-loading {
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+}
+
+.vendas-pagination-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid #17acaf;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Estilos para mensagem de nenhuma venda */
+.venda-empty {
+  color: #a0aec0;
+  text-align: center;
+}
+
+/* Estilos melhorados para paginação de vendas - agora dentro do items-per-page */
+#vendas-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+#vendas-pagination .join-item {
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#vendas-pagination .join-item:hover {
+  background: #4a5568;
+  border-color: #17acaf;
+  color: #17acaf;
+  transform: translateY(-1px);
+}
+
+#vendas-pagination .join-item.btn-active {
+  background: #17acaf;
+  border-color: #17acaf;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+#vendas-pagination .join-item:disabled {
+  background: #1a202c;
+  border-color: #2d3748;
+  color: #4a5568;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#vendas-pagination .join-item:disabled:hover {
+  background: #1a202c;
+  border-color: #2d3748;
+  color: #4a5568;
+  transform: none;
+}
+
+#vendas-pagination-pages {
+  display: flex;
+  gap: 2px;
+}
+
+/* Informações de paginação melhoradas - agora dentro do items-per-page */
+#vendas-pagination-info {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 0.85rem;
+}
+
+/* Controle de itens por página compacto - layout horizontal */
+.items-per-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  color: #a0aec0;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background: rgba(45, 55, 72, 0.3);
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  flex-wrap: wrap;
+  min-height: 40px;
+}
+
+.items-per-page label {
+  font-weight: 500;
+}
+
+.items-per-page select {
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  color: #e2e8f0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.items-per-page select:hover {
+  border-color: #17acaf;
+}
+
+.items-per-page select:focus {
+  outline: none;
+  border-color: #17acaf;
+  box-shadow: 0 0 0 2px rgba(23, 172, 175, 0.2);
+}
+
+/* Responsividade para paginação */
+@media (max-width: 768px) {
+  .items-per-page {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .items-per-page > div {
+    justify-content: center;
+  }
+  
+  #vendas-pagination {
+    justify-content: center;
+  }
+  
+  #vendas-pagination .join-item {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    min-width: 32px;
+  }
+  
+  #vendas-pagination-info {
+    text-align: center;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .items-per-page {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  #vendas-pagination .join-item {
+    padding: 3px 6px;
+    font-size: 0.7rem;
+    min-width: 28px;
+  }
+  
+  #vendas-pagination-info {
+    font-size: 0.7rem;
+  }
+}

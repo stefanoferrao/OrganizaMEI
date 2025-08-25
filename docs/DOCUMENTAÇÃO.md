@@ -148,15 +148,17 @@ O sistema detecta automaticamente a aba "Estoque" na planilha Google Sheets:
 
 ---
 
-## 🔄 **SINCRONIZAÇÃO INTELIGENTE**
+## 🔄 **SINCRONIZAÇÃO INTELIGENTE AVANÇADA**
 
-### 🎯 **Verificação Automática**
+### 🎯 **Verificação Automática Inteligente**
 
-O sistema verifica automaticamente se os dados locais estão atualizados:
+O sistema v6.0 implementa sincronização inteligente com verificação otimizada:
 
-1. **Carregamento da página** → Verificação automática
-2. **Comparação de timestamps** usando IDs únicos
-3. **Sincronização condicional** apenas se necessário
+1. **Carregamento da página** → Verificação automática em 3 segundos
+2. **Comparação por timestamp** usando IDs únicos DDMMAAAAHHMMSS
+3. **Sincronização condicional** apenas quando dados desatualizados
+4. **Cache inteligente** evita verificações desnecessárias
+5. **Loading visual** apenas durante sincronização real
 
 ### 📅 **Formato dos IDs Únicos**
 
@@ -171,63 +173,102 @@ DDMMAAAAAHHMMSS
 └└──────────── Dia (25)
 ```
 
-**Características:**
-- **14 caracteres** no total
+**Características Avançadas:**
+- **14 caracteres** com precisão de segundo
 - **Formato**: DDMMAAAAHHMMSS
 - **Exemplo**: 31122024143045 = 31/12/2024 às 14:30:45
 - **Ordenação cronológica** automática
 - **Unicidade garantida** por timestamp completo
+- **Compatibilidade** com fuso horário local
+- **Validação** automática de formato
 
-### 🔍 **Lógica de Comparação**
+### 🔍 **Lógica de Sincronização Inteligente**
 
 ```javascript
-// Se ultimoIdRemoto > ultimoIdLocal
-// → Dados desatualizados, sincronizar
+// Verificação por timestamp
+if (ultimoIdRemoto > ultimoIdLocal) {
+  // Dados desatualizados - sincronizar
+  executarSincronizacaoCompleta();
+} else {
+  // Dados atualizados - carregamento normal
+  carregarDadosLocais();
+}
 
-// Se ultimoIdRemoto <= ultimoIdLocal  
-// → Dados atualizados, não sincronizar
+// Cache de verificação (30 segundos)
+if (ultimaVerificacao < 30000) {
+  // Pular verificação recente
+  return;
+}
 ```
 
-### ⚡ **Vantagens**
+### ⚡ **Vantagens da Sincronização v6.0**
 
-- **Performance otimizada**: Verificação rápida
+- **Performance otimizada**: Verificação em < 500ms
 - **Experiência fluida**: Loading apenas quando necessário
 - **Confiabilidade**: Baseado em timestamps precisos
-- **Eficiência**: Reduz chamadas desnecessárias
+- **Eficiência**: Cache inteligente reduz chamadas
+- **Recuperação automática**: Correção de problemas
+- **Feedback visual**: Indicadores de status em tempo real
 
 ---
 
-## 🎛️ **SISTEMA DE LOADING**
+## 🎛️ **LOADING MANAGER UNIFICADO**
 
-### 🔄 **Detecção Automática**
+### 🔄 **Sistema Inteligente de Loading**
 
-O sistema intercepta notificações de sincronização:
+O LoadingManager v6.0 oferece controle completo do feedback visual:
 
-- **"sincronizando" + tipo "info"** → Ativa loading
-- **"sincronizado" + tipo "success"** → Desativa loading
-- **tipo "error"** → Desativa loading
+- **Detecção automática** de operações de sincronização
+- **Overlay responsivo** com animações suaves
+- **Bloqueio inteligente** de interações durante sync
+- **Restauração automática** do estado original
+- **Progress tracking** com barra de progresso
 
-### 🚫 **Bloqueio de Interface**
+### 🚫 **Bloqueio de Interface Avançado**
 
 Quando ativado:
-1. Mostra overlay com spinner animado
-2. Desabilita todos os botões, inputs e selects
-3. Previne scroll da página
-4. Salva estado original para restauração
+1. **Overlay visual** com spinner animado e mensagens
+2. **Desabilitação seletiva** de botões, inputs e selects
+3. **Prevenção de scroll** e interações
+4. **Backup de estado** para restauração perfeita
+5. **Tratamento de erros** com cleanup automático
 
-### 📁 **Arquivos**
+### 📁 **Implementação Integrada**
 
-- `css/loading-overlay.css` - Estilos do overlay
-- `js/loading-manager.js` - Classe LoadingManager
+- **main.js** - Classe LoadingManager completa
+- **CSS integrado** - Estilos responsivos no main.css
+- **Instância global** - window.loadingManager
 
-### 🔧 **Uso Manual**
+### 🔧 **API Completa**
 
 ```javascript
-// Ativar loading
-window.loadingManager.startSyncLoading();
+// Ativar loading com mensagem personalizada
+window.loadingManager.showLoading(
+  'Sincronizando dados...', 
+  'Aguarde, não feche esta janela'
+);
+
+// Atualizar progresso
+window.loadingManager.updateProgress(50, 'Processando...');
 
 // Desativar loading
-window.loadingManager.stopSyncLoading();
+window.loadingManager.hideLoading();
+
+// Verificar status
+if (window.loadingManager.isCurrentlyLoading()) {
+  // Loading ativo
+}
+```
+
+### 🎯 **Integração com Sincronização**
+
+```javascript
+// Ativação automática para dados desatualizados
+if (!dadosAtualizados) {
+  window.loadingManager.startSyncLoading();
+  await sincronizarTudo();
+  window.loadingManager.stopSyncLoading();
+}
 ```
 
 ---
@@ -544,4 +585,4 @@ function verificarTimestamp(timestampLocal) {
 
 ---
 
-**OrganizaMEI v4.0** - Sistema modular, inteligente e completo para gestão de MEI.
+**OrganizaMEI v6.0** - Sistema modular, inteligente e completo para gestão de MEI com sincronização avançada, loading manager unificado e arquitetura otimizada.

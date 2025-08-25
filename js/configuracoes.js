@@ -1313,7 +1313,7 @@ class TutorialOnboarding {
             {
                 target: 'aside img',
                 title: 'Bem-vindo ao OrganizaMEI! 🎉',
-                content: 'Este é seu sistema de gestão completo para MEI. Vamos fazer um tour rápido pelas principais funcionalidades.',
+                content: 'Este é seu sistema de gestão completo para MEI. Vamos fazer um tour pelas 8 funcionalidades principais.',
                 position: 'right'
             },
             {
@@ -1369,11 +1369,43 @@ class TutorialOnboarding {
                 action: () => changeTab('vendas')
             },
             {
+                target: 'nav button[onclick*="categorias"]',
+                title: 'Gestão de Categorias 🏷️',
+                content: 'Organize suas receitas e despesas em categorias personalizadas. Essencial para relatórios precisos!',
+                position: 'right',
+                action: () => changeTab('categorias')
+            },
+            {
+                target: '#lista-categorias',
+                title: 'Categorias Organizadas 📋',
+                content: 'Aqui você pode adicionar, editar e organizar suas categorias e subcategorias de receitas e despesas.',
+                position: 'bottom'
+            },
+            {
                 target: 'nav button[onclick*="graficos"]',
-                title: 'Relatórios e Gráficos 📈',
-                content: 'Analise seu negócio com gráficos detalhados e relatórios DRE.',
+                title: 'Gráficos e Análises 📈',
+                content: 'Visualize seus dados com mais de 15 tipos de gráficos diferentes para análise completa.',
                 position: 'right',
                 action: () => changeTab('graficos')
+            },
+            {
+                target: '#tipo-grafico',
+                title: 'Tipos de Gráficos 📊',
+                content: 'Escolha entre gráficos de linha, pizza e relatórios DRE. Use as setas ↑↓ para navegar rapidamente!',
+                position: 'bottom'
+            },
+            {
+                target: 'nav button[onclick*="relatorios"]',
+                title: 'Relatórios Detalhados 📄',
+                content: 'Gere relatórios DRE completos e exporte para Excel. Perfeito para análises financeiras!',
+                position: 'right',
+                action: () => changeTab('relatorios')
+            },
+            {
+                target: '#relatorios-content',
+                title: 'DRE e Exportação 💼',
+                content: 'Demonstrativo do Resultado do Exercício com exportação para Excel. Ideal para contabilidade!',
+                position: 'bottom'
             },
             {
                 target: 'nav button[onclick*="configuracoes"]',
@@ -1385,7 +1417,7 @@ class TutorialOnboarding {
             {
                 target: 'body',
                 title: 'Pronto para começar! 🚀',
-                content: 'Agora você conhece as principais funcionalidades. Comece cadastrando alguns produtos no estoque!',
+                content: 'Agora você conhece todas as 8 funcionalidades principais: Dashboard, Estoque, Financeiro, Vendas, Categorias, Gráficos, Relatórios e Configurações. Comece cadastrando alguns produtos no estoque!',
                 position: 'center'
             }
         ];

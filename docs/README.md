@@ -1,57 +1,71 @@
-# 🚀 **OrganizaMEI** - Sistema de Gestão para MEI
+# 🚀 **OrganizaMEI v6.0** - Sistema de Gestão para MEI
 
-> Sistema modular e inteligente para controle financeiro, estoque e vendas com integração opcional ao Google Sheets, tutorial interativo e sistema de temas.
+> Sistema modular e inteligente para controle financeiro, estoque e vendas com integração opcional ao Google Sheets, tutorial interativo, sistema de temas e sincronização inteligente.
 
 ## 📋 **Funcionalidades Principais**
 
-### 🎓 **Tutorial Interativo**
-- Tutorial guiado para novos usuários
-- Navegação passo a passo pelas funcionalidades
-- Sistema de progresso visual
-- Opção de pular ou refazer tutorial
-- Auto-inicialização para primeira visita
+### 🎓 **Tutorial Interativo Completo**
+- Tutorial guiado com 12 passos
+- Navegação automática entre abas
+- Sistema de progresso visual com barra
+- Opção de pular, voltar ou refazer tutorial
+- Auto-inicialização para novos usuários
+- Flexibilidade total de navegação
 
-### 🎨 **Sistema de Temas**
-- Tema Default (padrão)
-- Tema Police (alternativo)
-- Transições suaves entre temas
-- Configuração salva no navegador
+### 🎨 **Sistema de Temas Expandido**
+- **Default**: Tema padrão azul/verde
+- **Police**: Tema alternativo com design único
+- **Office**: Tema corporativo profissional
+- Transições suaves com overlay
+- Configuração persistente no navegador
+- Preview visual antes da seleção
 
-### ⌨️ **Atalhos de Teclado**
-- **Globais:** F1-F8 ou 1-7 para navegação entre abas
-- **Financeiro:** Setas para selecionar receita/despesa, Enter para enviar
-- **Gráficos:** Setas para navegar entre tipos de gráfico
-- **Configurável:** Ativar/desativar atalhos e feedback visual
+### ⌨️ **Atalhos de Teclado Unificados**
+- **Globais:** F1-F8 para navegação rápida entre abas
+- **Financeiro:** F9, Ctrl+R/D/L, Ctrl+Enter, Esc
+- **Gráficos:** ↑↓ para navegar entre tipos
+- **Configurável:** Ativar/desativar atalhos e feedback
+- **Inteligente:** Atalhos contextuais por aba
 
-### 📱 **PWA (Progressive Web App)**
+### 📱 **PWA (Progressive Web App) Avançado**
 - Instalável como aplicativo nativo
-- Funciona offline (dados locais)
-- Ícones personalizados
-- Tela cheia no mobile
+- Funciona completamente offline
+- Ícones personalizados para todos os tamanhos
+- Tela cheia otimizada para mobile
+- Categorizado como finance/business/productivity
 
-### 💰 **Gestão Financeira Completa**
-- Controle de receitas e despesas por categorias
+### 💰 **Gestão Financeira Inteligente**
+- Controle completo de receitas e despesas
+- Sistema de categorias e subcategorias
 - Lançamentos automáticos de vendas
-- Relatórios DRE detalhados
-- Indicadores de performance (KPIs)
+- Relatórios DRE completos e detalhados
+- KPIs e indicadores em tempo real
+- Pesquisa avançada e filtros
+- Paginação inteligente
 
-### 📦 **Controle de Estoque Inteligente**
-- Cadastro e controle de produtos
-- Movimentações de entrada e saída
-- Integração automática com vendas
+### 📦 **Controle de Estoque Avançado**
+- Cadastro e gestão completa de produtos
+- Movimentações detalhadas (entrada/saída/venda)
+- Integração automática com vendas e financeiro
 - Histórico completo de movimentações
+- Edição e exclusão de movimentações
+- Sistema de quebras e perdas
 
-### 📊 **Dashboard e Relatórios**
+### 📊 **Dashboard e Relatórios Completos**
 - Visão geral em tempo real
-- Gráficos interativos (Chart.js)
-- Análises de tendências
-- Filtros por período
+- 15+ tipos de gráficos interativos
+- Análises de tendências e evolução
+- Filtros avançados por período
+- Exportação para Excel
+- DRE detalhado por subcategorias
 
-### 🔗 **Integração Google Sheets (Opcional)**
-- Sincronização automática de dados
-- Backup na nuvem
-- Acesso multiplataforma
-- Detecção inteligente de abas
+### 🔗 **Integração Google Sheets Inteligente**
+- Sincronização automática e inteligente
+- Verificação por timestamp usando IDs únicos
+- Backup automático na nuvem
+- Detecção automática de abas
+- Criação automática da aba Estoque
+- Status visual em tempo real
 
 ---
 
@@ -203,14 +217,15 @@ O sistema detecta automaticamente:
 
 ## 🔄 **Histórico de Versões**
 
-### 🆕 **v5.2 (Atual)**
-- 🎨 **Sistema de Temas Expandido:** Novos temas Office e Police Beta
-- 📱 **Mobile Otimizado:** Melhor suporte a teclado virtual e gestos touch
-- 🔄 **Sincronização Inteligente:** Verificação automática de dados desatualizados
-- 📊 **GitHub Integration:** Visualizador de changelog direto do repositório
-- 🎓 **Tutorial Aprimorado:** Sistema de onboarding mais intuitivo
-- ⌨️ **Atalhos Globais:** Sistema unificado de navegação por teclado
-- 🛠️ **Correções e Melhorias:** Performance e estabilidade aprimoradas
+### 🆕 **v6.0 (Atual)**
+- 🔄 **Sincronização Inteligente Avançada:** Verificação automática com timestamps únicos
+- 🎛️ **Loading Manager:** Sistema unificado de feedback visual
+- 📱 **Otimizações Mobile:** Melhor suporte a teclado virtual e gestos
+- 🎨 **Temas Expandidos:** Default, Police e Office com transições suaves
+- ⌨️ **Atalhos Unificados:** Sistema completo de navegação por teclado
+- 🎓 **Tutorial Completo:** 12 passos com navegação automática
+- 📊 **Gráficos Avançados:** 15+ tipos com exportação Excel
+- 🛠️ **Arquitetura Modular:** Código organizado e otimizado
 
 ### **v4.0**
 - 🎓 Tutorial interativo completo
@@ -522,4 +537,4 @@ OrganizaMEI/
 
 ---
 
-**OrganizaMEI v5.2** - Sistema de gestão para MEI com temas expandidos, sincronização inteligente, integração GitHub e experiência mobile otimizada.
+**OrganizaMEI v6.0** - Sistema completo de gestão para MEI com sincronização inteligente, tutorial interativo, temas expandidos e arquitetura modular otimizada.
