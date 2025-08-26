@@ -131,6 +131,9 @@ async function saveWebAppUrl() {
         progressFill.style.width = '70%';
         await new Promise(resolve => setTimeout(resolve, 300));
         
+        // Disparar evento personalizado para notificar o sistema global
+        document.dispatchEvent(new CustomEvent('configSaved'));
+        
         // Executar ressincronização automaticamente
         await sincronizarTudo();
         
@@ -144,7 +147,7 @@ async function saveWebAppUrl() {
         btn.classList.add('success');
         progressContainer.remove();
         
-        mostrarNotificacaoSync('URL salva e dados sincronizados!', 'success');
+        mostrarNotificacaoSync('URL salva.', 'success');
         
         // Atualizar status após salvar
         setTimeout(atualizarStatusIntegracao, 500);
@@ -262,186 +265,7 @@ function hideProgress() {
     }
 }
 
-// Sincronizar dados do Google Sheets para a plataforma (apenas leitura)
-async function sincronizarFinanceiro() {
-    const url = getCurrentUrl();
-    if (!url || url.includes('*')) {
-        updateSyncStatus('Configure a URL do Web App primeiro!', 'error');
-        hideProgress();
-        return;
-    }
 
-    try {
-        // Atualizar progresso no loading manager se estiver ativo
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(10, 'Conectando com Google Sheets...');
-        }
-        
-        showProgress('Conectando com Google Sheets...');
-        updateSyncStatus('Sincronizando...', 'syncing');
-        updateMiniIndicator('syncing');
-        
-        // Aguardar um pouco para mostrar o progresso
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Atualizar progresso
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(25, 'Obtendo dados da planilha...');
-        }
-        
-        // Obter dados da planilha
-        const responseRead = await fetch(url + '?action=read', { method: 'GET', mode: 'cors' });
-        const resultRead = await responseRead.json();
-        
-        if (!resultRead.success) {
-            updateSyncStatus('Erro ao ler planilha', 'error');
-            mostrarNotificacaoSync('Erro ao ler planilha', 'error');
-            hideProgress();
-            return;
-        }
-        
-        // Atualizar progresso
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(40, 'Processando dados financeiros...');
-        }
-        
-        showProgress('Processando dados...');
-        await new Promise(resolve => setTimeout(resolve, 600));
-        
-        const dadosPlanilha = resultRead.data || [];
-        
-        // Substituir dados locais pelos dados da planilha
-        const lancamentosSincronizados = dadosPlanilha.map(item => ({
-            id: item.id,
-            tipo: item.tipo,
-            categoria: item.categoria,
-            subcategoria: item.subcategoria,
-            descricao: item.descricao,
-            quantidade: item.quantidade || 1,
-            valor: item.valor,
-            data: item.data instanceof Date ? item.data.toLocaleDateString('pt-BR') : item.data
-        }));
-        
-        // Salvar dados sincronizados
-        localStorage.setItem('lancamentos', JSON.stringify(lancamentosSincronizados));
-        
-        // Forçar atualização das variáveis globais - safer function checks
-        if (window.carregarDadosAtualizados && typeof window.carregarDadosAtualizados === 'function') {
-            window.carregarDadosAtualizados();
-        } else if (window.lancamentos && Array.isArray(window.lancamentos)) {
-            window.lancamentos.length = 0;
-            window.lancamentos.push(...lancamentosSincronizados);
-        }
-        
-        // Atualizar timestamp de modificação
-        atualizarTimestampModificacao();
-        
-        // Atualizar progresso
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(60, 'Sincronizando estoque...');
-        }
-        
-        // Sincronizar estoque se a aba existir
-        showProgress('Sincronizando estoque...');
-        await sincronizarEstoque();
-        
-        // Atualizar progresso
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(80, 'Atualizando interface...');
-        }
-        
-        showProgress('Atualizando interface...');
-        
-        // Forçar atualização completa da interface
-        // Recarregar dados do localStorage
-        if (typeof carregarDadosAtualizados === 'function') {
-            carregarDadosAtualizados();
-        } else {
-            const novosLancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
-            if (typeof window.lancamentos !== 'undefined') {
-                window.lancamentos.length = 0;
-                window.lancamentos.push(...novosLancamentos);
-            }
-        }
-        
-        // Forçar atualização das variáveis globais (usar dados já carregados)
-        window.lancamentos = lancamentosSincronizados;
-        if (window.lancamentos && Array.isArray(window.lancamentos)) {
-            window.lancamentos.length = 0;
-            window.lancamentos.push(...lancamentosSincronizados);
-        }
-        
-        // Atualizar financeiro imediatamente durante "Atualizando interface..." - safer function checks
-        if (window.renderizarLancamentos && typeof window.renderizarLancamentos === 'function') {
-            window.renderizarLancamentos();
-        }
-        if (window.renderizarResumoFinanceiro && typeof window.renderizarResumoFinanceiro === 'function') {
-            window.renderizarResumoFinanceiro();
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 700));
-        
-        // Atualizar outras interfaces - safer function checks
-        if (window.renderizarDashboardResumo && typeof window.renderizarDashboardResumo === 'function') window.renderizarDashboardResumo();
-        if (window.renderizarVendas && typeof window.renderizarVendas === 'function') window.renderizarVendas();
-        if (window.renderizarResumoFinanceiro && typeof window.renderizarResumoFinanceiro === 'function') window.renderizarResumoFinanceiro();
-        if (window.atualizarFiltroMesAno && typeof window.atualizarFiltroMesAno === 'function') window.atualizarFiltroMesAno();
-        if (window.renderizarProdutos && typeof window.renderizarProdutos === 'function') window.renderizarProdutos();
-        
-        // Atualizar progresso
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(95, 'Finalizando sincronização...');
-        }
-        
-        showProgress('Finalizando...');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        // Atualizar gráficos se a função estiver disponível - safer function check
-        if (window.renderizarGrafico && typeof window.renderizarGrafico === 'function') {
-            const ultimoGrafico = localStorage.getItem('ultimoGraficoSelecionado') || 'vendas';
-            window.renderizarGrafico(ultimoGrafico);
-        }
-        
-        updateSyncStatus('Sincronizado', 'success');
-        updateMiniIndicator('connected-working');
-        mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
-        hideProgress();
-        
-        // Atualizar progresso final e parar loading manager
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager && window.loadingManager.isCurrentlyLoading()) {
-            window.loadingManager.updateProgress(100, 'Sincronização concluída!');
-            setTimeout(() => {
-                window.loadingManager.stopSyncLoading();
-            }, 800);
-        }
-        
-        // Remover feedback visual após sincronização - safer function check
-        if (window.removerFeedbackVisual && typeof window.removerFeedbackVisual === 'function') {
-            window.removerFeedbackVisual();
-        }
-        
-        // Aguardar 1500ms para compatibilidade com atualização dos dados
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        updateSyncStatus(`${dadosPlanilha.length} registros importados`, 'success');
-        updateMiniIndicator('connected-working');
-        
-        // Interface já foi atualizada com os dados sincronizados
-        
-    } catch (error) {
-        updateSyncStatus('Erro na sincronização', 'error');
-        updateMiniIndicator('error');
-        mostrarNotificacaoSync('Erro na sincronização', 'error');
-        hideProgress();
-        
-        // Parar loading manager em caso de erro
-        if (typeof window.loadingManager !== 'undefined' && window.loadingManager) {
-          window.loadingManager.stopSyncLoading();
-        }
-    } finally {
-        // Controle de sync-disabled gerenciado pela função sincronizarTudo
-    }
-}
 
 // Adicionar lançamento ao Google Sheets
 async function adicionarLancamentoSheets(lancamento) {
@@ -471,10 +295,6 @@ async function adicionarLancamentoSheets(lancamento) {
         const result = await response.json();
         if (result.success) {
             atualizarTimestampModificacao();
-            // Remover feedback visual após adição bem-sucedida - safer function check
-            if (window.removerFeedbackVisual && typeof window.removerFeedbackVisual === 'function') {
-                setTimeout(window.removerFeedbackVisual, 500);
-            }
         }
         return result.success;
     } catch (error) {
@@ -510,10 +330,6 @@ async function excluirLancamentoSheets(id) {
         const result = await response.json();
         if (result.success === true) {
             atualizarTimestampModificacao();
-            // Remover feedback visual após exclusão bem-sucedida
-            if (typeof removerFeedbackVisual === 'function') {
-                setTimeout(removerFeedbackVisual, 500);
-            }
         }
         return result.success === true;
     } catch (error) {
@@ -560,10 +376,6 @@ async function editarLancamentoSheets(lancamento) {
         
         if (result.success) {
             atualizarTimestampModificacao();
-            // Remover feedback visual após edição bem-sucedida
-            if (typeof removerFeedbackVisual === 'function') {
-                setTimeout(removerFeedbackVisual, 500);
-            }
         }
         
         return result.success;
@@ -612,10 +424,6 @@ async function editarMovimentacaoEstoque(movimentacao) {
         
         if (result.success) {
             atualizarTimestampModificacao();
-            // Remover feedback visual após edição bem-sucedida
-            if (typeof removerFeedbackVisual === 'function') {
-                setTimeout(removerFeedbackVisual, 500);
-            }
         }
         
         return result.success;
@@ -654,10 +462,6 @@ async function excluirMovimentacaoEstoque(id) {
         
         if (result.success) {
             atualizarTimestampModificacao();
-            // Remover feedback visual após exclusão bem-sucedida
-            if (typeof removerFeedbackVisual === 'function') {
-                setTimeout(removerFeedbackVisual, 500);
-            }
         }
         
         return result.success;
@@ -864,32 +668,73 @@ async function atualizarStatusIntegracao() {
     }
 }
 
-// Sincronização unificada
+// Sincronização unificada - DELEGADA PARA SISTEMA GLOBAL
 async function sincronizarTudo() {
+    // Delegar para o sistema de sincronização global
+    if (window.syncGlobalManager) {
+        window.syncGlobalManager.startSync('manual');
+    } else {
+        console.warn('Sistema de sincronização global não disponível, usando método legado');
+        // Fallback para método antigo se o sistema global não estiver disponível
+        await sincronizarFinanceiroLegacy();
+    }
+}
+
+// Função legada mantida para compatibilidade
+async function sincronizarFinanceiroLegacy() {
     const btn = document.getElementById('btn-sync-all');
-    const originalText = btn.textContent;
+    const originalText = btn ? btn.textContent : '';
     
     try {
-        // Inativar todos os botões CRUD
-        document.body.classList.add('sync-disabled');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Sincronizando...';
+        }
         
-        btn.disabled = true;
-        btn.textContent = 'Sincronizando...';
-        
-        showProgress('Iniciando sincronização completa...');
+        showProgress('Iniciando sincronização...');
         updateMiniIndicator('syncing');
         
-        // Sincronizar financeiro
-        await sincronizarFinanceiro();
+        // Usar a função global de sincronização
+        if (window.sincronizarFinanceiro && typeof window.sincronizarFinanceiro === 'function') {
+            await window.sincronizarFinanceiro();
+            
+            // Sincronizar estoque também
+            if (window.sincronizarEstoque && typeof window.sincronizarEstoque === 'function') {
+                await window.sincronizarEstoque();
+            }
+            
+            // Atualizar categorias
+            if (window.categoriaManager && typeof window.categoriaManager.sincronizarComFinanceiro === 'function') {
+                window.categoriaManager.sincronizarComFinanceiro();
+            }
+            
+            // Atualizar outras interfaces
+            if (window.renderizarDashboardResumo && typeof window.renderizarDashboardResumo === 'function') {
+                window.renderizarDashboardResumo();
+            }
+            if (window.renderizarVendas && typeof window.renderizarVendas === 'function') {
+                window.renderizarVendas();
+            }
+            if (window.atualizarFiltroMesAno && typeof window.atualizarFiltroMesAno === 'function') {
+                window.atualizarFiltroMesAno();
+            }
+            
+            updateSyncStatus('Sincronizado', 'success');
+            updateMiniIndicator('connected-working');
+            mostrarNotificacaoSync('Dados sincronizados com sucesso', 'success');
+        } else {
+            throw new Error('Sistema de sincronização não disponível');
+        }
         
     } catch (error) {
-        mostrarNotificacaoSync('Erro na sincronização', 'error');
+        updateSyncStatus('Erro na sincronização', 'error');
+        updateMiniIndicator('error');
+        mostrarNotificacaoSync('Erro na sincronização: ' + error.message, 'error');
     } finally {
-        // Reativar todos os botões CRUD
-        document.body.classList.remove('sync-disabled');
-        
-        btn.disabled = false;
-        btn.textContent = originalText;
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
         hideProgress();
     }
 }
@@ -926,7 +771,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (syncAllBtn) syncAllBtn.addEventListener('click', sincronizarTudo);
+    if (syncAllBtn) {
+        syncAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // O evento será capturado pelo sistema global
+            // Não fazer nada aqui para evitar duplicação
+        });
+    }
     
     if (testBtn) testBtn.addEventListener('click', testarConexaoSheets);
     
@@ -1097,80 +948,7 @@ async function excluirProdutoEstoque(nomeProduto) {
     }
 }
 
-async function sincronizarEstoque() {
-    const url = getCurrentUrl();
-    if (!url || url.includes('*')) return;
-    
-    const estoqueAtivo = localStorage.getItem('estoqueGoogleSheetsAtivo') === 'true';
-    if (!estoqueAtivo) return;
-    
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action: 'readEstoque' })
-        });
-        
-        const result = await response.json();
-        
-        if (!result.success) {
-            return;
-        }
-        
-        const movimentacoes = result.data || [];
-        
-        // Salvar movimentações no localStorage
-        localStorage.setItem('movimentacoesEstoque', JSON.stringify(movimentacoes));
-        
-        const estoqueCalculado = {};
-        
-        // Calcular estoque por produto
-        movimentacoes.forEach(mov => {
-            if (!estoqueCalculado[mov.produto]) {
-                estoqueCalculado[mov.produto] = 0;
-            }
-            
-            if (mov.tipoMovimento === 'Entrada') {
-                estoqueCalculado[mov.produto] += mov.quantidade;
-            } else if (mov.tipoMovimento === 'Saída' || mov.tipoMovimento === 'Venda' || mov.tipoMovimento === 'Exclusão') {
-                estoqueCalculado[mov.produto] -= mov.quantidade;
-            }
-        });
-        
-        // Converter para array de produtos (otimizado)
-        const produtosSincronizados = Object.entries(estoqueCalculado)
-            .filter(([nome, quantidade]) => quantidade > 0)
-            .map(([nome, quantidade]) => ({
-                nome: nome,
-                quantidade: quantidade
-            }));
-        
-        // Atualizar localStorage e variável global
-        localStorage.setItem('produtos', JSON.stringify(produtosSincronizados));
-        
-        // Forçar atualização das variáveis globais - safer function checks
-        if (window.carregarDadosAtualizados && typeof window.carregarDadosAtualizados === 'function') {
-            window.carregarDadosAtualizados();
-        } else if (window.produtos && Array.isArray(window.produtos)) {
-            window.produtos.length = 0;
-            window.produtos.push(...produtosSincronizados);
-        }
-        
-        // Atualizar interface se a função estiver disponível - safer function check
-        if (window.renderizarProdutos && typeof window.renderizarProdutos === 'function') {
-            setTimeout(() => {
-                window.renderizarProdutos();
-            }, 100);
-        }
-        
-        // Salvar timestamp da sincronização
-        localStorage.setItem('ultimaSincronizacaoEstoque', Date.now().toString());
-        
-    } catch (error) {
-        // Erro silencioso
-    }
-}
+
 
 
 
@@ -1398,8 +1176,101 @@ async function testarConexaoSheets() {
     }
 }
 
+// Função para forçar atualização síncrona de todos os módulos
+async function forcarAtualizacaoTodosModulos() {
+    console.log('Forçando atualização síncrona de todos os módulos...');
+    
+    // Recarregar dados do localStorage
+    const dadosAtualizados = carregarDadosAtualizados();
+    
+    // Atualizar categorias
+    if (window.categoriaManager && typeof window.categoriaManager.sincronizarComFinanceiro === 'function') {
+        window.categoriaManager.sincronizarComFinanceiro();
+    }
+    
+    // Aguardar processamento
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Atualizar financeiro
+    if (window.renderizarLancamentos && typeof window.renderizarLancamentos === 'function') {
+        window.renderizarLancamentos();
+    }
+    if (window.renderizarResumoFinanceiro && typeof window.renderizarResumoFinanceiro === 'function') {
+        window.renderizarResumoFinanceiro();
+    }
+    
+    // Aguardar processamento
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Atualizar estoque
+    if (window.renderizarProdutos && typeof window.renderizarProdutos === 'function') {
+        window.renderizarProdutos();
+    }
+    
+    // Aguardar processamento
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Atualizar categorias na interface
+    if (window.renderizarListaCategorias && typeof window.renderizarListaCategorias === 'function') {
+        window.renderizarListaCategorias();
+    }
+    if (window.atualizarCategorias && typeof window.atualizarCategorias === 'function') {
+        window.atualizarCategorias();
+    }
+    
+    console.log('Atualização forçada de todos os módulos concluída');
+}
+
+// Função auxiliar para verificar se todos os módulos estão atualizados
+async function verificarModulosAtualizados() {
+    console.log('Verificando se todos os módulos estão atualizados...');
+    
+    // Verificar se as funções de renderização existem e foram executadas
+    const verificacoes = {
+        financeiro: false,
+        estoque: false,
+        categorias: false
+    };
+    
+    // Verificar financeiro
+    if (window.renderizarLancamentos && typeof window.renderizarLancamentos === 'function') {
+        const lancamentos = JSON.parse(localStorage.getItem('lancamentos') || '[]');
+        if (Array.isArray(window.lancamentos) && window.lancamentos.length === lancamentos.length) {
+            verificacoes.financeiro = true;
+        }
+    } else {
+        verificacoes.financeiro = true; // Se não existe a função, considera atualizado
+    }
+    
+    // Verificar estoque
+    if (window.renderizarProdutos && typeof window.renderizarProdutos === 'function') {
+        const produtos = JSON.parse(localStorage.getItem('produtos') || '[]');
+        if (Array.isArray(window.produtos) && window.produtos.length === produtos.length) {
+            verificacoes.estoque = true;
+        }
+    } else {
+        verificacoes.estoque = true; // Se não existe a função, considera atualizado
+    }
+    
+    // Verificar categorias
+    if (window.categoriaManager && window.renderizarListaCategorias && typeof window.renderizarListaCategorias === 'function') {
+        const categoriasAtuais = window.categoriaManager.obterCategorias();
+        if (window.categorias && typeof window.categorias === 'object') {
+            verificacoes.categorias = true;
+        }
+    } else {
+        verificacoes.categorias = true; // Se não existe o gerenciador, considera atualizado
+    }
+    
+    console.log('Status dos módulos:', verificacoes);
+    
+    return verificacoes.financeiro && verificacoes.estoque && verificacoes.categorias;
+}
+
 // Expor funções globalmente para uso em outros arquivos
 window.SYNC_CONFIG = SYNC_CONFIG;
+window.verificarModulosAtualizados = verificarModulosAtualizados;
+window.forcarAtualizacaoTodosModulos = forcarAtualizacaoTodosModulos;
 window.deveVerificarSincronizacao = deveVerificarSincronizacao;
 window.marcarUltimaVerificacao = marcarUltimaVerificacao;
 window.debugLog = debugLog;

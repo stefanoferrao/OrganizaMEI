@@ -45,10 +45,10 @@ document.addEventListener("DOMContentLoaded", function () {
       "Outros": ["Doações", "Reembolsos"]
     },
     despesa: {
-      "Operacional": ["Aluguel", "Energia", "Água", "Internet"],
+      "Operacional": ["Aluguel", "Água"],
       "Pessoal": ["Salários", "Benefícios"],
-      "Compras": ["Insumos", "Materiais", "Higiene", "Embalagem"],
-      "Quebra": ["Vencimento", "Avaria", "Perda", "Roubo", "Deterioração", "Outros"],
+      "Compras": ["Insumos", "Materiais"],
+      "Quebra": ["Vencimento", "Avaria"],
       "Outros": ["Impostos", "Multas"]
     }
   };
@@ -133,6 +133,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   function obterCategorias() {
+    // Usar o sistema centralizado se disponível
+    if (typeof window.categoriaManager !== 'undefined') {
+      return window.categoriaManager.obterCategorias();
+    }
+    
+    // Fallback para compatibilidade
     if (typeof window.categorias !== 'undefined') {
       return window.categorias;
     }
@@ -671,6 +677,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     atualizarSubcategorias();
+    
+    // Forçar sincronização com o gerenciador de categorias se disponível
+    if (typeof window.categoriaManager !== 'undefined') {
+      window.categoriaManager.sincronizarComFinanceiro();
+    }
   }
 
   function atualizarSubcategorias() {

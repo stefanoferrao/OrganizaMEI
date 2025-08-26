@@ -289,6 +289,17 @@
   font-weight: 600;
 }
 
+/* Layout em linha para formulário */
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row > * {
+  flex: 1;
+}
+
 /* Grupos de categoria e subcategoria */
 .form-group-categoria,
 .form-group-subcategoria {
@@ -1350,8 +1361,6 @@
     align-self: stretch;
   }
 
-
-
   .integration-status {
     flex-direction: column;
     text-align: center;
@@ -1374,6 +1383,11 @@
   #financeiro-form-inner input:not([type="radio"]) {
     padding: 10px 12px;
     margin-bottom: 10px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .form-row input:not([type="radio"]) {

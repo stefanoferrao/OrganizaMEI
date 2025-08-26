@@ -1229,6 +1229,94 @@ body[data-theme="office"] .daisyui-status-indicator:hover .daisyui-status-dot {
 
 body[data-theme="office"] .daisyui-status-indicator.connected-working .daisyui-status-dot {
     background: var(--secondary-color) !important;
+    box-shadow: 0 0 10px rgba(157, 157, 157, 0.3) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.connected-pending .daisyui-status-dot {
+    background: var(--warning-color) !important;
+    border-color: rgba(255, 193, 7, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(255, 193, 7, 0.3) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.checking .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.syncing .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.page-load .daisyui-status-dot {
+    background: var(--info-color) !important;
+    border-color: rgba(23, 162, 184, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(23, 162, 184, 0.3) !important;
+}
+
+body[data-theme="office"] .daisyui-status-indicator.error .daisyui-status-dot,
+body[data-theme="office"] .daisyui-status-indicator.not-configured .daisyui-status-dot {
+    background: var(--error-color) !important;
+    border-color: rgba(220, 53, 69, 0.4) !important;
+    box-shadow: 0 2px 8px var(--shadow-color), 0 0 8px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* === RELATÓRIOS === */
+body[data-theme="office"] .relatorio-container {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+body[data-theme="office"] .relatorio-card {
+    background: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 3px solid var(--secondary-color) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 2px 8px var(--shadow-color) !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+body[data-theme="office"] .relatorio-card:hover {
+    border-left-color: var(--primary-color) !important;
+    box-shadow: 0 4px 15px var(--glow-color) !important;
+    transform: translateY(-2px) !important;
+}
+
+body[data-theme="office"] .relatorio-card h3 {
+    color: var(--secondary-color) !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 12px !important;
+}
+
+body[data-theme="office"] .relatorio-card .relatorio-valor {
+    color: var(--text-primary) !important;
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
+}
+
+body[data-theme="office"] .relatorio-card .relatorio-descricao {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem !important;
+    margin-top: 8px !important;
+}
+
+body[data-theme="office"] .relatorio-card .relatorio-icon {
+    color: var(--secondary-color) !important;
+    filter: drop-shadow(0 1px 2px rgba(44, 62, 80, 0.2)) !important;
+    font-size: 1.5rem !important;
+    margin-right: 12px !important;
+}
+
+body[data-theme="office"] #relatorios h2.text-xl.font-semibold.mb-4 {
+    color: var(--background-color) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 10px !important;
+}
+
+body[data-theme="office"] #relatorios h2.text-xl.font-semibold.mb-4 i {
+    color: var(--background-color) !important;
+    filter: drop-shadow(0 1px 2px rgba(44, 62, 80, 0.2)) !important;
     box-shadow: 0 0 10px rgba(52, 73, 94, 0.3) !important;
     border: 1px solid var(--primary-color) !important;
 }

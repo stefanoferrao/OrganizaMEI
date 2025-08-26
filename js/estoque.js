@@ -655,7 +655,11 @@ document.addEventListener("DOMContentLoaded", function () {
             
             if (valor === 0) {
               // Produto com valor zero = Despesa categoria Quebra
-              const subcategoriaQuebra = await window.mostrarPopupClassificacaoQuebra(produtos[idx].nome, qtd);
+              // Obter subcategorias de Quebra atualizadas do sistema centralizado
+              const categoriasAtuais = window.categoriaManager ? window.categoriaManager.obterCategorias() : categorias;
+              const subcategoriasQuebra = categoriasAtuais.despesa && categoriasAtuais.despesa.Quebra ? categoriasAtuais.despesa.Quebra : ['Vencimento', 'Avaria', 'Perda', 'Roubo', 'Deterioração', 'Outros'];
+              
+              const subcategoriaQuebra = await mostrarPopupClassificacaoQuebraAtualizado(produtos[idx].nome, qtd, subcategoriasQuebra);
               if (!subcategoriaQuebra) {
                 throw new Error('Operação cancelada pelo usuário');
               }
@@ -1006,6 +1010,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.atualizarListaProdutos = atualizarListaProdutos;
   window.forcarRecalculoLayout = forcarRecalculoLayout;
   window.resetarPaginacaoEstoque = resetarPaginacaoEstoque;
+  window.recalcularEstoque = recalcularEstoque;
   
   // Sincronizar movimentações do Google Sheets ao inicializar
   async function sincronizarMovimentacoesIniciais() {
@@ -1457,6 +1462,50 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  
+  // Função para mostrar popup de classificação de quebra com categorias atualizadas
+  window.mostrarPopupClassificacaoQuebraAtualizado = async function(nomeProduto, quantidade, subcategoriasQuebra) {
+    return new Promise((resolve) => {
+      // Criar opções para o select
+      const opcoes = subcategoriasQuebra.map(sub => `<option value="${sub}">${sub}</option>`).join('');
+      
+      Swal.fire({
+        title: 'Classificar Quebra',
+        html: `
+          <div style="text-align: left; margin-bottom: 15px;">
+            <p><strong>Produto:</strong> ${nomeProduto}</p>
+            <p><strong>Quantidade:</strong> ${quantidade} unidades</p>
+            <p><strong>Motivo da quebra:</strong></p>
+            <select id="motivo-quebra" class="swal2-select" style="width: 100%; margin-top: 10px;">
+              <option value="">Selecione o motivo...</option>
+              ${opcoes}
+            </select>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#e53e3e',
+        cancelButtonColor: '#4a5568',
+        background: '#2d3748',
+        color: '#e2e8f0',
+        preConfirm: () => {
+          const motivo = document.getElementById('motivo-quebra').value;
+          if (!motivo) {
+            Swal.showValidationMessage('Selecione o motivo da quebra');
+            return false;
+          }
+          return motivo;
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          resolve(result.value);
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  };
   
   // Sincronizar movimentações iniciais
   setTimeout(sincronizarMovimentacoesIniciais, 1000);

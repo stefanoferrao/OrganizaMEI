@@ -1,18 +1,40 @@
 // Categorias - Gerenciamento de Categorias e Subcategorias
 document.addEventListener("DOMContentLoaded", function () {
   
+  // Obter referência do gerenciador de categorias
+  const manager = window.categoriaManager;
+  
+  // Listener para atualizações automáticas
+  if (manager) {
+    manager.adicionarListener((categoriasAtualizadas) => {
+      // Atualizar variável global para compatibilidade
+      window.categorias = categoriasAtualizadas;
+      categorias = categoriasAtualizadas;
+      
+      // Renderizar interface atualizada
+      renderizarListaCategorias();
+      
+      // Notificar outros módulos
+      atualizarCategorias();
+      atualizarCategoriaSubcategoriaForm();
+    });
+  }
+  
   // Interface de categorias
   function renderizarListaCategorias() {
     const div = document.getElementById("lista-categorias");
     if (!div) return;
+    
+    // Obter categorias atualizadas do gerenciador
+    const categoriasAtuais = manager ? manager.obterCategorias() : categorias;
     
     let html = "";
     ["receita", "despesa"].forEach(tipo => {
       html += `<h3 class='cat-titulo'>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</h3>`;
       // Campo de adição de categoria logo abaixo do título
       html += `<div class='cat-add-div'><input type='text' id='add-cat-${tipo}' placeholder='Nova categoria...' class='cat-add-input'><button onclick="adicionarCategoria('${tipo}')">Adicionar</button></div>`;
-      Object.keys(categorias[tipo]).forEach(cat => {
-        const subs = categorias[tipo][cat];
+      Object.keys(categoriasAtuais[tipo]).forEach(cat => {
+        const subs = categoriasAtuais[tipo][cat];
         html += `
           <div class="cat-card" id="cat-${tipo}-${cat}">
             <div class="cat-header">
@@ -43,8 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
     div.innerHTML = html;
     
     // Botão + para adicionar subcategoria
-    Object.keys(categorias).forEach(tipo => {
-      Object.keys(categorias[tipo]).forEach(cat => {
+    Object.keys(categoriasAtuais).forEach(tipo => {
+      Object.keys(categoriasAtuais[tipo]).forEach(cat => {
         const subList = document.getElementById(`cat-${tipo}-${cat}`);
         if (subList) {
           const addSubDiv = document.createElement('div');
@@ -56,20 +78,48 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Adicionar categoria
+  // Adicionar categoria usando o sistema centralizado
   window.adicionarCategoria = function (tipo) {
     const input = document.getElementById('add-cat-' + tipo);
     const nome = input.value.trim();
-    if (!nome) return alert('Digite o nome da categoria.');
-    if (categorias[tipo][nome]) return alert('Categoria já existe!');
-    categorias[tipo][nome] = [];
-    salvarCategorias();
-    renderizarListaCategorias();
-    atualizarCategorias();
-    atualizarCategoriaSubcategoriaForm();
+    
+    if (!nome) {
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync('Digite o nome da categoria.', 'error');
+      }
+      return;
+    }
+    
+    if (manager) {
+      const resultado = manager.adicionarCategoria(tipo, nome);
+      
+      if (resultado.sucesso) {
+        input.value = '';
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync(`Categoria "${resultado.categoria}" adicionada!`, 'success');
+        }
+        // O listener já vai atualizar a interface automaticamente
+      } else {
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync(resultado.erro, 'error');
+        }
+      }
+    } else {
+      // Fallback para compatibilidade
+      if (categorias[tipo][nome]) {
+        alert('Categoria já existe!');
+        return;
+      }
+      categorias[tipo][nome] = [];
+      salvarCategorias();
+      renderizarListaCategorias();
+      atualizarCategorias();
+      atualizarCategoriaSubcategoriaForm();
+      input.value = '';
+    }
   }
 
-  // Abrir popup para adicionar subcategoria
+  // Abrir popup para adicionar subcategoria usando o sistema centralizado
   window.abrirPopupSubcategoria = function (tipo, cat) {
     Swal.fire({
       title: 'Nova Subcategoria',
@@ -87,26 +137,59 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!value || !value.trim()) {
           return 'Digite o nome da subcategoria!';
         }
-        if (categorias[tipo][cat].includes(value.trim())) {
+        
+        if (manager) {
+          const subcategorias = manager.obterSubcategorias(tipo, cat);
+          if (subcategorias.includes(value.trim())) {
+            return 'Subcategoria já existe!';
+          }
+        } else if (categorias[tipo][cat].includes(value.trim())) {
           return 'Subcategoria já existe!';
         }
       }
     }).then((result) => {
       if (result.isConfirmed) {
         const nome = result.value.trim();
-        categorias[tipo][cat].push(nome);
-        salvarCategorias();
-        renderizarListaCategorias();
-        atualizarCategorias();
-        atualizarCategoriaSubcategoriaForm();
-        Swal.fire({
-          title: 'Sucesso!',
-          text: `Subcategoria "${nome}" adicionada!`,
-          icon: 'success',
-          confirmButtonColor: '#38a169',
-          background: '#232b38',
-          color: '#e2e8f0'
-        });
+        
+        if (manager) {
+          const resultado = manager.adicionarSubcategoria(tipo, cat, nome);
+          
+          if (resultado.sucesso) {
+            Swal.fire({
+              title: 'Sucesso!',
+              text: `Subcategoria "${nome}" adicionada!`,
+              icon: 'success',
+              confirmButtonColor: '#38a169',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+            // O listener já vai atualizar a interface automaticamente
+          } else {
+            Swal.fire({
+              title: 'Erro!',
+              text: resultado.erro,
+              icon: 'error',
+              confirmButtonColor: '#e53e3e',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+          }
+        } else {
+          // Fallback para compatibilidade
+          categorias[tipo][cat].push(nome);
+          salvarCategorias();
+          renderizarListaCategorias();
+          atualizarCategorias();
+          atualizarCategoriaSubcategoriaForm();
+          Swal.fire({
+            title: 'Sucesso!',
+            text: `Subcategoria "${nome}" adicionada!`,
+            icon: 'success',
+            confirmButtonColor: '#38a169',
+            background: '#232b38',
+            color: '#e2e8f0'
+          });
+        }
       }
     });
   }
@@ -162,33 +245,57 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     
-    if (categorias[tipo][novoNome] && novoNome !== cat) {
-      // Feedback visual para nome duplicado
-      input.style.borderColor = '#ecc94b';
-      input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
-      input.placeholder = 'Nome já existe!';
-      setTimeout(() => {
-        input.style.borderColor = '';
-        input.style.boxShadow = '';
-        input.placeholder = 'Nome da categoria...';
-      }, 2000);
-      return;
-    }
-    
-    // Animação de sucesso
-    input.style.borderColor = '#38a169';
-    input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
-    
-    categorias[tipo][novoNome] = categorias[tipo][cat];
-    delete categorias[tipo][cat];
-    salvarCategorias();
-    renderizarListaCategorias();
-    atualizarCategorias();
-    atualizarCategoriaSubcategoriaForm();
-    
-    // Notificação de sucesso
-    if (typeof mostrarNotificacaoSync === 'function') {
-      mostrarNotificacaoSync(`Categoria "${novoNome}" atualizada!`, 'success');
+    if (manager) {
+      const resultado = manager.editarCategoria(tipo, cat, novoNome);
+      
+      if (resultado.sucesso) {
+        // Animação de sucesso
+        input.style.borderColor = '#38a169';
+        input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+        
+        // Notificação de sucesso
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync(`Categoria "${novoNome}" atualizada!`, 'success');
+        }
+        // O listener já vai atualizar a interface automaticamente
+      } else {
+        // Feedback visual para erro
+        input.style.borderColor = '#ecc94b';
+        input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+        input.placeholder = resultado.erro;
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow = '';
+          input.placeholder = 'Nome da categoria...';
+        }, 2000);
+      }
+    } else {
+      // Fallback para compatibilidade
+      if (categorias[tipo][novoNome] && novoNome !== cat) {
+        input.style.borderColor = '#ecc94b';
+        input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+        input.placeholder = 'Nome já existe!';
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow = '';
+          input.placeholder = 'Nome da categoria...';
+        }, 2000);
+        return;
+      }
+      
+      input.style.borderColor = '#38a169';
+      input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+      
+      categorias[tipo][novoNome] = categorias[tipo][cat];
+      delete categorias[tipo][cat];
+      salvarCategorias();
+      renderizarListaCategorias();
+      atualizarCategorias();
+      atualizarCategoriaSubcategoriaForm();
+      
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync(`Categoria "${novoNome}" atualizada!`, 'success');
+      }
     }
   }
 
@@ -243,33 +350,57 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     
-    if (categorias[tipo][cat].includes(novoNome) && novoNome !== sub) {
-      // Feedback visual para nome duplicado
-      input.style.borderColor = '#ecc94b';
-      input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
-      input.placeholder = 'Nome já existe!';
-      setTimeout(() => {
-        input.style.borderColor = '';
-        input.style.boxShadow = '';
-        input.placeholder = 'Nome da subcategoria...';
-      }, 2000);
-      return;
-    }
-    
-    // Animação de sucesso
-    input.style.borderColor = '#38a169';
-    input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
-    
-    const idx = categorias[tipo][cat].indexOf(sub);
-    if (idx !== -1) categorias[tipo][cat][idx] = novoNome;
-    salvarCategorias();
-    renderizarListaCategorias();
-    atualizarCategorias();
-    atualizarCategoriaSubcategoriaForm();
-    
-    // Notificação de sucesso
-    if (typeof mostrarNotificacaoSync === 'function') {
-      mostrarNotificacaoSync(`Subcategoria "${novoNome}" atualizada!`, 'success');
+    if (manager) {
+      const resultado = manager.editarSubcategoria(tipo, cat, sub, novoNome);
+      
+      if (resultado.sucesso) {
+        // Animação de sucesso
+        input.style.borderColor = '#38a169';
+        input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+        
+        // Notificação de sucesso
+        if (typeof mostrarNotificacaoSync === 'function') {
+          mostrarNotificacaoSync(`Subcategoria "${novoNome}" atualizada!`, 'success');
+        }
+        // O listener já vai atualizar a interface automaticamente
+      } else {
+        // Feedback visual para erro
+        input.style.borderColor = '#ecc94b';
+        input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+        input.placeholder = resultado.erro;
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow = '';
+          input.placeholder = 'Nome da subcategoria...';
+        }, 2000);
+      }
+    } else {
+      // Fallback para compatibilidade
+      if (categorias[tipo][cat].includes(novoNome) && novoNome !== sub) {
+        input.style.borderColor = '#ecc94b';
+        input.style.boxShadow = '0 0 0 3px rgba(236, 201, 75, 0.3)';
+        input.placeholder = 'Nome já existe!';
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow = '';
+          input.placeholder = 'Nome da subcategoria...';
+        }, 2000);
+        return;
+      }
+      
+      input.style.borderColor = '#38a169';
+      input.style.boxShadow = '0 0 0 3px rgba(56, 161, 105, 0.3)';
+      
+      const idx = categorias[tipo][cat].indexOf(sub);
+      if (idx !== -1) categorias[tipo][cat][idx] = novoNome;
+      salvarCategorias();
+      renderizarListaCategorias();
+      atualizarCategorias();
+      atualizarCategoriaSubcategoriaForm();
+      
+      if (typeof mostrarNotificacaoSync === 'function') {
+        mostrarNotificacaoSync(`Subcategoria "${novoNome}" atualizada!`, 'success');
+      }
     }
   }
 
@@ -287,19 +418,45 @@ document.addEventListener("DOMContentLoaded", function () {
       color: '#e2e8f0'
     }).then((result) => {
       if (result.isConfirmed) {
-        delete categorias[tipo][cat];
-        salvarCategorias();
-        renderizarListaCategorias();
-        atualizarCategorias();
-        atualizarCategoriaSubcategoriaForm();
-        Swal.fire({
-          title: 'Removida!',
-          text: `Categoria "${cat}" foi removida.`,
-          icon: 'success',
-          confirmButtonColor: '#38a169',
-          background: '#232b38',
-          color: '#e2e8f0'
-        });
+        if (manager) {
+          const resultado = manager.removerCategoria(tipo, cat);
+          
+          if (resultado.sucesso) {
+            Swal.fire({
+              title: 'Removida!',
+              text: `Categoria "${cat}" foi removida.`,
+              icon: 'success',
+              confirmButtonColor: '#38a169',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+            // O listener já vai atualizar a interface automaticamente
+          } else {
+            Swal.fire({
+              title: 'Erro!',
+              text: resultado.erro,
+              icon: 'error',
+              confirmButtonColor: '#e53e3e',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+          }
+        } else {
+          // Fallback para compatibilidade
+          delete categorias[tipo][cat];
+          salvarCategorias();
+          renderizarListaCategorias();
+          atualizarCategorias();
+          atualizarCategoriaSubcategoriaForm();
+          Swal.fire({
+            title: 'Removida!',
+            text: `Categoria "${cat}" foi removida.`,
+            icon: 'success',
+            confirmButtonColor: '#38a169',
+            background: '#232b38',
+            color: '#e2e8f0'
+          });
+        }
       }
     });
   }
@@ -318,31 +475,60 @@ document.addEventListener("DOMContentLoaded", function () {
       color: '#e2e8f0'
     }).then((result) => {
       if (result.isConfirmed) {
-        categorias[tipo][cat] = categorias[tipo][cat].filter(s => s !== sub);
-        salvarCategorias();
-        renderizarListaCategorias();
-        atualizarCategorias();
-        atualizarCategoriaSubcategoriaForm();
-        Swal.fire({
-          title: 'Removida!',
-          text: `Subcategoria "${sub}" foi removida.`,
-          icon: 'success',
-          confirmButtonColor: '#38a169',
-          background: '#232b38',
-          color: '#e2e8f0'
-        });
+        if (manager) {
+          const resultado = manager.removerSubcategoria(tipo, cat, sub);
+          
+          if (resultado.sucesso) {
+            Swal.fire({
+              title: 'Removida!',
+              text: `Subcategoria "${sub}" foi removida.`,
+              icon: 'success',
+              confirmButtonColor: '#38a169',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+            // O listener já vai atualizar a interface automaticamente
+          } else {
+            Swal.fire({
+              title: 'Erro!',
+              text: resultado.erro,
+              icon: 'error',
+              confirmButtonColor: '#e53e3e',
+              background: '#232b38',
+              color: '#e2e8f0'
+            });
+          }
+        } else {
+          // Fallback para compatibilidade
+          categorias[tipo][cat] = categorias[tipo][cat].filter(s => s !== sub);
+          salvarCategorias();
+          renderizarListaCategorias();
+          atualizarCategorias();
+          atualizarCategoriaSubcategoriaForm();
+          Swal.fire({
+            title: 'Removida!',
+            text: `Subcategoria "${sub}" foi removida.`,
+            icon: 'success',
+            confirmButtonColor: '#38a169',
+            background: '#232b38',
+            color: '#e2e8f0'
+          });
+        }
       }
     });
   }
 
   function atualizarCategoriaSubcategoriaForm() {
+    // Obter categorias atualizadas do gerenciador
+    const categoriasAtuais = manager ? manager.obterCategorias() : categorias;
+    
     // Para o formulário de subcategoria
     const tipoSelect = document.getElementById("tipo-subcategoria");
     const categoriaSelect = document.getElementById("categoria-subcategoria");
     if (!tipoSelect || !categoriaSelect) return;
     categoriaSelect.innerHTML = "";
     const tipo = tipoSelect.value;
-    Object.keys(categorias[tipo]).forEach(cat => {
+    Object.keys(categoriasAtuais[tipo]).forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
       opt.textContent = cat;
@@ -351,6 +537,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function atualizarCategorias() {
+    // Obter categorias atualizadas do gerenciador
+    const categoriasAtuais = manager ? manager.obterCategorias() : categorias;
+    
+    // Atualizar variável global para compatibilidade
+    window.categorias = categoriasAtuais;
+    categorias = categoriasAtuais;
+    
     // Atualizar selects do financeiro se existirem (nova interface)
     const tipoSelecionado = document.querySelector('input[name="tipo-lancamento"]:checked')?.value;
     const categoriaInput = document.getElementById("categoria-lancamento");
@@ -361,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
     categoriaInput.innerHTML = '<option value="">Selecione uma categoria...</option>';
     subcategoriaInput.innerHTML = '<option value="">Selecione uma subcategoria...</option>';
     
-    const cats = categorias[tipoSelecionado] || {};
+    const cats = categoriasAtuais[tipoSelecionado] || {};
     Object.keys(cats).forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
@@ -372,7 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Atualizar subcategorias se houver categoria selecionada
     const cat = categoriaInput.value;
     if (cat) {
-      const subs = (categorias[tipoSelecionado] && categorias[tipoSelecionado][cat]) ? categorias[tipoSelecionado][cat] : [];
+      const subs = (categoriasAtuais[tipoSelecionado] && categoriasAtuais[tipoSelecionado][cat]) ? categoriasAtuais[tipoSelecionado][cat] : [];
       subs.forEach(sub => {
         const opt = document.createElement("option");
         opt.value = sub;

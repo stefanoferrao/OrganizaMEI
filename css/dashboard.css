@@ -255,7 +255,7 @@
   font-size: min(4vw, 2.5rem);
   margin-bottom: min(1.5vh, 12px);
   transition: transform 0.3s ease;
-  animation: pulse 2s infinite;
+  filter: drop-shadow(0 0 8px rgba(23, 172, 175, 0.3));
   flex-shrink: 0;
 }
 
@@ -502,7 +502,6 @@
 .dashboard-value {
   background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
   background-size: 200% 200%;
-  animation: shimmer 3s ease-in-out infinite;
 }
 
 @keyframes shimmer {

@@ -14,7 +14,8 @@ class ShortcutSystem {
             'F5': () => this.refreshPage(),
             'F6': () => this.navigateToTab('categorias'),
             'F7': () => this.navigateToTab('graficos'),
-            'F8': () => this.navigateToTab('configuracoes'),
+            'F8': () => this.navigateToTab('relatorios'),
+            'F9': () => this.navigateToTab('configuracoes'),
             'Digit1': () => this.navigateToTab('dashboard'),
             'Digit2': () => this.navigateToTab('estoque'),
             'Digit3': () => this.navigateToTab('financeiro'),
@@ -197,6 +198,7 @@ class ShortcutSystem {
                 'vendas': 'Vendas',
                 'categorias': 'Categorias',
                 'graficos': 'Gráficos',
+                'relatorios': 'Relatórios',
                 'configuracoes': 'Configurações'
             };
             this.showNotification(tabNames[tabId], 'global');
